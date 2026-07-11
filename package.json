@@ -1,0 +1,43 @@
+{
+  "name": "airline-manager",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Production monorepo for Airline Manager.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "24.18.0",
+    "pnpm": "11.11.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.18.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@11.11.0",
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean && rimraf .turbo coverage",
+    "dev": "turbo run dev --parallel",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "turbo run test",
+    "test:boundaries": "node scripts/test-boundaries.mjs",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "24.13.3",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.2.10",
+    "globals": "17.7.0",
+    "prettier": "3.9.5",
+    "rimraf": "6.1.3",
+    "turbo": "2.10.4",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.63.0",
+    "vitest": "4.1.10"
+  }
+}

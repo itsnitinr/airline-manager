@@ -1,7 +1,7 @@
 # Scaffold the TypeScript monorepo
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: none
 
 ## Goal
@@ -44,4 +44,9 @@ API, and worker applications plus shared packages.
 
 ## Comments
 
-None yet.
+- 2026-07-11: Added the pinned Node 24.18.0/pnpm 11.11.0 workspace; separate web, API,
+  and worker shells; domain, contracts, database, config, and test-support packages;
+  strict TypeScript, formatting, lint, tests, builds, and dependency-boundary enforcement;
+  plus public-safe environment and repository documentation. Validation passed for frozen
+  install, formatting, lint, type-check, 9 unit tests, all builds, four deliberate forbidden
+  imports, application startup smoke checks, diff/whitespace review, and secret-pattern scans.
