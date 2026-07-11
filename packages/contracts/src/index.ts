@@ -46,6 +46,8 @@ export type FoundingSelectionRequest = Readonly<{
   worldRulesetVersion: string;
 }>;
 
+export type FounderLeaseSelectionRequest = Readonly<{ optionCode: string }>;
+
 const exactMinorSchema = { type: "string", pattern: "^[0-9]+$" } as const;
 const foundingSelectionProperties = {
   airlineName: { type: "string", minLength: 3, maxLength: 80 },
@@ -287,6 +289,338 @@ export const airlineSummaryResponseSchema = {
     equityMinor: exactMinorSchema,
     loanLiabilityMinor: exactMinorSchema,
     nextStep: { type: "string", const: "select_founder_aircraft" },
+    nextStepGuidance: { type: "string" },
+  },
+} as const;
+
+export const aircraftIdentifierParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "aircraftId"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    aircraftId: { type: "string", format: "uuid" },
+  },
+} as const;
+
+export const founderLeaseSelectionRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["optionCode"],
+  properties: { optionCode: { type: "string", pattern: "^founder-[a-z0-9-]+$" } },
+} as const;
+
+const founderVariantSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "code",
+    "manufacturer",
+    "model",
+    "category",
+    "rangeNm",
+    "typicalSeats",
+    "maximumSeats",
+    "minimumRunwayFt",
+    "productionStatus",
+    "acquisitionChannel",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    code: { type: "string" },
+    manufacturer: { type: "string" },
+    model: { type: "string" },
+    category: { type: "string", enum: ["turboprop", "regional_jet", "narrow_body"] },
+    rangeNm: { type: "integer", minimum: 1 },
+    typicalSeats: { type: "integer", minimum: 1 },
+    maximumSeats: { type: "integer", minimum: 1 },
+    minimumRunwayFt: { type: "integer", minimum: 1 },
+    productionStatus: { type: "string", enum: ["in_production", "discontinued"] },
+    acquisitionChannel: { type: "string", const: "operating_lease" },
+  },
+} as const;
+
+const founderOptionSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "code",
+    "packageVersion",
+    "catalogReleaseVersion",
+    "worldRulesetVersion",
+    "variant",
+    "cabin",
+    "lease",
+    "delivery",
+    "tradeoffs",
+    "viable",
+    "provenanceNotice",
+  ],
+  properties: {
+    code: { type: "string" },
+    packageVersion: { type: "string" },
+    catalogReleaseVersion: { type: "string" },
+    worldRulesetVersion: { type: "string" },
+    variant: founderVariantSchema,
+    cabin: {
+      type: "object",
+      additionalProperties: false,
+      required: ["configurationKind", "economySeats", "bookingClassesConfigured"],
+      properties: {
+        configurationKind: { type: "string", const: "physical_cabin" },
+        economySeats: { type: "integer", minimum: 1 },
+        bookingClassesConfigured: { type: "boolean", const: false },
+      },
+    },
+    lease: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "currency",
+        "termDays",
+        "paymentIntervalDays",
+        "paymentCount",
+        "recurringPaymentMinor",
+        "depositMinor",
+        "depositSubsidyMinor",
+        "refundableDepositMinor",
+      ],
+      properties: {
+        currency: foundingSelectionProperties.reportingCurrency,
+        termDays: { type: "integer", minimum: 1 },
+        paymentIntervalDays: { type: "integer", minimum: 1 },
+        paymentCount: { type: "integer", minimum: 1 },
+        recurringPaymentMinor: exactMinorSchema,
+        depositMinor: exactMinorSchema,
+        depositSubsidyMinor: exactMinorSchema,
+        refundableDepositMinor: exactMinorSchema,
+      },
+    },
+    delivery: {
+      type: "object",
+      additionalProperties: false,
+      required: ["delayMinutes", "immediate", "maximumDelayMinutes"],
+      properties: {
+        delayMinutes: { type: "integer", minimum: 0, maximum: 1440 },
+        immediate: { type: "boolean" },
+        maximumDelayMinutes: { type: "integer", const: 1440 },
+      },
+    },
+    tradeoffs: {
+      type: "object",
+      additionalProperties: false,
+      required: ["network", "cost", "delivery", "commonalityRisk", "runway"],
+      properties: {
+        network: { type: "string" },
+        cost: { type: "string" },
+        delivery: { type: "string" },
+        commonalityRisk: { type: "string" },
+        runway: { type: "string" },
+      },
+    },
+    viable: { type: "boolean", const: true },
+    provenanceNotice: { type: "string" },
+  },
+} as const;
+
+const leasePaymentSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["paymentNumber", "dueAt", "amountMinor", "status"],
+  properties: {
+    paymentNumber: { type: "integer", minimum: 1 },
+    dueAt: { type: "string", format: "date-time" },
+    amountMinor: exactMinorSchema,
+    status: { type: "string", enum: ["scheduled", "paid", "overdue", "cancelled"] },
+  },
+} as const;
+
+export const founderPackageComparisonResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "careerId", "packageVersion", "options", "exactlyOneMayBeAccepted"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    careerId: { type: "string", format: "uuid" },
+    packageVersion: { type: "string" },
+    options: { type: "array", minItems: 4, maxItems: 4, items: founderOptionSchema },
+    exactlyOneMayBeAccepted: { type: "boolean", const: true },
+  },
+} as const;
+
+export const founderLeasePreviewResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "option",
+    "deliveryTargetAt",
+    "principalBaseAirportId",
+    "paymentSchedule",
+    "nextStep",
+    "nextStepGuidance",
+  ],
+  properties: {
+    option: founderOptionSchema,
+    deliveryTargetAt: { type: "string", format: "date-time" },
+    principalBaseAirportId: { type: "string", format: "uuid" },
+    paymentSchedule: { type: "array", items: leasePaymentSchema },
+    nextStep: { type: "string", const: "accept_founder_lease" },
+    nextStepGuidance: { type: "string" },
+  },
+} as const;
+
+const fleetAircraftSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "serialNumber",
+    "airlineId",
+    "leaseId",
+    "catalogReleaseId",
+    "catalogReleaseVersion",
+    "variantId",
+    "variantCode",
+    "manufacturer",
+    "model",
+    "owner",
+    "operatorAirlineId",
+    "currentAirportId",
+    "plannedAirportId",
+    "deliveryState",
+    "deliveryTargetAt",
+    "deliveredAt",
+    "manufacturedAt",
+    "chronologicalAgeSeconds",
+    "accumulatedHoursMinutes",
+    "accumulatedCycles",
+    "conditionBasisPoints",
+    "dispatchReliabilityBasisPoints",
+    "version",
+    "cabin",
+    "restrictions",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    serialNumber: { type: "string" },
+    airlineId: { anyOf: [{ type: "string", format: "uuid" }, { type: "null" }] },
+    leaseId: { type: "string", format: "uuid" },
+    catalogReleaseId: { type: "string", format: "uuid" },
+    catalogReleaseVersion: { type: "string" },
+    variantId: { type: "string", format: "uuid" },
+    variantCode: { type: "string" },
+    manufacturer: { type: "string" },
+    model: { type: "string" },
+    owner: {
+      type: "object",
+      additionalProperties: false,
+      required: ["lessorId", "name"],
+      properties: { lessorId: { type: "string", format: "uuid" }, name: { type: "string" } },
+    },
+    operatorAirlineId: { anyOf: [{ type: "string", format: "uuid" }, { type: "null" }] },
+    currentAirportId: { anyOf: [{ type: "string", format: "uuid" }, { type: "null" }] },
+    plannedAirportId: { anyOf: [{ type: "string", format: "uuid" }, { type: "null" }] },
+    deliveryState: { type: "string", enum: ["pending", "delivered", "returned", "defaulted"] },
+    deliveryTargetAt: { type: "string", format: "date-time" },
+    deliveredAt: { anyOf: [{ type: "string", format: "date-time" }, { type: "null" }] },
+    manufacturedAt: { type: "string", format: "date-time" },
+    chronologicalAgeSeconds: exactMinorSchema,
+    accumulatedHoursMinutes: exactMinorSchema,
+    accumulatedCycles: exactMinorSchema,
+    conditionBasisPoints: { type: "integer", minimum: 0, maximum: 10000 },
+    dispatchReliabilityBasisPoints: { type: "integer", minimum: 0, maximum: 10000 },
+    version: exactMinorSchema,
+    cabin: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "configurationKind",
+        "economySeats",
+        "premiumEconomySeats",
+        "businessSeats",
+        "firstSeats",
+        "bookingClassesConfigured",
+      ],
+      properties: {
+        configurationKind: { type: "string", const: "physical_cabin" },
+        economySeats: { type: "integer", minimum: 1 },
+        premiumEconomySeats: { type: "integer", const: 0 },
+        businessSeats: { type: "integer", const: 0 },
+        firstSeats: { type: "integer", const: 0 },
+        bookingClassesConfigured: { type: "boolean", const: false },
+      },
+    },
+    restrictions: {
+      type: "object",
+      additionalProperties: false,
+      required: ["sale", "collateral", "cashExtraction"],
+      properties: {
+        sale: { type: "boolean", const: true },
+        collateral: { type: "boolean", const: true },
+        cashExtraction: { type: "boolean", const: true },
+      },
+    },
+  },
+} as const;
+
+export const fleetListResponseSchema = { type: "array", items: fleetAircraftSchema } as const;
+export const fleetAircraftResponseSchema = fleetAircraftSchema;
+export const deliveryStatusResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "aircraftId",
+    "deliveryState",
+    "deliveryTargetAt",
+    "deliveredAt",
+    "currentAirportId",
+    "plannedAirportId",
+    "version",
+  ],
+  properties: {
+    aircraftId: { type: "string", format: "uuid" },
+    deliveryState: fleetAircraftSchema.properties.deliveryState,
+    deliveryTargetAt: fleetAircraftSchema.properties.deliveryTargetAt,
+    deliveredAt: fleetAircraftSchema.properties.deliveredAt,
+    currentAirportId: fleetAircraftSchema.properties.currentAirportId,
+    plannedAirportId: fleetAircraftSchema.properties.plannedAirportId,
+    version: exactMinorSchema,
+  },
+} as const;
+
+export const founderLeaseAcceptanceResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "airlineId",
+    "careerId",
+    "packageVersion",
+    "lease",
+    "aircraft",
+    "nextStep",
+    "nextStepGuidance",
+  ],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    careerId: { type: "string", format: "uuid" },
+    packageVersion: { type: "string" },
+    lease: {
+      type: "object",
+      additionalProperties: false,
+      required: ["id", "status", "version", "startsAt", "maturesAt", "currency", "paymentSchedule"],
+      properties: {
+        id: { type: "string", format: "uuid" },
+        status: { type: "string", const: "active" },
+        version: exactMinorSchema,
+        startsAt: { type: "string", format: "date-time" },
+        maturesAt: { type: "string", format: "date-time" },
+        currency: foundingSelectionProperties.reportingCurrency,
+        paymentSchedule: { type: "array", items: leasePaymentSchema },
+      },
+    },
+    aircraft: fleetAircraftSchema,
+    nextStep: { type: "string", enum: ["await_aircraft_delivery", "plan_first_route"] },
     nextStepGuidance: { type: "string" },
   },
 } as const;

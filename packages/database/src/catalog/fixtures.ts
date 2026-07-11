@@ -76,6 +76,32 @@ export type FoundingBalanceFixture = Readonly<{
   }>;
 }>;
 
+export type FounderPackageFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  lessor: Readonly<{ code: string; name: string }>;
+  options: readonly Readonly<{
+    code: string;
+    variant_code: string;
+    acquisition_channel: "operating_lease";
+    economy_seats: number;
+    delivery_delay_minutes: number;
+    term_days: number;
+    payment_interval_days: number;
+    payment_count: number;
+    recurring_payment_minor: Readonly<Record<string, string>>;
+    deposit_minor: Readonly<Record<string, string>>;
+    deposit_subsidy_minor: Readonly<Record<string, string>>;
+    network_summary: string;
+    cost_summary: string;
+    delivery_summary: string;
+    commonality_risk_summary: string;
+    runway_tradeoff_summary: string;
+    usage_conditions: Readonly<Record<string, number>>;
+    return_conditions: Readonly<Record<string, number | boolean>>;
+  }>[];
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -94,4 +120,8 @@ export function readAircraftFixture(): Promise<AircraftFixture> {
 
 export function readFoundingBalanceFixture(): Promise<FoundingBalanceFixture> {
   return readJson(new URL("../../data/founding-balance-v1.json", import.meta.url));
+}
+
+export function readFounderPackageFixture(): Promise<FounderPackageFixture> {
+  return readJson(new URL("../../data/founder-packages-v1.json", import.meta.url));
 }

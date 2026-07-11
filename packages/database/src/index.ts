@@ -31,6 +31,11 @@ export {
   type FoundingMaterialStage,
 } from "./airline/repository.js";
 export {
+  KyselyFleetRepository,
+  fleetMaterialStages,
+  type FleetMaterialStage,
+} from "./fleet/repository.js";
+export {
   importOurAirports,
   type AirportImportInput,
   type AirportImportResult,

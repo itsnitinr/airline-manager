@@ -6,12 +6,13 @@ import {
 } from "@airline-manager/config";
 import {
   KyselyAirlineFoundingRepository,
+  KyselyFleetRepository,
   KyselyIdentityRepository,
   createDatabaseRuntime,
   createInfrastructureReadinessCheck,
   readDatabasePoolOptions,
 } from "@airline-manager/database";
-import { AirlineFoundingService } from "@airline-manager/application";
+import { AirlineFoundingService, FleetService } from "@airline-manager/application";
 import type { FastifyInstance } from "fastify";
 import { createApiServer } from "./app.js";
 import { createAuthenticationAdapter } from "./auth/better-auth.js";
@@ -102,6 +103,10 @@ export async function startApi(
     ),
     airlineFoundingService: new AirlineFoundingService(
       new KyselyAirlineFoundingRepository(databaseRuntime.database),
+      new KyselyIdentityRepository(databaseRuntime.database),
+    ),
+    fleetService: new FleetService(
+      new KyselyFleetRepository(databaseRuntime.database),
       new KyselyIdentityRepository(databaseRuntime.database),
     ),
     ...(rateLimitMax === undefined ? {} : { rateLimitMax }),

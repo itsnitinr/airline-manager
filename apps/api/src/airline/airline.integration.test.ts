@@ -1,8 +1,9 @@
 import { randomBytes, randomUUID } from "node:crypto";
-import { AirlineFoundingService } from "@airline-manager/application";
+import { AirlineFoundingService, FleetService } from "@airline-manager/application";
 import type { FoundingSelectionRequest } from "@airline-manager/contracts";
 import {
   KyselyAirlineFoundingRepository,
+  KyselyFleetRepository,
   KyselyIdentityRepository,
   createDatabaseRuntime,
   readDatabasePoolOptions,
@@ -64,6 +65,11 @@ function createFixture() {
       new KyselyIdentityRepository(runtime.database),
       { now: () => new Date("2026-07-11T12:00:00.000Z") },
     ),
+    fleetService: new FleetService(
+      new KyselyFleetRepository(runtime.database),
+      new KyselyIdentityRepository(runtime.database),
+      { now: () => new Date("2026-07-11T12:00:00.000Z") },
+    ),
   });
   apps.add(app);
   return { app, email };
@@ -74,10 +80,11 @@ async function registerVerifiedSession(
   emailDelivery: CapturingAuthenticationEmailDelivery,
 ): Promise<string> {
   const address = `airline-${randomUUID()}@example.test`;
+  const forwardedFor = `198.51.100.${Number.parseInt(randomUUID().slice(0, 2), 16)}`;
   const registered = await app.inject({
     method: "POST",
     url: "/api/auth/sign-up/email",
-    headers: { origin: trustedOrigin },
+    headers: { origin: trustedOrigin, "x-forwarded-for": forwardedFor },
     payload: { name: "Airline Founder", email: address, password },
   });
   expect(registered.statusCode).toBe(200);
@@ -88,12 +95,12 @@ async function registerVerifiedSession(
   await app.inject({
     method: "GET",
     url: `${verificationUrl.pathname}${verificationUrl.search}`,
-    headers: { origin: trustedOrigin },
+    headers: { origin: trustedOrigin, "x-forwarded-for": forwardedFor },
   });
   const signedIn = await app.inject({
     method: "POST",
     url: "/api/auth/sign-in/email",
-    headers: { origin: trustedOrigin },
+    headers: { origin: trustedOrigin, "x-forwarded-for": forwardedFor },
     payload: { email: address, password },
   });
   expect(signedIn.statusCode).toBe(200);
@@ -202,14 +209,14 @@ describe("authenticated airline founding API", () => {
   it("denies foreign and substituted airline IDs with the same ownership response", async () => {
     const owner = createFixture();
     const ownerCookie = await registerVerifiedSession(owner.app, owner.email);
+    const attacker = createFixture();
+    const attackerCookie = await registerVerifiedSession(attacker.app, attacker.email);
     const founded = await owner.app.inject({
       method: "POST",
       url: "/v1/airlines/founding/confirm",
       headers: { cookie: ownerCookie, "idempotency-key": "owner-founding" },
       payload: { ...selection, airlineName: "Owner Meridian Air" },
     });
-    const attacker = createFixture();
-    const attackerCookie = await registerVerifiedSession(attacker.app, attacker.email);
     const foreign = await attacker.app.inject({
       method: "GET",
       url: `/v1/airlines/${String(founded.json().airlineId)}`,
@@ -249,5 +256,130 @@ describe("authenticated airline founding API", () => {
       error: { code: "airport_jurisdiction_mismatch" },
     });
     expect(mismatch.body).not.toMatch(/token|cookie|password|SELECT|constraint/i);
+  });
+
+  it("compares, previews, accepts, and queries the founder fleet through authenticated contracts", async () => {
+    const { app, email } = createFixture();
+    const cookie = await registerVerifiedSession(app, email);
+    const founded = await app.inject({
+      method: "POST",
+      url: "/v1/airlines/founding/confirm",
+      headers: { cookie, "idempotency-key": "fleet-api-founding" },
+      payload: { ...selection, airlineName: "Fleet API Meridian" },
+    });
+    const airlineId = String(founded.json().airlineId);
+    const comparison = await app.inject({
+      method: "GET",
+      url: `/v1/airlines/${airlineId}/founder-package`,
+      headers: { cookie },
+    });
+    expect(comparison.statusCode).toBe(200);
+    expect(comparison.json()).toMatchObject({
+      packageVersion: "founder-package-v1",
+      exactlyOneMayBeAccepted: true,
+      options: expect.arrayContaining([
+        expect.objectContaining({ code: "founder-atr-72-600", viable: true }),
+      ]),
+    });
+    expect(comparison.json().options).toHaveLength(4);
+    const preview = await app.inject({
+      method: "POST",
+      url: `/v1/airlines/${airlineId}/founder-package/preview`,
+      headers: { cookie },
+      payload: { optionCode: "founder-atr-72-600" },
+    });
+    expect(preview.statusCode).toBe(200);
+    expect(preview.json()).toMatchObject({
+      option: { cabin: { economySeats: 72, bookingClassesConfigured: false } },
+      nextStep: "accept_founder_lease",
+    });
+    const input = {
+      method: "POST" as const,
+      url: `/v1/airlines/${airlineId}/founder-lease/accept`,
+      headers: { cookie, "idempotency-key": "fleet-api-accept" },
+      payload: { optionCode: "founder-atr-72-600" },
+    };
+    const accepted = await app.inject(input);
+    const repeated = await app.inject(input);
+    expect(accepted.statusCode).toBe(201);
+    expect(repeated.json()).toEqual(accepted.json());
+    expect(accepted.json()).toMatchObject({
+      aircraft: { deliveryState: "delivered", variantCode: "atr-72-600" },
+      nextStep: "plan_first_route",
+    });
+    const aircraftId = String(accepted.json().aircraft.id);
+    const [fleet, detail, delivery, nextStep] = await Promise.all([
+      app.inject({ method: "GET", url: `/v1/airlines/${airlineId}/fleet`, headers: { cookie } }),
+      app.inject({
+        method: "GET",
+        url: `/v1/airlines/${airlineId}/fleet/${aircraftId}`,
+        headers: { cookie },
+      }),
+      app.inject({
+        method: "GET",
+        url: `/v1/airlines/${airlineId}/fleet/${aircraftId}/delivery-status`,
+        headers: { cookie },
+      }),
+      app.inject({
+        method: "GET",
+        url: `/v1/airlines/${airlineId}/next-step`,
+        headers: { cookie },
+      }),
+    ]);
+    expect(fleet.statusCode).toBe(200);
+    expect(fleet.json()).toHaveLength(1);
+    expect(detail.json()).toMatchObject({
+      id: aircraftId,
+      restrictions: { sale: true, collateral: true, cashExtraction: true },
+    });
+    expect(delivery.json()).toMatchObject({ aircraftId, deliveryState: "delivered" });
+    expect(nextStep.json()).toMatchObject({ nextStep: "plan_first_route" });
+  });
+
+  it("reports delayed delivery and denies duplicate acceptance and foreign aircraft substitution", async () => {
+    const owner = createFixture();
+    const ownerCookie = await registerVerifiedSession(owner.app, owner.email);
+    const attacker = createFixture();
+    const attackerCookie = await registerVerifiedSession(attacker.app, attacker.email);
+    const founded = await owner.app.inject({
+      method: "POST",
+      url: "/v1/airlines/founding/confirm",
+      headers: { cookie: ownerCookie, "idempotency-key": "delayed-api-founding" },
+      payload: { ...selection, airlineName: "Delayed API Meridian" },
+    });
+    const airlineId = String(founded.json().airlineId);
+    const accepted = await owner.app.inject({
+      method: "POST",
+      url: `/v1/airlines/${airlineId}/founder-lease/accept`,
+      headers: { cookie: ownerCookie, "idempotency-key": "delayed-api-accept" },
+      payload: { optionCode: "founder-airbus-a320neo" },
+    });
+    expect(accepted.statusCode).toBe(201);
+    expect(accepted.json()).toMatchObject({
+      aircraft: { deliveryState: "pending", currentAirportId: null },
+      nextStep: "await_aircraft_delivery",
+    });
+    const duplicate = await owner.app.inject({
+      method: "POST",
+      url: `/v1/airlines/${airlineId}/founder-lease/accept`,
+      headers: { cookie: ownerCookie, "idempotency-key": "different-api-accept" },
+      payload: { optionCode: "founder-boeing-737-8" },
+    });
+    expect(duplicate.statusCode).toBe(409);
+    expect(duplicate.json()).toMatchObject({ error: { code: "founder_lease_already_accepted" } });
+
+    const foreign = await attacker.app.inject({
+      method: "GET",
+      url: `/v1/airlines/${airlineId}/fleet/${String(accepted.json().aircraft.id)}`,
+      headers: { cookie: attackerCookie },
+    });
+    const missing = await attacker.app.inject({
+      method: "GET",
+      url: `/v1/airlines/${airlineId}/fleet/${randomUUID()}`,
+      headers: { cookie: attackerCookie },
+    });
+    expect(foreign.statusCode).toBe(403);
+    expect(missing.statusCode).toBe(403);
+    expect(foreign.body).not.toMatch(/cookie|token|password|SELECT|constraint/i);
   });
 });

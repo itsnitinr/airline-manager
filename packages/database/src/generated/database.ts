@@ -50,6 +50,59 @@ export interface AdministrativeAuditRecords {
   resource_type: string;
 }
 
+export interface Aircraft {
+  accumulated_cycles: Generated<Int8>;
+  accumulated_hours_minutes: Generated<Int8>;
+  aircraft_variant_id: string;
+  catalog_release_id: string;
+  condition_basis_points: number;
+  created_at: Timestamp;
+  current_airport_id: string | null;
+  delivered_at: Timestamp | null;
+  delivery_state: string;
+  delivery_target_at: Timestamp;
+  dispatch_reliability_basis_points: number;
+  id: Generated<string>;
+  initial_chronological_age_seconds: Generated<Int8>;
+  manufactured_at: Timestamp;
+  operating_lease_id: string;
+  operator_airline_id: string | null;
+  owner_lessor_id: string;
+  planned_airport_id: string | null;
+  serial_number: string;
+  variant_snapshot: Json;
+  version: Generated<Int8>;
+}
+
+export interface AircraftCabinConfigurations {
+  aircraft_id: string;
+  business_seats: Generated<number>;
+  configuration_kind: Generated<string>;
+  configured_at: Timestamp;
+  economy_seats: number;
+  first_seats: Generated<number>;
+  id: Generated<string>;
+  premium_economy_seats: Generated<number>;
+  version: Generated<number>;
+}
+
+export interface AircraftLessors {
+  code: string;
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  name: string;
+}
+
+export interface AircraftLifecycleEvents {
+  aircraft_id: string;
+  aircraft_version: Int8;
+  airport_id: string | null;
+  details: Json;
+  event_type: string;
+  id: Generated<string>;
+  occurred_at: Timestamp;
+}
+
 export interface Airlines {
   brand: Json;
   career_id: string;
@@ -267,6 +320,38 @@ export interface FounderFinancingOffers {
   term_days: number;
 }
 
+export interface FounderPackageOptions {
+  acquisition_channel: string;
+  aircraft_variant_id: string;
+  code: string;
+  commonality_risk_summary: string;
+  cost_summary: string;
+  delivery_delay_minutes: number;
+  delivery_summary: string;
+  deposit_minor: Json;
+  deposit_subsidy_minor: Json;
+  economy_seats: number;
+  id: Generated<string>;
+  lessor_id: string;
+  network_summary: string;
+  package_version_id: string;
+  payment_count: number;
+  payment_interval_days: number;
+  recurring_payment_minor: Json;
+  return_conditions: Json;
+  runway_tradeoff_summary: string;
+  term_days: number;
+  usage_conditions: Json;
+}
+
+export interface FounderPackageVersions {
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  status: string;
+  version: string;
+  world_ruleset_id: string;
+}
+
 export interface FoundingBalanceVersions {
   assumptions: Json;
   baseline_daily_obligation_minor: Json;
@@ -443,6 +528,51 @@ export interface LedgerProfitAndLossReport {
   transaction_currency: string | null;
 }
 
+export interface OperatingLeasePaymentSchedule {
+  amount_minor: Int8;
+  due_at: Timestamp;
+  journal_entry_id: string | null;
+  lease_id: string;
+  payment_number: number;
+  status: Generated<string>;
+  term_version: number;
+}
+
+export interface OperatingLeases {
+  aircraft_id: string | null;
+  airline_id: string;
+  career_id: string;
+  cash_extraction_prohibited: Generated<boolean>;
+  collateral_prohibited: Generated<boolean>;
+  currency: string;
+  ended_at: Timestamp | null;
+  founder_package_option_id: string;
+  id: Generated<string>;
+  lessor_id: string;
+  matures_at: Timestamp;
+  sale_prohibited: Generated<boolean>;
+  starts_at: Timestamp;
+  status: Generated<string>;
+  version: Generated<Int8>;
+}
+
+export interface OperatingLeaseTerms {
+  delivery_terms: Json;
+  deposit_minor: Int8;
+  deposit_subsidy_minor: Int8;
+  effective_at: Timestamp;
+  id: Generated<string>;
+  lease_id: string;
+  payment_count: number;
+  payment_interval_days: number;
+  recurring_payment_minor: Int8;
+  refundable_deposit_minor: Int8;
+  return_conditions: Json;
+  term_days: number;
+  usage_conditions: Json;
+  version: number;
+}
+
 export interface OutboxEvents {
   aggregate_id: string;
   aggregate_type: string;
@@ -603,6 +733,10 @@ export interface WorldRulesets {
 export interface DB {
   accounting_periods: AccountingPeriods;
   administrative_audit_records: AdministrativeAuditRecords;
+  aircraft: Aircraft;
+  aircraft_cabin_configurations: AircraftCabinConfigurations;
+  aircraft_lessors: AircraftLessors;
+  aircraft_lifecycle_events: AircraftLifecycleEvents;
   airline_stations: AirlineStations;
   airlines: Airlines;
   auth_account: AuthAccount;
@@ -623,6 +757,8 @@ export interface DB {
   exchange_rate_sources: ExchangeRateSources;
   exchange_rates: ExchangeRates;
   founder_financing_offers: FounderFinancingOffers;
+  founder_package_options: FounderPackageOptions;
+  founder_package_versions: FounderPackageVersions;
   founding_balance_versions: FoundingBalanceVersions;
   founding_loan_schedule: FoundingLoanSchedule;
   founding_loans: FoundingLoans;
@@ -637,6 +773,9 @@ export interface DB {
   ledger_cash_report: LedgerCashReport;
   ledger_postings: LedgerPostings;
   ledger_profit_and_loss_report: LedgerProfitAndLossReport;
+  operating_lease_payment_schedule: OperatingLeasePaymentSchedule;
+  operating_lease_terms: OperatingLeaseTerms;
+  operating_leases: OperatingLeases;
   outbox_events: OutboxEvents;
   player_account_roles: PlayerAccountRoles;
   player_accounts: PlayerAccounts;

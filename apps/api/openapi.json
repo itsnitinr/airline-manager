@@ -417,6 +417,2651 @@
         "tags": ["airlines"]
       }
     },
+    "/v1/airlines/{airlineId}/fleet": {
+      "get": {
+        "operationId": "listFleet",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "accumulatedCycles": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "accumulatedHoursMinutes": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "airlineId": {
+                        "anyOf": [
+                          {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "cabin": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "bookingClassesConfigured": {
+                            "enum": [false],
+                            "type": "boolean"
+                          },
+                          "businessSeats": {
+                            "enum": [0],
+                            "type": "integer"
+                          },
+                          "configurationKind": {
+                            "enum": ["physical_cabin"],
+                            "type": "string"
+                          },
+                          "economySeats": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "firstSeats": {
+                            "enum": [0],
+                            "type": "integer"
+                          },
+                          "premiumEconomySeats": {
+                            "enum": [0],
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "configurationKind",
+                          "economySeats",
+                          "premiumEconomySeats",
+                          "businessSeats",
+                          "firstSeats",
+                          "bookingClassesConfigured"
+                        ],
+                        "type": "object"
+                      },
+                      "catalogReleaseId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "catalogReleaseVersion": {
+                        "type": "string"
+                      },
+                      "chronologicalAgeSeconds": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "conditionBasisPoints": {
+                        "maximum": 10000,
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "currentAirportId": {
+                        "anyOf": [
+                          {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "deliveredAt": {
+                        "anyOf": [
+                          {
+                            "format": "date-time",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "deliveryState": {
+                        "enum": ["pending", "delivered", "returned", "defaulted"],
+                        "type": "string"
+                      },
+                      "deliveryTargetAt": {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "dispatchReliabilityBasisPoints": {
+                        "maximum": 10000,
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "id": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "leaseId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "manufacturedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "manufacturer": {
+                        "type": "string"
+                      },
+                      "model": {
+                        "type": "string"
+                      },
+                      "operatorAirlineId": {
+                        "anyOf": [
+                          {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "owner": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "lessorId": {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["lessorId", "name"],
+                        "type": "object"
+                      },
+                      "plannedAirportId": {
+                        "anyOf": [
+                          {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "restrictions": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "cashExtraction": {
+                            "enum": [true],
+                            "type": "boolean"
+                          },
+                          "collateral": {
+                            "enum": [true],
+                            "type": "boolean"
+                          },
+                          "sale": {
+                            "enum": [true],
+                            "type": "boolean"
+                          }
+                        },
+                        "required": ["sale", "collateral", "cashExtraction"],
+                        "type": "object"
+                      },
+                      "serialNumber": {
+                        "type": "string"
+                      },
+                      "variantCode": {
+                        "type": "string"
+                      },
+                      "variantId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "version": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "serialNumber",
+                      "airlineId",
+                      "leaseId",
+                      "catalogReleaseId",
+                      "catalogReleaseVersion",
+                      "variantId",
+                      "variantCode",
+                      "manufacturer",
+                      "model",
+                      "owner",
+                      "operatorAirlineId",
+                      "currentAirportId",
+                      "plannedAirportId",
+                      "deliveryState",
+                      "deliveryTargetAt",
+                      "deliveredAt",
+                      "manufacturedAt",
+                      "chronologicalAgeSeconds",
+                      "accumulatedHoursMinutes",
+                      "accumulatedCycles",
+                      "conditionBasisPoints",
+                      "dispatchReliabilityBasisPoints",
+                      "version",
+                      "cabin",
+                      "restrictions"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fleet"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fleet/{aircraftId}": {
+      "get": {
+        "operationId": "getFleetAircraft",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "aircraftId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "accumulatedCycles": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "accumulatedHoursMinutes": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "airlineId": {
+                      "anyOf": [
+                        {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "cabin": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "bookingClassesConfigured": {
+                          "enum": [false],
+                          "type": "boolean"
+                        },
+                        "businessSeats": {
+                          "enum": [0],
+                          "type": "integer"
+                        },
+                        "configurationKind": {
+                          "enum": ["physical_cabin"],
+                          "type": "string"
+                        },
+                        "economySeats": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "firstSeats": {
+                          "enum": [0],
+                          "type": "integer"
+                        },
+                        "premiumEconomySeats": {
+                          "enum": [0],
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "configurationKind",
+                        "economySeats",
+                        "premiumEconomySeats",
+                        "businessSeats",
+                        "firstSeats",
+                        "bookingClassesConfigured"
+                      ],
+                      "type": "object"
+                    },
+                    "catalogReleaseId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "catalogReleaseVersion": {
+                      "type": "string"
+                    },
+                    "chronologicalAgeSeconds": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "conditionBasisPoints": {
+                      "maximum": 10000,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "currentAirportId": {
+                      "anyOf": [
+                        {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "deliveredAt": {
+                      "anyOf": [
+                        {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "deliveryState": {
+                      "enum": ["pending", "delivered", "returned", "defaulted"],
+                      "type": "string"
+                    },
+                    "deliveryTargetAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "dispatchReliabilityBasisPoints": {
+                      "maximum": 10000,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "leaseId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "manufacturedAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "manufacturer": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "operatorAirlineId": {
+                      "anyOf": [
+                        {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "owner": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "lessorId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["lessorId", "name"],
+                      "type": "object"
+                    },
+                    "plannedAirportId": {
+                      "anyOf": [
+                        {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "restrictions": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "cashExtraction": {
+                          "enum": [true],
+                          "type": "boolean"
+                        },
+                        "collateral": {
+                          "enum": [true],
+                          "type": "boolean"
+                        },
+                        "sale": {
+                          "enum": [true],
+                          "type": "boolean"
+                        }
+                      },
+                      "required": ["sale", "collateral", "cashExtraction"],
+                      "type": "object"
+                    },
+                    "serialNumber": {
+                      "type": "string"
+                    },
+                    "variantCode": {
+                      "type": "string"
+                    },
+                    "variantId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "version": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "serialNumber",
+                    "airlineId",
+                    "leaseId",
+                    "catalogReleaseId",
+                    "catalogReleaseVersion",
+                    "variantId",
+                    "variantCode",
+                    "manufacturer",
+                    "model",
+                    "owner",
+                    "operatorAirlineId",
+                    "currentAirportId",
+                    "plannedAirportId",
+                    "deliveryState",
+                    "deliveryTargetAt",
+                    "deliveredAt",
+                    "manufacturedAt",
+                    "chronologicalAgeSeconds",
+                    "accumulatedHoursMinutes",
+                    "accumulatedCycles",
+                    "conditionBasisPoints",
+                    "dispatchReliabilityBasisPoints",
+                    "version",
+                    "cabin",
+                    "restrictions"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fleet"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fleet/{aircraftId}/delivery-status": {
+      "get": {
+        "operationId": "getAircraftDeliveryStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "aircraftId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "aircraftId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "currentAirportId": {
+                      "anyOf": [
+                        {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "deliveredAt": {
+                      "anyOf": [
+                        {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "deliveryState": {
+                      "enum": ["pending", "delivered", "returned", "defaulted"],
+                      "type": "string"
+                    },
+                    "deliveryTargetAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "plannedAirportId": {
+                      "anyOf": [
+                        {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "version": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "aircraftId",
+                    "deliveryState",
+                    "deliveryTargetAt",
+                    "deliveredAt",
+                    "currentAirportId",
+                    "plannedAirportId",
+                    "version"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fleet"]
+      }
+    },
+    "/v1/airlines/{airlineId}/founder-lease/accept": {
+      "post": {
+        "operationId": "acceptFounderLease",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "optionCode": {
+                    "pattern": "^founder-[a-z0-9-]+$",
+                    "type": "string"
+                  }
+                },
+                "required": ["optionCode"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "aircraft": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "accumulatedCycles": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "accumulatedHoursMinutes": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "airlineId": {
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "cabin": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "bookingClassesConfigured": {
+                              "enum": [false],
+                              "type": "boolean"
+                            },
+                            "businessSeats": {
+                              "enum": [0],
+                              "type": "integer"
+                            },
+                            "configurationKind": {
+                              "enum": ["physical_cabin"],
+                              "type": "string"
+                            },
+                            "economySeats": {
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "firstSeats": {
+                              "enum": [0],
+                              "type": "integer"
+                            },
+                            "premiumEconomySeats": {
+                              "enum": [0],
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "configurationKind",
+                            "economySeats",
+                            "premiumEconomySeats",
+                            "businessSeats",
+                            "firstSeats",
+                            "bookingClassesConfigured"
+                          ],
+                          "type": "object"
+                        },
+                        "catalogReleaseId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "catalogReleaseVersion": {
+                          "type": "string"
+                        },
+                        "chronologicalAgeSeconds": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "conditionBasisPoints": {
+                          "maximum": 10000,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "currentAirportId": {
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "deliveredAt": {
+                          "anyOf": [
+                            {
+                              "format": "date-time",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "deliveryState": {
+                          "enum": ["pending", "delivered", "returned", "defaulted"],
+                          "type": "string"
+                        },
+                        "deliveryTargetAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "dispatchReliabilityBasisPoints": {
+                          "maximum": 10000,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "leaseId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "manufacturedAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "manufacturer": {
+                          "type": "string"
+                        },
+                        "model": {
+                          "type": "string"
+                        },
+                        "operatorAirlineId": {
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "owner": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "lessorId": {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["lessorId", "name"],
+                          "type": "object"
+                        },
+                        "plannedAirportId": {
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "restrictions": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "cashExtraction": {
+                              "enum": [true],
+                              "type": "boolean"
+                            },
+                            "collateral": {
+                              "enum": [true],
+                              "type": "boolean"
+                            },
+                            "sale": {
+                              "enum": [true],
+                              "type": "boolean"
+                            }
+                          },
+                          "required": ["sale", "collateral", "cashExtraction"],
+                          "type": "object"
+                        },
+                        "serialNumber": {
+                          "type": "string"
+                        },
+                        "variantCode": {
+                          "type": "string"
+                        },
+                        "variantId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "version": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "serialNumber",
+                        "airlineId",
+                        "leaseId",
+                        "catalogReleaseId",
+                        "catalogReleaseVersion",
+                        "variantId",
+                        "variantCode",
+                        "manufacturer",
+                        "model",
+                        "owner",
+                        "operatorAirlineId",
+                        "currentAirportId",
+                        "plannedAirportId",
+                        "deliveryState",
+                        "deliveryTargetAt",
+                        "deliveredAt",
+                        "manufacturedAt",
+                        "chronologicalAgeSeconds",
+                        "accumulatedHoursMinutes",
+                        "accumulatedCycles",
+                        "conditionBasisPoints",
+                        "dispatchReliabilityBasisPoints",
+                        "version",
+                        "cabin",
+                        "restrictions"
+                      ],
+                      "type": "object"
+                    },
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "careerId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "lease": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "currency": {
+                          "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "maturesAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "paymentSchedule": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "amountMinor": {
+                                "pattern": "^[0-9]+$",
+                                "type": "string"
+                              },
+                              "dueAt": {
+                                "format": "date-time",
+                                "type": "string"
+                              },
+                              "paymentNumber": {
+                                "minimum": 1,
+                                "type": "integer"
+                              },
+                              "status": {
+                                "enum": ["scheduled", "paid", "overdue", "cancelled"],
+                                "type": "string"
+                              }
+                            },
+                            "required": ["paymentNumber", "dueAt", "amountMinor", "status"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "startsAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "status": {
+                          "enum": ["active"],
+                          "type": "string"
+                        },
+                        "version": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "status",
+                        "version",
+                        "startsAt",
+                        "maturesAt",
+                        "currency",
+                        "paymentSchedule"
+                      ],
+                      "type": "object"
+                    },
+                    "nextStep": {
+                      "enum": ["await_aircraft_delivery", "plan_first_route"],
+                      "type": "string"
+                    },
+                    "nextStepGuidance": {
+                      "type": "string"
+                    },
+                    "packageVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "airlineId",
+                    "careerId",
+                    "packageVersion",
+                    "lease",
+                    "aircraft",
+                    "nextStep",
+                    "nextStepGuidance"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fleet"]
+      }
+    },
+    "/v1/airlines/{airlineId}/founder-package": {
+      "get": {
+        "operationId": "listFounderPackage",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "careerId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "exactlyOneMayBeAccepted": {
+                      "enum": [true],
+                      "type": "boolean"
+                    },
+                    "options": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "cabin": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "bookingClassesConfigured": {
+                                "enum": [false],
+                                "type": "boolean"
+                              },
+                              "configurationKind": {
+                                "enum": ["physical_cabin"],
+                                "type": "string"
+                              },
+                              "economySeats": {
+                                "minimum": 1,
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "configurationKind",
+                              "economySeats",
+                              "bookingClassesConfigured"
+                            ],
+                            "type": "object"
+                          },
+                          "catalogReleaseVersion": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "delivery": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "delayMinutes": {
+                                "maximum": 1440,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "immediate": {
+                                "type": "boolean"
+                              },
+                              "maximumDelayMinutes": {
+                                "enum": [1440],
+                                "type": "integer"
+                              }
+                            },
+                            "required": ["delayMinutes", "immediate", "maximumDelayMinutes"],
+                            "type": "object"
+                          },
+                          "lease": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "currency": {
+                                "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                                "type": "string"
+                              },
+                              "depositMinor": {
+                                "pattern": "^[0-9]+$",
+                                "type": "string"
+                              },
+                              "depositSubsidyMinor": {
+                                "pattern": "^[0-9]+$",
+                                "type": "string"
+                              },
+                              "paymentCount": {
+                                "minimum": 1,
+                                "type": "integer"
+                              },
+                              "paymentIntervalDays": {
+                                "minimum": 1,
+                                "type": "integer"
+                              },
+                              "recurringPaymentMinor": {
+                                "pattern": "^[0-9]+$",
+                                "type": "string"
+                              },
+                              "refundableDepositMinor": {
+                                "pattern": "^[0-9]+$",
+                                "type": "string"
+                              },
+                              "termDays": {
+                                "minimum": 1,
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "currency",
+                              "termDays",
+                              "paymentIntervalDays",
+                              "paymentCount",
+                              "recurringPaymentMinor",
+                              "depositMinor",
+                              "depositSubsidyMinor",
+                              "refundableDepositMinor"
+                            ],
+                            "type": "object"
+                          },
+                          "packageVersion": {
+                            "type": "string"
+                          },
+                          "provenanceNotice": {
+                            "type": "string"
+                          },
+                          "tradeoffs": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "commonalityRisk": {
+                                "type": "string"
+                              },
+                              "cost": {
+                                "type": "string"
+                              },
+                              "delivery": {
+                                "type": "string"
+                              },
+                              "network": {
+                                "type": "string"
+                              },
+                              "runway": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "network",
+                              "cost",
+                              "delivery",
+                              "commonalityRisk",
+                              "runway"
+                            ],
+                            "type": "object"
+                          },
+                          "variant": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "acquisitionChannel": {
+                                "enum": ["operating_lease"],
+                                "type": "string"
+                              },
+                              "category": {
+                                "enum": ["turboprop", "regional_jet", "narrow_body"],
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "format": "uuid",
+                                "type": "string"
+                              },
+                              "manufacturer": {
+                                "type": "string"
+                              },
+                              "maximumSeats": {
+                                "minimum": 1,
+                                "type": "integer"
+                              },
+                              "minimumRunwayFt": {
+                                "minimum": 1,
+                                "type": "integer"
+                              },
+                              "model": {
+                                "type": "string"
+                              },
+                              "productionStatus": {
+                                "enum": ["in_production", "discontinued"],
+                                "type": "string"
+                              },
+                              "rangeNm": {
+                                "minimum": 1,
+                                "type": "integer"
+                              },
+                              "typicalSeats": {
+                                "minimum": 1,
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "code",
+                              "manufacturer",
+                              "model",
+                              "category",
+                              "rangeNm",
+                              "typicalSeats",
+                              "maximumSeats",
+                              "minimumRunwayFt",
+                              "productionStatus",
+                              "acquisitionChannel"
+                            ],
+                            "type": "object"
+                          },
+                          "viable": {
+                            "enum": [true],
+                            "type": "boolean"
+                          },
+                          "worldRulesetVersion": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "packageVersion",
+                          "catalogReleaseVersion",
+                          "worldRulesetVersion",
+                          "variant",
+                          "cabin",
+                          "lease",
+                          "delivery",
+                          "tradeoffs",
+                          "viable",
+                          "provenanceNotice"
+                        ],
+                        "type": "object"
+                      },
+                      "maxItems": 4,
+                      "minItems": 4,
+                      "type": "array"
+                    },
+                    "packageVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "airlineId",
+                    "careerId",
+                    "packageVersion",
+                    "options",
+                    "exactlyOneMayBeAccepted"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fleet"]
+      }
+    },
+    "/v1/airlines/{airlineId}/founder-package/preview": {
+      "post": {
+        "operationId": "previewFounderLease",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "optionCode": {
+                    "pattern": "^founder-[a-z0-9-]+$",
+                    "type": "string"
+                  }
+                },
+                "required": ["optionCode"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "deliveryTargetAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "nextStep": {
+                      "enum": ["accept_founder_lease"],
+                      "type": "string"
+                    },
+                    "nextStepGuidance": {
+                      "type": "string"
+                    },
+                    "option": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "cabin": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "bookingClassesConfigured": {
+                              "enum": [false],
+                              "type": "boolean"
+                            },
+                            "configurationKind": {
+                              "enum": ["physical_cabin"],
+                              "type": "string"
+                            },
+                            "economySeats": {
+                              "minimum": 1,
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "configurationKind",
+                            "economySeats",
+                            "bookingClassesConfigured"
+                          ],
+                          "type": "object"
+                        },
+                        "catalogReleaseVersion": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "delivery": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "delayMinutes": {
+                              "maximum": 1440,
+                              "minimum": 0,
+                              "type": "integer"
+                            },
+                            "immediate": {
+                              "type": "boolean"
+                            },
+                            "maximumDelayMinutes": {
+                              "enum": [1440],
+                              "type": "integer"
+                            }
+                          },
+                          "required": ["delayMinutes", "immediate", "maximumDelayMinutes"],
+                          "type": "object"
+                        },
+                        "lease": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "currency": {
+                              "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                              "type": "string"
+                            },
+                            "depositMinor": {
+                              "pattern": "^[0-9]+$",
+                              "type": "string"
+                            },
+                            "depositSubsidyMinor": {
+                              "pattern": "^[0-9]+$",
+                              "type": "string"
+                            },
+                            "paymentCount": {
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "paymentIntervalDays": {
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "recurringPaymentMinor": {
+                              "pattern": "^[0-9]+$",
+                              "type": "string"
+                            },
+                            "refundableDepositMinor": {
+                              "pattern": "^[0-9]+$",
+                              "type": "string"
+                            },
+                            "termDays": {
+                              "minimum": 1,
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "currency",
+                            "termDays",
+                            "paymentIntervalDays",
+                            "paymentCount",
+                            "recurringPaymentMinor",
+                            "depositMinor",
+                            "depositSubsidyMinor",
+                            "refundableDepositMinor"
+                          ],
+                          "type": "object"
+                        },
+                        "packageVersion": {
+                          "type": "string"
+                        },
+                        "provenanceNotice": {
+                          "type": "string"
+                        },
+                        "tradeoffs": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "commonalityRisk": {
+                              "type": "string"
+                            },
+                            "cost": {
+                              "type": "string"
+                            },
+                            "delivery": {
+                              "type": "string"
+                            },
+                            "network": {
+                              "type": "string"
+                            },
+                            "runway": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["network", "cost", "delivery", "commonalityRisk", "runway"],
+                          "type": "object"
+                        },
+                        "variant": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "acquisitionChannel": {
+                              "enum": ["operating_lease"],
+                              "type": "string"
+                            },
+                            "category": {
+                              "enum": ["turboprop", "regional_jet", "narrow_body"],
+                              "type": "string"
+                            },
+                            "code": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            "manufacturer": {
+                              "type": "string"
+                            },
+                            "maximumSeats": {
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "minimumRunwayFt": {
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "model": {
+                              "type": "string"
+                            },
+                            "productionStatus": {
+                              "enum": ["in_production", "discontinued"],
+                              "type": "string"
+                            },
+                            "rangeNm": {
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "typicalSeats": {
+                              "minimum": 1,
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "code",
+                            "manufacturer",
+                            "model",
+                            "category",
+                            "rangeNm",
+                            "typicalSeats",
+                            "maximumSeats",
+                            "minimumRunwayFt",
+                            "productionStatus",
+                            "acquisitionChannel"
+                          ],
+                          "type": "object"
+                        },
+                        "viable": {
+                          "enum": [true],
+                          "type": "boolean"
+                        },
+                        "worldRulesetVersion": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "packageVersion",
+                        "catalogReleaseVersion",
+                        "worldRulesetVersion",
+                        "variant",
+                        "cabin",
+                        "lease",
+                        "delivery",
+                        "tradeoffs",
+                        "viable",
+                        "provenanceNotice"
+                      ],
+                      "type": "object"
+                    },
+                    "paymentSchedule": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "amountMinor": {
+                            "pattern": "^[0-9]+$",
+                            "type": "string"
+                          },
+                          "dueAt": {
+                            "format": "date-time",
+                            "type": "string"
+                          },
+                          "paymentNumber": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "status": {
+                            "enum": ["scheduled", "paid", "overdue", "cancelled"],
+                            "type": "string"
+                          }
+                        },
+                        "required": ["paymentNumber", "dueAt", "amountMinor", "status"],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "principalBaseAirportId": {
+                      "format": "uuid",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "option",
+                    "deliveryTargetAt",
+                    "principalBaseAirportId",
+                    "paymentSchedule",
+                    "nextStep",
+                    "nextStepGuidance"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fleet"]
+      }
+    },
     "/v1/airlines/{airlineId}/next-step": {
       "get": {
         "operationId": "getAirlineNextStepGuidance",
@@ -439,7 +3084,11 @@
                   "additionalProperties": false,
                   "properties": {
                     "nextStep": {
-                      "enum": ["select_founder_aircraft"],
+                      "enum": [
+                        "select_founder_aircraft",
+                        "await_aircraft_delivery",
+                        "plan_first_route"
+                      ],
                       "type": "string"
                     },
                     "nextStepGuidance": {
@@ -2088,6 +4737,10 @@
     {
       "description": "Authenticated airline career commands and queries.",
       "name": "airlines"
+    },
+    {
+      "description": "Founder lease and individual aircraft commands and queries.",
+      "name": "fleet"
     }
   ]
 }

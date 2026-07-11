@@ -1,0 +1,186 @@
+{
+  "version": "founder-package-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "lessor": {
+    "code": "founder-aviation-leasing",
+    "name": "Founder Aviation Leasing"
+  },
+  "options": [
+    {
+      "code": "founder-atr-72-600",
+      "variant_code": "atr-72-600",
+      "acquisition_channel": "operating_lease",
+      "economy_seats": 72,
+      "delivery_delay_minutes": 0,
+      "term_days": 30,
+      "payment_interval_days": 5,
+      "payment_count": 6,
+      "recurring_payment_minor": {
+        "CHF": "180000",
+        "EUR": "185000",
+        "GBP": "160000",
+        "JPY": "30000000",
+        "KWD": "570000",
+        "USD": "200000"
+      },
+      "deposit_minor": {
+        "CHF": "900000",
+        "EUR": "925000",
+        "GBP": "800000",
+        "JPY": "150000000",
+        "KWD": "2850000",
+        "USD": "1000000"
+      },
+      "deposit_subsidy_minor": {
+        "CHF": "900000",
+        "EUR": "925000",
+        "GBP": "800000",
+        "JPY": "150000000",
+        "KWD": "2850000",
+        "USD": "1000000"
+      },
+      "network_summary": "Short regional sectors with access to the broadest runway set.",
+      "cost_summary": "Lowest recurring commitment and smallest cash-risk envelope.",
+      "delivery_summary": "Immediate delivery at the principal base.",
+      "commonality_risk_summary": "Turboprop specialization reduces fleet commonality with later jets.",
+      "runway_tradeoff_summary": "Best runway flexibility, but the shortest range and lowest capacity.",
+      "usage_conditions": { "maximum_hours": 360, "maximum_cycles": 300 },
+      "return_conditions": {
+        "minimum_condition_basis_points": 7500,
+        "must_be_at_principal_base": true
+      }
+    },
+    {
+      "code": "founder-embraer-e175",
+      "variant_code": "embraer-e175",
+      "acquisition_channel": "operating_lease",
+      "economy_seats": 76,
+      "delivery_delay_minutes": 0,
+      "term_days": 30,
+      "payment_interval_days": 5,
+      "payment_count": 6,
+      "recurring_payment_minor": {
+        "CHF": "270000",
+        "EUR": "280000",
+        "GBP": "240000",
+        "JPY": "45000000",
+        "KWD": "850000",
+        "USD": "300000"
+      },
+      "deposit_minor": {
+        "CHF": "1350000",
+        "EUR": "1400000",
+        "GBP": "1200000",
+        "JPY": "225000000",
+        "KWD": "4250000",
+        "USD": "1500000"
+      },
+      "deposit_subsidy_minor": {
+        "CHF": "1350000",
+        "EUR": "1400000",
+        "GBP": "1200000",
+        "JPY": "225000000",
+        "KWD": "4250000",
+        "USD": "1500000"
+      },
+      "network_summary": "Regional reach with materially more range than the turboprop.",
+      "cost_summary": "Moderate lease cost with a conservative 76-seat economy cabin.",
+      "delivery_summary": "Immediate delivery at the principal base.",
+      "commonality_risk_summary": "Regional-jet specialization is economical at lower demand but distinct from narrow-bodies.",
+      "runway_tradeoff_summary": "Balanced runway access and range with limited peak capacity.",
+      "usage_conditions": { "maximum_hours": 360, "maximum_cycles": 260 },
+      "return_conditions": {
+        "minimum_condition_basis_points": 7500,
+        "must_be_at_principal_base": true
+      }
+    },
+    {
+      "code": "founder-airbus-a320neo",
+      "variant_code": "airbus-a320neo",
+      "acquisition_channel": "operating_lease",
+      "economy_seats": 180,
+      "delivery_delay_minutes": 720,
+      "term_days": 30,
+      "payment_interval_days": 5,
+      "payment_count": 6,
+      "recurring_payment_minor": {
+        "CHF": "495000",
+        "EUR": "510000",
+        "GBP": "440000",
+        "JPY": "82500000",
+        "KWD": "1560000",
+        "USD": "550000"
+      },
+      "deposit_minor": {
+        "CHF": "2475000",
+        "EUR": "2550000",
+        "GBP": "2200000",
+        "JPY": "412500000",
+        "KWD": "7800000",
+        "USD": "2750000"
+      },
+      "deposit_subsidy_minor": {
+        "CHF": "2475000",
+        "EUR": "2550000",
+        "GBP": "2200000",
+        "JPY": "412500000",
+        "KWD": "7800000",
+        "USD": "2750000"
+      },
+      "network_summary": "High-capacity medium-haul network coverage.",
+      "cost_summary": "Higher fixed obligation that needs stronger demand and utilization.",
+      "delivery_summary": "Compressed twelve-hour delivery to the principal base.",
+      "commonality_risk_summary": "Strong future A320-family commonality, with greater launch exposure.",
+      "runway_tradeoff_summary": "Long range and capacity require longer runways and more working capital.",
+      "usage_conditions": { "maximum_hours": 360, "maximum_cycles": 220 },
+      "return_conditions": {
+        "minimum_condition_basis_points": 7500,
+        "must_be_at_principal_base": true
+      }
+    },
+    {
+      "code": "founder-boeing-737-8",
+      "variant_code": "boeing-737-8",
+      "acquisition_channel": "operating_lease",
+      "economy_seats": 189,
+      "delivery_delay_minutes": 1080,
+      "term_days": 30,
+      "payment_interval_days": 5,
+      "payment_count": 6,
+      "recurring_payment_minor": {
+        "CHF": "515000",
+        "EUR": "530000",
+        "GBP": "455000",
+        "JPY": "85500000",
+        "KWD": "1620000",
+        "USD": "570000"
+      },
+      "deposit_minor": {
+        "CHF": "2575000",
+        "EUR": "2650000",
+        "GBP": "2275000",
+        "JPY": "427500000",
+        "KWD": "8100000",
+        "USD": "2850000"
+      },
+      "deposit_subsidy_minor": {
+        "CHF": "2575000",
+        "EUR": "2650000",
+        "GBP": "2275000",
+        "JPY": "427500000",
+        "KWD": "8100000",
+        "USD": "2850000"
+      },
+      "network_summary": "Longest starter range with the largest economy cabin in the package.",
+      "cost_summary": "Highest recurring commitment and the narrowest early cash runway.",
+      "delivery_summary": "Compressed eighteen-hour delivery to the principal base.",
+      "commonality_risk_summary": "Strong future 737-family commonality, with the greatest launch exposure.",
+      "runway_tradeoff_summary": "Maximum starter reach and capacity at the cost of runway flexibility.",
+      "usage_conditions": { "maximum_hours": 360, "maximum_cycles": 220 },
+      "return_conditions": {
+        "minimum_condition_basis_points": 7500,
+        "must_be_at_principal_base": true
+      }
+    }
+  ]
+}

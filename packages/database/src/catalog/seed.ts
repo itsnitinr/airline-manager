@@ -8,6 +8,7 @@ import type { Database } from "../database.js";
 import {
   readAircraftFixture,
   readAirportFixture,
+  readFounderPackageFixture,
   readFoundingBalanceFixture,
   readSourceFixture,
 } from "./fixtures.js";
@@ -365,6 +366,70 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
       ${foundingBalance.forecast_horizon_days},
       ${JSON.stringify(foundingBalance.assumptions)}::jsonb)
     ON CONFLICT (version) DO NOTHING`.execute(database);
+
+  const founderPackage = await readFounderPackageFixture();
+  if (founderPackage.world_ruleset_version !== worldRulesetVersion) {
+    throw new Error("Founder package fixture selects a different world ruleset.");
+  }
+  if (founderPackage.options.length !== 4) {
+    throw new Error("Founder package must contain exactly the four published starter variants.");
+  }
+  await sql`INSERT INTO aircraft_lessors (code, name)
+    VALUES (${founderPackage.lessor.code}, ${founderPackage.lessor.name})
+    ON CONFLICT (code) DO NOTHING`.execute(database);
+  const lessor = await sql<{ id: string }>`SELECT id FROM aircraft_lessors
+    WHERE code = ${founderPackage.lessor.code}`.execute(database);
+  const lessorId = lessor.rows[0]?.id;
+  if (!lessorId) throw new Error("Founder package lessor was not created.");
+  await sql`INSERT INTO founder_package_versions (version, world_ruleset_id, status)
+    VALUES (${founderPackage.version}, ${rulesetId}::uuid, 'draft')
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  const packageVersion = await sql<{ id: string }>`SELECT id FROM founder_package_versions
+    WHERE version = ${founderPackage.version}`.execute(database);
+  const packageVersionId = packageVersion.rows[0]?.id;
+  if (!packageVersionId) throw new Error("Founder package version was not created.");
+  for (const option of founderPackage.options) {
+    const variant = aircraftFixture.variants.find(({ code }) => code === option.variant_code);
+    const snapshot = aircraftSnapshots.find(
+      ({ snapshot: item }) => item.code === option.variant_code,
+    );
+    if (!variant || !snapshot || option.economy_seats > variant.maximum_seats) {
+      throw new Error(`Founder option ${option.code} has an invalid published variant or cabin.`);
+    }
+    const allowedChannels =
+      option.variant_code === "embraer-e175"
+        ? ["operating_lease", "used_purchase"]
+        : variant.production_status === "discontinued"
+          ? ["operating_lease", "used_purchase"]
+          : ["factory_new", "operating_lease", "used_purchase"];
+    if (!allowedChannels.includes(option.acquisition_channel)) {
+      throw new Error(`Founder option ${option.code} violates contemporary acquisition rules.`);
+    }
+    const existingOption = await sql<{ exists: boolean }>`SELECT EXISTS (
+      SELECT 1 FROM founder_package_options
+      WHERE package_version_id = ${packageVersionId}::uuid AND code = ${option.code}) AS exists`.execute(
+      database,
+    );
+    if (existingOption.rows[0]?.exists) continue;
+    await sql`INSERT INTO founder_package_options
+      (package_version_id, code, aircraft_variant_id, lessor_id, acquisition_channel,
+       economy_seats, delivery_delay_minutes, term_days, payment_interval_days, payment_count,
+       recurring_payment_minor, deposit_minor, deposit_subsidy_minor, network_summary,
+       cost_summary, delivery_summary, commonality_risk_summary, runway_tradeoff_summary,
+       usage_conditions, return_conditions)
+      VALUES (${packageVersionId}::uuid, ${option.code}, ${snapshot.id}::uuid, ${lessorId}::uuid,
+        ${option.acquisition_channel}, ${option.economy_seats}, ${option.delivery_delay_minutes},
+        ${option.term_days}, ${option.payment_interval_days}, ${option.payment_count},
+        ${JSON.stringify(option.recurring_payment_minor)}::jsonb,
+        ${JSON.stringify(option.deposit_minor)}::jsonb,
+        ${JSON.stringify(option.deposit_subsidy_minor)}::jsonb, ${option.network_summary},
+        ${option.cost_summary}, ${option.delivery_summary}, ${option.commonality_risk_summary},
+        ${option.runway_tradeoff_summary}, ${JSON.stringify(option.usage_conditions)}::jsonb,
+        ${JSON.stringify(option.return_conditions)}::jsonb)
+      ON CONFLICT (package_version_id, code) DO NOTHING`.execute(database);
+  }
+  await sql`UPDATE founder_package_versions SET status = 'active'
+    WHERE id = ${packageVersionId}::uuid AND status = 'draft'`.execute(database);
 
   return {
     releaseVersion,

@@ -4,6 +4,7 @@ import {
   createApplicationServices,
   type ApplicationServices,
   type AirlineFoundingService,
+  type FleetService,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -31,6 +32,7 @@ export type ApiAppOptions = Readonly<{
   logger?: FastifyServerOptions["logger"];
   authentication?: Readonly<{ adapter: AuthenticationAdapter; database: Database }>;
   airlineFoundingService?: AirlineFoundingService;
+  fleetService?: FleetService;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -74,6 +76,10 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
         { name: "system", description: "Non-gameplay application shell operations." },
         { name: "events", description: "Recoverable advisory event stream." },
         { name: "airlines", description: "Authenticated airline career commands and queries." },
+        {
+          name: "fleet",
+          description: "Founder lease and individual aircraft commands and queries.",
+        },
       ],
     },
   });
@@ -109,7 +115,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
       applicationServices: options.applicationServices ?? createApplicationServices(),
       checkReadiness: options.checkReadiness ?? defaultReadiness,
     });
-    registerAirlineRoutes(routes, options.airlineFoundingService);
+    registerAirlineRoutes(routes, options.airlineFoundingService, options.fleetService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,
       heartbeatMs: options.sseHeartbeatMs ?? 15_000,

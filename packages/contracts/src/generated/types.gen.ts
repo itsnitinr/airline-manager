@@ -158,6 +158,890 @@ export type GetAirlineCareerSummaryResponses = {
 export type GetAirlineCareerSummaryResponse =
   GetAirlineCareerSummaryResponses[keyof GetAirlineCareerSummaryResponses];
 
+export type ListFleetData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fleet";
+};
+
+export type ListFleetErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListFleetError = ListFleetErrors[keyof ListFleetErrors];
+
+export type ListFleetResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    accumulatedCycles: string;
+    accumulatedHoursMinutes: string;
+    airlineId: string | unknown;
+    cabin: {
+      bookingClassesConfigured: false;
+      businessSeats: 0;
+      configurationKind: "physical_cabin";
+      economySeats: number;
+      firstSeats: 0;
+      premiumEconomySeats: 0;
+    };
+    catalogReleaseId: string;
+    catalogReleaseVersion: string;
+    chronologicalAgeSeconds: string;
+    conditionBasisPoints: number;
+    currentAirportId: string | unknown;
+    deliveredAt: string | unknown;
+    deliveryState: "pending" | "delivered" | "returned" | "defaulted";
+    deliveryTargetAt: string;
+    dispatchReliabilityBasisPoints: number;
+    id: string;
+    leaseId: string;
+    manufacturedAt: string;
+    manufacturer: string;
+    model: string;
+    operatorAirlineId: string | unknown;
+    owner: {
+      lessorId: string;
+      name: string;
+    };
+    plannedAirportId: string | unknown;
+    restrictions: {
+      cashExtraction: true;
+      collateral: true;
+      sale: true;
+    };
+    serialNumber: string;
+    variantCode: string;
+    variantId: string;
+    version: string;
+  }>;
+};
+
+export type ListFleetResponse = ListFleetResponses[keyof ListFleetResponses];
+
+export type GetFleetAircraftData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fleet/{aircraftId}";
+};
+
+export type GetFleetAircraftErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFleetAircraftError = GetFleetAircraftErrors[keyof GetFleetAircraftErrors];
+
+export type GetFleetAircraftResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    accumulatedCycles: string;
+    accumulatedHoursMinutes: string;
+    airlineId: string | unknown;
+    cabin: {
+      bookingClassesConfigured: false;
+      businessSeats: 0;
+      configurationKind: "physical_cabin";
+      economySeats: number;
+      firstSeats: 0;
+      premiumEconomySeats: 0;
+    };
+    catalogReleaseId: string;
+    catalogReleaseVersion: string;
+    chronologicalAgeSeconds: string;
+    conditionBasisPoints: number;
+    currentAirportId: string | unknown;
+    deliveredAt: string | unknown;
+    deliveryState: "pending" | "delivered" | "returned" | "defaulted";
+    deliveryTargetAt: string;
+    dispatchReliabilityBasisPoints: number;
+    id: string;
+    leaseId: string;
+    manufacturedAt: string;
+    manufacturer: string;
+    model: string;
+    operatorAirlineId: string | unknown;
+    owner: {
+      lessorId: string;
+      name: string;
+    };
+    plannedAirportId: string | unknown;
+    restrictions: {
+      cashExtraction: true;
+      collateral: true;
+      sale: true;
+    };
+    serialNumber: string;
+    variantCode: string;
+    variantId: string;
+    version: string;
+  };
+};
+
+export type GetFleetAircraftResponse = GetFleetAircraftResponses[keyof GetFleetAircraftResponses];
+
+export type GetAircraftDeliveryStatusData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fleet/{aircraftId}/delivery-status";
+};
+
+export type GetAircraftDeliveryStatusErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetAircraftDeliveryStatusError =
+  GetAircraftDeliveryStatusErrors[keyof GetAircraftDeliveryStatusErrors];
+
+export type GetAircraftDeliveryStatusResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aircraftId: string;
+    currentAirportId: string | unknown;
+    deliveredAt: string | unknown;
+    deliveryState: "pending" | "delivered" | "returned" | "defaulted";
+    deliveryTargetAt: string;
+    plannedAirportId: string | unknown;
+    version: string;
+  };
+};
+
+export type GetAircraftDeliveryStatusResponse =
+  GetAircraftDeliveryStatusResponses[keyof GetAircraftDeliveryStatusResponses];
+
+export type AcceptFounderLeaseData = {
+  body: {
+    optionCode: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/founder-lease/accept";
+};
+
+export type AcceptFounderLeaseErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type AcceptFounderLeaseError = AcceptFounderLeaseErrors[keyof AcceptFounderLeaseErrors];
+
+export type AcceptFounderLeaseResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    aircraft: {
+      accumulatedCycles: string;
+      accumulatedHoursMinutes: string;
+      airlineId: string | unknown;
+      cabin: {
+        bookingClassesConfigured: false;
+        businessSeats: 0;
+        configurationKind: "physical_cabin";
+        economySeats: number;
+        firstSeats: 0;
+        premiumEconomySeats: 0;
+      };
+      catalogReleaseId: string;
+      catalogReleaseVersion: string;
+      chronologicalAgeSeconds: string;
+      conditionBasisPoints: number;
+      currentAirportId: string | unknown;
+      deliveredAt: string | unknown;
+      deliveryState: "pending" | "delivered" | "returned" | "defaulted";
+      deliveryTargetAt: string;
+      dispatchReliabilityBasisPoints: number;
+      id: string;
+      leaseId: string;
+      manufacturedAt: string;
+      manufacturer: string;
+      model: string;
+      operatorAirlineId: string | unknown;
+      owner: {
+        lessorId: string;
+        name: string;
+      };
+      plannedAirportId: string | unknown;
+      restrictions: {
+        cashExtraction: true;
+        collateral: true;
+        sale: true;
+      };
+      serialNumber: string;
+      variantCode: string;
+      variantId: string;
+      version: string;
+    };
+    airlineId: string;
+    careerId: string;
+    lease: {
+      currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      id: string;
+      maturesAt: string;
+      paymentSchedule: Array<{
+        amountMinor: string;
+        dueAt: string;
+        paymentNumber: number;
+        status: "scheduled" | "paid" | "overdue" | "cancelled";
+      }>;
+      startsAt: string;
+      status: "active";
+      version: string;
+    };
+    nextStep: "await_aircraft_delivery" | "plan_first_route";
+    nextStepGuidance: string;
+    packageVersion: string;
+  };
+};
+
+export type AcceptFounderLeaseResponse =
+  AcceptFounderLeaseResponses[keyof AcceptFounderLeaseResponses];
+
+export type ListFounderPackageData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/founder-package";
+};
+
+export type ListFounderPackageErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListFounderPackageError = ListFounderPackageErrors[keyof ListFounderPackageErrors];
+
+export type ListFounderPackageResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    airlineId: string;
+    careerId: string;
+    exactlyOneMayBeAccepted: true;
+    options: [
+      {
+        cabin: {
+          bookingClassesConfigured: false;
+          configurationKind: "physical_cabin";
+          economySeats: number;
+        };
+        catalogReleaseVersion: string;
+        code: string;
+        delivery: {
+          delayMinutes: number;
+          immediate: boolean;
+          maximumDelayMinutes: 1440;
+        };
+        lease: {
+          currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+          depositMinor: string;
+          depositSubsidyMinor: string;
+          paymentCount: number;
+          paymentIntervalDays: number;
+          recurringPaymentMinor: string;
+          refundableDepositMinor: string;
+          termDays: number;
+        };
+        packageVersion: string;
+        provenanceNotice: string;
+        tradeoffs: {
+          commonalityRisk: string;
+          cost: string;
+          delivery: string;
+          network: string;
+          runway: string;
+        };
+        variant: {
+          acquisitionChannel: "operating_lease";
+          category: "turboprop" | "regional_jet" | "narrow_body";
+          code: string;
+          id: string;
+          manufacturer: string;
+          maximumSeats: number;
+          minimumRunwayFt: number;
+          model: string;
+          productionStatus: "in_production" | "discontinued";
+          rangeNm: number;
+          typicalSeats: number;
+        };
+        viable: true;
+        worldRulesetVersion: string;
+      },
+      {
+        cabin: {
+          bookingClassesConfigured: false;
+          configurationKind: "physical_cabin";
+          economySeats: number;
+        };
+        catalogReleaseVersion: string;
+        code: string;
+        delivery: {
+          delayMinutes: number;
+          immediate: boolean;
+          maximumDelayMinutes: 1440;
+        };
+        lease: {
+          currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+          depositMinor: string;
+          depositSubsidyMinor: string;
+          paymentCount: number;
+          paymentIntervalDays: number;
+          recurringPaymentMinor: string;
+          refundableDepositMinor: string;
+          termDays: number;
+        };
+        packageVersion: string;
+        provenanceNotice: string;
+        tradeoffs: {
+          commonalityRisk: string;
+          cost: string;
+          delivery: string;
+          network: string;
+          runway: string;
+        };
+        variant: {
+          acquisitionChannel: "operating_lease";
+          category: "turboprop" | "regional_jet" | "narrow_body";
+          code: string;
+          id: string;
+          manufacturer: string;
+          maximumSeats: number;
+          minimumRunwayFt: number;
+          model: string;
+          productionStatus: "in_production" | "discontinued";
+          rangeNm: number;
+          typicalSeats: number;
+        };
+        viable: true;
+        worldRulesetVersion: string;
+      },
+      {
+        cabin: {
+          bookingClassesConfigured: false;
+          configurationKind: "physical_cabin";
+          economySeats: number;
+        };
+        catalogReleaseVersion: string;
+        code: string;
+        delivery: {
+          delayMinutes: number;
+          immediate: boolean;
+          maximumDelayMinutes: 1440;
+        };
+        lease: {
+          currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+          depositMinor: string;
+          depositSubsidyMinor: string;
+          paymentCount: number;
+          paymentIntervalDays: number;
+          recurringPaymentMinor: string;
+          refundableDepositMinor: string;
+          termDays: number;
+        };
+        packageVersion: string;
+        provenanceNotice: string;
+        tradeoffs: {
+          commonalityRisk: string;
+          cost: string;
+          delivery: string;
+          network: string;
+          runway: string;
+        };
+        variant: {
+          acquisitionChannel: "operating_lease";
+          category: "turboprop" | "regional_jet" | "narrow_body";
+          code: string;
+          id: string;
+          manufacturer: string;
+          maximumSeats: number;
+          minimumRunwayFt: number;
+          model: string;
+          productionStatus: "in_production" | "discontinued";
+          rangeNm: number;
+          typicalSeats: number;
+        };
+        viable: true;
+        worldRulesetVersion: string;
+      },
+      {
+        cabin: {
+          bookingClassesConfigured: false;
+          configurationKind: "physical_cabin";
+          economySeats: number;
+        };
+        catalogReleaseVersion: string;
+        code: string;
+        delivery: {
+          delayMinutes: number;
+          immediate: boolean;
+          maximumDelayMinutes: 1440;
+        };
+        lease: {
+          currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+          depositMinor: string;
+          depositSubsidyMinor: string;
+          paymentCount: number;
+          paymentIntervalDays: number;
+          recurringPaymentMinor: string;
+          refundableDepositMinor: string;
+          termDays: number;
+        };
+        packageVersion: string;
+        provenanceNotice: string;
+        tradeoffs: {
+          commonalityRisk: string;
+          cost: string;
+          delivery: string;
+          network: string;
+          runway: string;
+        };
+        variant: {
+          acquisitionChannel: "operating_lease";
+          category: "turboprop" | "regional_jet" | "narrow_body";
+          code: string;
+          id: string;
+          manufacturer: string;
+          maximumSeats: number;
+          minimumRunwayFt: number;
+          model: string;
+          productionStatus: "in_production" | "discontinued";
+          rangeNm: number;
+          typicalSeats: number;
+        };
+        viable: true;
+        worldRulesetVersion: string;
+      },
+    ];
+    packageVersion: string;
+  };
+};
+
+export type ListFounderPackageResponse =
+  ListFounderPackageResponses[keyof ListFounderPackageResponses];
+
+export type PreviewFounderLeaseData = {
+  body: {
+    optionCode: string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/founder-package/preview";
+};
+
+export type PreviewFounderLeaseErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type PreviewFounderLeaseError = PreviewFounderLeaseErrors[keyof PreviewFounderLeaseErrors];
+
+export type PreviewFounderLeaseResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    deliveryTargetAt: string;
+    nextStep: "accept_founder_lease";
+    nextStepGuidance: string;
+    option: {
+      cabin: {
+        bookingClassesConfigured: false;
+        configurationKind: "physical_cabin";
+        economySeats: number;
+      };
+      catalogReleaseVersion: string;
+      code: string;
+      delivery: {
+        delayMinutes: number;
+        immediate: boolean;
+        maximumDelayMinutes: 1440;
+      };
+      lease: {
+        currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+        depositMinor: string;
+        depositSubsidyMinor: string;
+        paymentCount: number;
+        paymentIntervalDays: number;
+        recurringPaymentMinor: string;
+        refundableDepositMinor: string;
+        termDays: number;
+      };
+      packageVersion: string;
+      provenanceNotice: string;
+      tradeoffs: {
+        commonalityRisk: string;
+        cost: string;
+        delivery: string;
+        network: string;
+        runway: string;
+      };
+      variant: {
+        acquisitionChannel: "operating_lease";
+        category: "turboprop" | "regional_jet" | "narrow_body";
+        code: string;
+        id: string;
+        manufacturer: string;
+        maximumSeats: number;
+        minimumRunwayFt: number;
+        model: string;
+        productionStatus: "in_production" | "discontinued";
+        rangeNm: number;
+        typicalSeats: number;
+      };
+      viable: true;
+      worldRulesetVersion: string;
+    };
+    paymentSchedule: Array<{
+      amountMinor: string;
+      dueAt: string;
+      paymentNumber: number;
+      status: "scheduled" | "paid" | "overdue" | "cancelled";
+    }>;
+    principalBaseAirportId: string;
+  };
+};
+
+export type PreviewFounderLeaseResponse =
+  PreviewFounderLeaseResponses[keyof PreviewFounderLeaseResponses];
+
 export type GetAirlineNextStepGuidanceData = {
   body?: never;
   path: {
@@ -220,7 +1104,7 @@ export type GetAirlineNextStepGuidanceResponses = {
    * Default Response
    */
   200: {
-    nextStep: "select_founder_aircraft";
+    nextStep: "select_founder_aircraft" | "await_aircraft_delivery" | "plan_first_route";
     nextStepGuidance: string;
   };
 };

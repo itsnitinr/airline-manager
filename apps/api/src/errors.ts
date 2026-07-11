@@ -1,6 +1,6 @@
 import type { ErrorEnvelope } from "@airline-manager/contracts";
 import { AuthorizationError } from "@airline-manager/application";
-import { FoundingDomainError } from "@airline-manager/domain";
+import { FleetDomainError, FoundingDomainError } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
 function envelope(
@@ -43,6 +43,20 @@ export function registerErrorMapping(app: FastifyInstance): void {
         .status(
           conflictCodes.has(error.code) ? 409 : error.code === "founding_not_found" ? 403 : 400,
         )
+        .send(envelope(request, error.code, error.message));
+      return;
+    }
+    if (error instanceof FleetDomainError) {
+      const conflictCodes = new Set([
+        "founder_lease_already_accepted",
+        "idempotency_conflict",
+        "aircraft_not_due",
+        "stale_aircraft_version",
+        "invalid_lease_transition",
+      ]);
+      const hiddenCodes = new Set(["aircraft_not_found", "founder_package_not_found"]);
+      void reply
+        .status(hiddenCodes.has(error.code) ? 403 : conflictCodes.has(error.code) ? 409 : 400)
         .send(envelope(request, error.code, error.message));
       return;
     }

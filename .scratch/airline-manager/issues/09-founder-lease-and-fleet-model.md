@@ -1,7 +1,7 @@
 # Implement the founder lease and fleet model
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 05, 07, 08
 
 ## Goal
@@ -51,4 +51,19 @@ history.
 
 ## Comments
 
-None yet.
+Implemented `founder-package-v1` for all four published starter variants with versioned lease,
+delivery, cabin, provenance, network, cost, commonality/risk, and runway tradeoffs. Added immutable
+individual-aircraft identity/catalog snapshots, lessor-owned operating leases and exact schedules,
+economy-only physical cabins, append-only lifecycle history, optimistic transitions, cash-neutral
+return/default behavior, and sale/collateral/cash-extraction restrictions.
+
+Acceptance is one serializable idempotent transaction covering the lease, aircraft, ownership,
+deposit/subsidy journals, schedule, lifecycle, and outbox. Immediate aircraft deliver at the
+principal base; delayed aircraft persist a maximum-24-hour target and due intent. The clock-injected
+framework-independent due-delivery handler enforces the target without adding a BullMQ consumer.
+
+Validation passed frozen install, formatting, lint, boundaries, OpenAPI/client freshness,
+type-check, unit/property tests, build, generated DB type freshness, blank/repeat PostgreSQL
+migrations, repeat catalog seeding, 59 database integration tests, and 13 authenticated API
+integration tests. Public-repository diff, provenance, ignored-file, whitespace, and secret reviews
+were completed before the focused ticket commit.

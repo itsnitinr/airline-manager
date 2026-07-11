@@ -35,6 +35,18 @@ export type ProvenanceClassification = "sourced" | "derived" | "balance";
 export type AircraftCategory = "turboprop" | "regional_jet" | "narrow_body";
 export type AcquisitionChannel = "factory_new" | "operating_lease" | "used_purchase";
 
+export function acquisitionChannelsForStatus(
+  productionStatus: "in_production" | "discontinued",
+  scenarioOverride?: readonly AcquisitionChannel[],
+): readonly AcquisitionChannel[] {
+  return (
+    scenarioOverride ??
+    (productionStatus === "discontinued"
+      ? ["operating_lease", "used_purchase"]
+      : ["factory_new", "operating_lease", "used_purchase"])
+  );
+}
+
 export type FieldProvenance = Readonly<{
   fieldName: string;
   classification: ProvenanceClassification;
