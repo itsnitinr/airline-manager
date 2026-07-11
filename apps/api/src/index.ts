@@ -7,7 +7,9 @@ import {
 } from "@airline-manager/config";
 import { createHealthResponse, createReadinessResponse } from "@airline-manager/contracts";
 import {
+  createDatabaseRuntime,
   createInfrastructureReadinessCheck,
+  readDatabasePoolOptions,
   type DependencyReadiness,
 } from "@airline-manager/database";
 
@@ -50,8 +52,9 @@ export function createApiServer(
 export function startApi(environment = process.env): Server {
   const host = readOptionalString("API_HOST", environment) ?? "127.0.0.1";
   const port = readOptionalInteger("API_PORT", environment) ?? 3001;
+  const databaseRuntime = createDatabaseRuntime(readDatabasePoolOptions("api", environment));
   const checkReadiness = createInfrastructureReadinessCheck({
-    databaseUrl: readRequiredString("DATABASE_URL", environment),
+    databaseRuntime,
     redisUrl: readRequiredString("REDIS_URL", environment),
   });
   const server = createApiServer(checkReadiness);
@@ -69,6 +72,10 @@ export function startApi(environment = process.env): Server {
         process.stderr.write("API shutdown failed\n");
         process.exitCode = 1;
       }
+      void databaseRuntime.destroy().catch(() => {
+        process.stderr.write("API database shutdown failed\n");
+        process.exitCode = 1;
+      });
     });
   };
   process.once("SIGTERM", shutdown);

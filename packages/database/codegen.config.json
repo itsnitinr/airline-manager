@@ -1,0 +1,9 @@
+{
+  "dialect": "postgres",
+  "outFile": "./src/generated/database.ts",
+  "defaultSchemas": ["public"],
+  "dateParser": "timestamp",
+  "numericParser": "string",
+  "typeOnlyImports": true,
+  "logLevel": "warn"
+}

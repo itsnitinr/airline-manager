@@ -1,7 +1,7 @@
 # Build the PostgreSQL and Kysely persistence foundation
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 01, 02
 
 ## Goal
@@ -45,4 +45,14 @@ helpers, and the persistence conventions used by every domain module.
 
 ## Comments
 
-None yet.
+- 2026-07-11: Added bounded UTC PostgreSQL pools for API, worker, tests, and migrations;
+  an advisory-locked, checksummed forward SQL migration runner; reproducible generated Kysely
+  types; domain-owned repository interfaces; short selectable-isolation transactions with retry
+  limited to PostgreSQL serialization/deadlock failures; and constrained/indexed migration,
+  outbox, idempotency, and append-only administrative-audit tables. CI now proves pending migration
+  detection, blank migration, repeat no-op behavior, current generated types, and real-PostgreSQL
+  integration tests. Validation passed for frozen install, formatting, lint/boundaries, type-check,
+  23 unit tests, build, 10 PostgreSQL integration tests, transaction rollback/isolation/retry,
+  constraint/index enforcement, reproducible and deliberately stale type generation, clean-volume
+  Compose migration/readiness/outage recovery, graceful shutdown, ignored state, diff/whitespace,
+  and public-repository secret scanning.

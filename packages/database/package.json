@@ -12,16 +12,23 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf dist",
-    "test": "vitest run",
+    "db:migrate": "pnpm build && node dist/cli/migrate.js",
+    "db:migrate:check": "pnpm build && node dist/cli/migrate.js --check",
+    "db:types": "kysely-codegen --config-file codegen.config.json",
+    "db:types:check": "kysely-codegen --config-file codegen.config.json --verify",
+    "test": "vitest run --exclude **/*.integration.test.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/pg": "8.20.0",
+    "kysely-codegen": "0.20.0",
     "rimraf": "6.1.3",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "dependencies": {
+    "kysely": "0.29.2",
     "pg": "8.22.0",
     "redis": "6.1.0"
   }

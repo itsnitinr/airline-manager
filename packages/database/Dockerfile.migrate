@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1.7
+ARG NODE_VERSION=24.18.0
+
+FROM node:${NODE_VERSION}-bookworm-slim AS build
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+WORKDIR /workspace
+RUN corepack enable
+COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm --filter @airline-manager/database build \
+  && pnpm --filter @airline-manager/database deploy --prod /output
+
+FROM node:${NODE_VERSION}-bookworm-slim AS runtime
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=build --chown=node:node /output/package.json ./package.json
+COPY --from=build --chown=node:node /output/node_modules ./node_modules
+COPY --from=build --chown=node:node /output/dist ./dist
+COPY --from=build --chown=node:node /workspace/packages/database/migrations ./migrations
+USER node
+CMD ["node", "dist/cli/migrate.js"]

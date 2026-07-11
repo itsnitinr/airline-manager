@@ -67,6 +67,62 @@ jobs:
       - name: Build worker image
         run: docker build --file apps/worker/Dockerfile --tag airline-manager-worker:ci .
 
+      - name: Build migration image
+        run:
+          docker build --file packages/database/Dockerfile.migrate --tag airline-manager-migrate:ci
+          .
+
+  database:
+    name: PostgreSQL schema
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.3-bookworm
+        env:
+          POSTGRES_DB: airline_manager_test
+          POSTGRES_USER: airline_manager_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U airline_manager_test -d airline_manager_test"
+          --health-interval 3s --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://airline_manager_test@127.0.0.1:5432/airline_manager_test
+      MIGRATION_DATABASE_URL: postgresql://airline_manager_test@127.0.0.1:5432/airline_manager_test
+      TEST_DATABASE_URL: postgresql://airline_manager_test@127.0.0.1:5432/airline_manager_test
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Install Node.js with pnpm store cache
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install frozen dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prove pending migrations are detected
+        run: if pnpm db:migrate:check; then exit 1; fi
+
+      - name: Migrate blank database
+        run: pnpm db:migrate
+
+      - name: Prove repeat migration is a no-op
+        run: pnpm db:migrate && pnpm db:migrate:check
+
+      - name: Verify generated Kysely types
+        run: pnpm db:types:check
+
+      - name: Run PostgreSQL integration tests
+        run: pnpm test:database
+
   secrets:
     name: Secret scan
     runs-on: ubuntu-latest

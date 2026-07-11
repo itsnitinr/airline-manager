@@ -1,5 +1,20 @@
 import pg from "pg";
 import { createClient } from "redis";
+import type { DatabaseRuntime } from "./database.js";
+
+export { createDatabaseRuntime, type Database, type DatabaseRuntime } from "./database.js";
+export {
+  readDatabasePoolOptions,
+  toPgPoolConfig,
+  type DatabasePoolOptions,
+  type DatabaseRuntimeRole,
+} from "./config.js";
+export {
+  isRetryableTransactionError,
+  runInTransaction,
+  type TransactionIsolationLevel,
+  type TransactionOptions,
+} from "./transactions.js";
 
 export interface DatabaseLifecycle {
   connect(): Promise<void>;
@@ -12,7 +27,8 @@ export type DependencyReadiness = Readonly<{
 }>;
 
 export type InfrastructureConnectionOptions = Readonly<{
-  databaseUrl: string;
+  databaseUrl?: string;
+  databaseRuntime?: DatabaseRuntime;
   redisUrl: string;
   timeoutMilliseconds?: number;
 }>;
@@ -74,7 +90,11 @@ export function createInfrastructureReadinessCheck(
   const timeoutMilliseconds = options.timeoutMilliseconds ?? 1_500;
   return async () => {
     const [postgres, redis] = await Promise.all([
-      checkPostgres(options.databaseUrl, timeoutMilliseconds),
+      options.databaseRuntime
+        ? options.databaseRuntime.isReady()
+        : options.databaseUrl
+          ? checkPostgres(options.databaseUrl, timeoutMilliseconds)
+          : Promise.resolve(false),
       checkRedis(options.redisUrl, timeoutMilliseconds),
     ]);
     return { postgres, redis };

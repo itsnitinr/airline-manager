@@ -5,3 +5,14 @@ export type Clock = Readonly<{
 export function readCurrentTime(clock: Clock): Date {
   return clock.now();
 }
+
+/** Domain-facing persistence contract. Adapter and row types must never appear here. */
+export interface Repository<TEntity, TIdentifier> {
+  findById(identifier: TIdentifier): Promise<TEntity | undefined>;
+  save(entity: TEntity): Promise<TEntity>;
+}
+
+/** Persisted aggregates use positive, monotonically increasing optimistic versions. */
+export interface VersionedEntity {
+  readonly version: number;
+}

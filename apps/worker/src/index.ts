@@ -11,7 +11,9 @@ import {
   type HealthResponse,
 } from "@airline-manager/contracts";
 import {
+  createDatabaseRuntime,
   createInfrastructureReadinessCheck,
+  readDatabasePoolOptions,
   type DependencyReadiness,
 } from "@airline-manager/database";
 
@@ -56,8 +58,9 @@ export function createWorkerHealthServer(
 export function startWorker(environment = process.env): Server {
   const host = readOptionalString("WORKER_HEALTH_HOST", environment) ?? "127.0.0.1";
   const port = readOptionalInteger("WORKER_HEALTH_PORT", environment) ?? 3002;
+  const databaseRuntime = createDatabaseRuntime(readDatabasePoolOptions("worker", environment));
   const checkReadiness = createInfrastructureReadinessCheck({
-    databaseUrl: readRequiredString("DATABASE_URL", environment),
+    databaseRuntime,
     redisUrl: readRequiredString("REDIS_URL", environment),
   });
   const server = createWorkerHealthServer(checkReadiness);
@@ -78,6 +81,10 @@ export function startWorker(environment = process.env): Server {
         process.stderr.write("Worker shutdown failed\n");
         process.exitCode = 1;
       }
+      void databaseRuntime.destroy().catch(() => {
+        process.stderr.write("Worker database shutdown failed\n");
+        process.exitCode = 1;
+      });
     });
   };
   process.once("SIGTERM", shutdown);

@@ -24,20 +24,25 @@ reuse the example database password outside the local Compose network.
 
 ## Common commands
 
-| Command                | Purpose                                                  |
-| ---------------------- | -------------------------------------------------------- |
-| `pnpm dev`             | Start the web, API, and worker development processes     |
-| `pnpm build`           | Build every application and shared package               |
-| `pnpm typecheck`       | Run strict TypeScript checks across the workspace        |
-| `pnpm lint`            | Run ESLint and dependency-boundary rules                 |
-| `pnpm format`          | Format source and configuration files                    |
-| `pnpm format:check`    | Verify formatting without changing files                 |
-| `pnpm test`            | Run all unit tests                                       |
-| `pnpm test:boundaries` | Prove a forbidden domain-to-framework import is rejected |
-| `pnpm infra:up`        | Build and start the complete local topology              |
-| `pnpm infra:down`      | Gracefully stop it while preserving database state       |
-| `pnpm infra:reset`     | Stop it and delete PostgreSQL and Redis volumes          |
-| `pnpm infra:reseed`    | Reset and recreate the currently empty infrastructure    |
+| Command                 | Purpose                                                  |
+| ----------------------- | -------------------------------------------------------- |
+| `pnpm dev`              | Start the web, API, and worker development processes     |
+| `pnpm build`            | Build every application and shared package               |
+| `pnpm typecheck`        | Run strict TypeScript checks across the workspace        |
+| `pnpm lint`             | Run ESLint and dependency-boundary rules                 |
+| `pnpm format`           | Format source and configuration files                    |
+| `pnpm format:check`     | Verify formatting without changing files                 |
+| `pnpm test`             | Run all unit tests                                       |
+| `pnpm test:boundaries`  | Prove a forbidden domain-to-framework import is rejected |
+| `pnpm db:migrate`       | Apply reviewed forward SQL migrations                    |
+| `pnpm db:migrate:check` | Fail when migrations are pending or edited               |
+| `pnpm db:types`         | Generate Kysely types from the applied schema            |
+| `pnpm db:types:check`   | Verify committed database types are current              |
+| `pnpm test:database`    | Run tests against real PostgreSQL                        |
+| `pnpm infra:up`         | Build and start the complete local topology              |
+| `pnpm infra:down`       | Gracefully stop it while preserving database state       |
+| `pnpm infra:reset`      | Stop it and delete PostgreSQL and Redis volumes          |
+| `pnpm infra:reseed`     | Reset and recreate the currently empty infrastructure    |
 
 Individual applications can be started with filters, for example
 `pnpm --filter @airline-manager/api dev`. The placeholder web application uses port 3000, while the
@@ -54,7 +59,7 @@ apps/
 packages/
   domain/        deterministic, framework-independent domain logic
   contracts/     public API contract types
-  database/      persistence adapter interfaces and future implementations
+  database/      SQL migrations, generated types, and persistence adapters
   config/        environment/configuration access
   test-support/  reusable deterministic test helpers
 ```
@@ -68,8 +73,8 @@ ticket set under `.scratch/airline-manager/`.
 
 ## Local container topology
 
-`compose.yaml` runs the web application, API, simulation worker, PostgreSQL, and Redis. From a clean
-checkout:
+`compose.yaml` runs the web application, API, simulation worker, PostgreSQL, Redis, and a one-shot
+forward migration service. From a clean checkout:
 
 ```sh
 pnpm infra:up
