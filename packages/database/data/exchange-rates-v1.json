@@ -1,0 +1,17 @@
+{
+  "interface_version": 1,
+  "source_id": "offline-fixture",
+  "source_version": "fixture-2026-07-11-v1",
+  "effective_at": "2026-07-11T00:00:00.000Z",
+  "sha256": "b3f8ac0314e6f074dd47a3d2e9cf14adcb0f6e81bfcf57acfd454eb65de89210",
+  "provenance": {
+    "kind": "deterministic-test-fixture",
+    "live_provider": "none",
+    "license": "repository-test-data"
+  },
+  "rates": [
+    { "base_currency": "EUR", "quote_currency": "USD", "numerator": "109", "denominator": "100" },
+    { "base_currency": "GBP", "quote_currency": "USD", "numerator": "127", "denominator": "100" },
+    { "base_currency": "JPY", "quote_currency": "USD", "numerator": "2", "denominator": "300" }
+  ]
+}

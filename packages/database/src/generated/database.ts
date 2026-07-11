@@ -27,6 +27,16 @@ export type Numeric = ColumnType<string, number | string, number | string>;
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export interface AccountingPeriods {
+  closed_at: Timestamp | null;
+  ends_on: Timestamp;
+  id: Generated<string>;
+  ledger_book_id: string;
+  period_key: string;
+  starts_on: Timestamp;
+  status: Generated<string>;
+}
+
 export interface AdministrativeAuditRecords {
   action: string;
   actor_identifier: string;
@@ -107,6 +117,32 @@ export interface CatalogReleases {
   version: string;
 }
 
+export interface ChartOfAccountsTemplateAccounts {
+  account_type: string;
+  cash_flow_activity: string | null;
+  code: string;
+  is_cash: Generated<boolean>;
+  is_fx_clearing: Generated<boolean>;
+  name: string;
+  normal_balance: string;
+  template_version_id: string;
+}
+
+export interface ChartOfAccountsTemplates {
+  code: string;
+  id: Generated<string>;
+  name: string;
+}
+
+export interface ChartOfAccountsTemplateVersions {
+  description: string;
+  id: Generated<string>;
+  published_at: Timestamp | null;
+  status: Generated<string>;
+  template_id: string;
+  version: number;
+}
+
 export interface CuratedAircraftVariants {
   category: string;
   certification_reference: string;
@@ -147,6 +183,37 @@ export interface CuratedAirports {
   world_region: string;
 }
 
+export interface Currencies {
+  code: string;
+  minor_units: number;
+  name: string;
+  rounding_mode: Generated<string>;
+}
+
+export interface ExchangeRateImports {
+  effective_at: Timestamp;
+  id: Generated<string>;
+  imported_at: Generated<Timestamp>;
+  provenance: Json;
+  sha256: string;
+  source_id: string;
+  source_version: string;
+}
+
+export interface ExchangeRates {
+  base_currency: string;
+  import_id: string;
+  quote_currency: string;
+  rate_denominator: Int8;
+  rate_numerator: Int8;
+}
+
+export interface ExchangeRateSources {
+  id: string;
+  interface_version: number;
+  name: string;
+}
+
 export interface IdempotencyCommands {
   command_type: string;
   created_at: Generated<Timestamp>;
@@ -158,6 +225,119 @@ export interface IdempotencyCommands {
   scope: string;
   state: Generated<string>;
   updated_at: Generated<Timestamp>;
+}
+
+export interface JournalEntries {
+  accounting_period_id: string;
+  cash_flow_activity: Generated<string>;
+  command_type: string;
+  created_at: Generated<Timestamp>;
+  description: string;
+  entry_kind: Generated<string>;
+  exchange_rate_denominator: Int8 | null;
+  exchange_rate_import_id: string | null;
+  exchange_rate_numerator: Int8 | null;
+  id: Generated<string>;
+  ledger_book_id: string;
+  occurred_at: Timestamp;
+  posted_at: Timestamp | null;
+  reporting_currency: string;
+  reversal_of_journal_entry_id: string | null;
+  status: Generated<string>;
+  transaction_currency: string;
+}
+
+export interface LedgerAccountBalances {
+  account_id: string | null;
+  account_type: string | null;
+  code: string | null;
+  ledger_book_id: string | null;
+  name: string | null;
+  normal_balance: string | null;
+  reporting_balance_minor: Int8 | null;
+  transaction_balance_minor: Int8 | null;
+  transaction_currency: string | null;
+}
+
+export interface LedgerAccounts {
+  account_type: string;
+  active: Generated<boolean>;
+  cash_flow_activity: string | null;
+  code: string;
+  id: Generated<string>;
+  is_cash: Generated<boolean>;
+  is_fx_clearing: Generated<boolean>;
+  ledger_book_id: string;
+  name: string;
+  normal_balance: string;
+  template_version_id: string;
+}
+
+export interface LedgerBalanceSheetReport {
+  account_type: string | null;
+  code: string | null;
+  ledger_book_id: string | null;
+  name: string | null;
+  reporting_amount_minor: Int8 | null;
+  transaction_amount_minor: Int8 | null;
+  transaction_currency: string | null;
+}
+
+export interface LedgerBooks {
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  owner_id: string;
+  owner_type: string;
+  reporting_currency: string;
+  template_version_id: string;
+}
+
+export interface LedgerCashFlowReport {
+  cash_flow_activity: string | null;
+  ledger_book_id: string | null;
+  reporting_amount_minor: Int8 | null;
+  transaction_amount_minor: Int8 | null;
+  transaction_currency: string | null;
+}
+
+export interface LedgerCashReport {
+  ledger_book_id: string | null;
+  reporting_amount_minor: Int8 | null;
+  transaction_amount_minor: Int8 | null;
+  transaction_currency: string | null;
+}
+
+export interface LedgerPostings {
+  account_id: string;
+  aircraft_id: string | null;
+  airline_id: string | null;
+  contract_id: string | null;
+  flight_id: string | null;
+  id: Generated<string>;
+  journal_entry_id: string;
+  line_number: number;
+  memo: string | null;
+  /**
+   * Exact snapshot in reporting-currency minor units, rounded half-even.
+   */
+  reporting_amount_minor: Int8;
+  route_id: string | null;
+  side: string;
+  station_id: string | null;
+  /**
+   * Exact integer ISO minor units; reporting-only FX rounding lines use zero.
+   */
+  transaction_amount_minor: Int8;
+}
+
+export interface LedgerProfitAndLossReport {
+  account_type: string | null;
+  code: string | null;
+  ledger_book_id: string | null;
+  name: string | null;
+  reporting_amount_minor: Int8 | null;
+  transaction_amount_minor: Int8 | null;
+  transaction_currency: string | null;
 }
 
 export interface OutboxEvents {
@@ -318,6 +498,7 @@ export interface WorldRulesets {
 }
 
 export interface DB {
+  accounting_periods: AccountingPeriods;
   administrative_audit_records: AdministrativeAuditRecords;
   auth_account: AuthAccount;
   auth_session: AuthSession;
@@ -326,9 +507,25 @@ export interface DB {
   catalog_release_aircraft_variants: CatalogReleaseAircraftVariants;
   catalog_release_airports: CatalogReleaseAirports;
   catalog_releases: CatalogReleases;
+  chart_of_accounts_template_accounts: ChartOfAccountsTemplateAccounts;
+  chart_of_accounts_template_versions: ChartOfAccountsTemplateVersions;
+  chart_of_accounts_templates: ChartOfAccountsTemplates;
   curated_aircraft_variants: CuratedAircraftVariants;
   curated_airports: CuratedAirports;
+  currencies: Currencies;
+  exchange_rate_imports: ExchangeRateImports;
+  exchange_rate_sources: ExchangeRateSources;
+  exchange_rates: ExchangeRates;
   idempotency_commands: IdempotencyCommands;
+  journal_entries: JournalEntries;
+  ledger_account_balances: LedgerAccountBalances;
+  ledger_accounts: LedgerAccounts;
+  ledger_balance_sheet_report: LedgerBalanceSheetReport;
+  ledger_books: LedgerBooks;
+  ledger_cash_flow_report: LedgerCashFlowReport;
+  ledger_cash_report: LedgerCashReport;
+  ledger_postings: LedgerPostings;
+  ledger_profit_and_loss_report: LedgerProfitAndLossReport;
   outbox_events: OutboxEvents;
   player_account_roles: PlayerAccountRoles;
   player_accounts: PlayerAccounts;
