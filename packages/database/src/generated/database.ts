@@ -23,6 +23,8 @@ export type JsonPrimitive = boolean | number | string | null;
 
 export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
+export type Numeric = ColumnType<string, number | string, number | string>;
+
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface AdministrativeAuditRecords {
@@ -36,6 +38,67 @@ export interface AdministrativeAuditRecords {
   request_id: string;
   resource_identifier: string;
   resource_type: string;
+}
+
+export interface CatalogReleaseAircraftVariants {
+  aircraft_variant_id: string;
+  release_id: string;
+  snapshot: Json;
+}
+
+export interface CatalogReleaseAirports {
+  airport_id: string;
+  release_id: string;
+  snapshot: Json;
+}
+
+export interface CatalogReleases {
+  created_at: Generated<Timestamp>;
+  description: string;
+  id: Generated<string>;
+  published_at: Timestamp | null;
+  status: Generated<string>;
+  version: string;
+}
+
+export interface CuratedAircraftVariants {
+  category: string;
+  certification_reference: string;
+  code: string;
+  curated_at: Generated<Timestamp>;
+  id: Generated<string>;
+  manufacturer: string;
+  maximum_seats: number;
+  maximum_takeoff_weight_kg: number;
+  minimum_runway_ft: number;
+  model: string;
+  passenger_only: boolean;
+  production_status: string;
+  production_status_effective_from: Timestamp;
+  range_nm: number;
+  typical_seats: number;
+}
+
+export interface CuratedAirports {
+  commercial_relevance: string;
+  country_code: string;
+  curated_at: Generated<Timestamp>;
+  elevation_ft: number | null;
+  iata_code: string;
+  icao_code: string;
+  id: Generated<string>;
+  ident: string;
+  latitude_deg: Numeric;
+  longest_runway_ft: number;
+  longitude_deg: Numeric;
+  municipality: string;
+  name: string;
+  promoted_from_raw_record_id: string;
+  region_code: string;
+  scheduled_service: boolean;
+  timezone_dataset_version: string;
+  timezone_name: string;
+  world_region: string;
 }
 
 export interface IdempotencyCommands {
@@ -71,15 +134,127 @@ export interface OutboxEvents {
   published_at: Timestamp | null;
 }
 
+export interface RawReferenceImports {
+  dataset_name: string;
+  first_retrieved_at: Timestamp;
+  id: Generated<string>;
+  imported_at: Generated<Timestamp>;
+  last_retrieved_at: Timestamp;
+  metadata: Generated<Json>;
+  record_count: Generated<number>;
+  retrieval_count: Generated<number>;
+  sha256: string;
+  source_id: string;
+  source_version: string;
+  status: Generated<string>;
+}
+
+export interface RawReferenceRecords {
+  created_at: Generated<Timestamp>;
+  disposition: Generated<string>;
+  id: Generated<string>;
+  import_id: string;
+  payload: Json;
+  payload_sha256: string;
+  source_record_id: string;
+}
+
+export interface ReferenceProvenance {
+  classification: string;
+  created_at: Generated<Timestamp>;
+  effective_from: Timestamp;
+  effective_to: Timestamp | null;
+  explanation: string;
+  field_name: string;
+  formula_version: string | null;
+  id: Generated<string>;
+  record_id: string;
+  record_type: string;
+  ruleset_version: string | null;
+  source_id: string | null;
+  source_locator: string | null;
+}
+
+export interface ReferenceSources {
+  accuracy_disclaimer: string;
+  attribution: string;
+  created_at: Generated<Timestamp>;
+  homepage_url: string;
+  id: string;
+  license_name: string;
+  license_url: string;
+  name: string;
+  redistribution_permitted: boolean;
+}
+
+export interface ReferenceValidationResults {
+  details: Generated<Json>;
+  id: Generated<string>;
+  message: string;
+  passed: boolean;
+  raw_record_id: string;
+  rule_code: string;
+  severity: string;
+  validated_at: Generated<Timestamp>;
+}
+
 export interface SchemaMigrations {
   applied_at: Generated<Timestamp>;
   checksum: string;
   name: string;
 }
 
+export interface TimezoneDatasetVersions {
+  release_url: string;
+  retrieved_at: Timestamp;
+  sha256: string;
+  source_id: string;
+  version: string;
+}
+
+export interface TimezoneDefinitions {
+  comment: string | null;
+  coordinates: string;
+  country_codes: string[];
+  dataset_version: string;
+  name: string;
+}
+
+export interface WorldRulesetAcquisitionOverrides {
+  aircraft_variant_id: string;
+  channels: string[];
+  reason: string;
+  world_ruleset_id: string;
+}
+
+export interface WorldRulesets {
+  activated_at: Timestamp | null;
+  catalog_release_id: string;
+  created_at: Generated<Timestamp>;
+  effective_from: Timestamp;
+  effective_to: Timestamp | null;
+  id: Generated<string>;
+  status: Generated<string>;
+  version: string;
+}
+
 export interface DB {
   administrative_audit_records: AdministrativeAuditRecords;
+  catalog_release_aircraft_variants: CatalogReleaseAircraftVariants;
+  catalog_release_airports: CatalogReleaseAirports;
+  catalog_releases: CatalogReleases;
+  curated_aircraft_variants: CuratedAircraftVariants;
+  curated_airports: CuratedAirports;
   idempotency_commands: IdempotencyCommands;
   outbox_events: OutboxEvents;
+  raw_reference_imports: RawReferenceImports;
+  raw_reference_records: RawReferenceRecords;
+  reference_provenance: ReferenceProvenance;
+  reference_sources: ReferenceSources;
+  reference_validation_results: ReferenceValidationResults;
   schema_migrations: SchemaMigrations;
+  timezone_dataset_versions: TimezoneDatasetVersions;
+  timezone_definitions: TimezoneDefinitions;
+  world_ruleset_acquisition_overrides: WorldRulesetAcquisitionOverrides;
+  world_rulesets: WorldRulesets;
 }

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "ourairports",
+    "name": "OurAirports open airport data",
+    "homepage_url": "https://ourairports.com/data/",
+    "license_name": "Public Domain",
+    "license_url": "https://ourairports.com/data/",
+    "attribution": "OurAirports, retrieved 2026-07-11",
+    "accuracy_disclaimer": "OurAirports provides no guarantee of accuracy or fitness for flight planning; this project independently validates and curates every playable row.",
+    "redistribution_permitted": true
+  },
+  {
+    "id": "iana-tzdb",
+    "name": "IANA Time Zone Database",
+    "homepage_url": "https://www.iana.org/time-zones",
+    "license_name": "IANA Time Zone Database public-domain notice",
+    "license_url": "https://data.iana.org/time-zones/tzdb/README",
+    "attribution": "IANA Time Zone Database 2026b",
+    "accuracy_disclaimer": "Timezone rules change through political decisions; each catalog row pins the tzdb version used for validation.",
+    "redistribution_permitted": true
+  },
+  {
+    "id": "timezone-boundary-builder",
+    "name": "Timezone Boundary Builder via tz-lookup",
+    "homepage_url": "https://github.com/evansiroky/timezone-boundary-builder",
+    "license_name": "Open Data Commons Open Database License 1.0",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "Timezone Boundary Builder contributors and tz-lookup",
+    "accuracy_disclaimer": "Coordinate-to-timezone assignment is a derived geographic lookup and is validated against the pinned IANA identifier set.",
+    "redistribution_permitted": true
+  },
+  {
+    "id": "atr",
+    "name": "ATR aircraft product publications",
+    "homepage_url": "https://www.atr-aircraft.com/aircraft-services/aircraft-family/atr-72-600/",
+    "license_name": "Copyrighted manufacturer publication; cited facts only",
+    "license_url": "https://www.atr-aircraft.com/terms-of-use/",
+    "attribution": "ATR 72-600 public product specifications",
+    "accuracy_disclaimer": "Published performance figures depend on stated operating assumptions and are not flight-planning data.",
+    "redistribution_permitted": true
+  },
+  {
+    "id": "embraer",
+    "name": "Embraer commercial aircraft publications",
+    "homepage_url": "https://embraer.com/e-jets/e175/en/",
+    "license_name": "Copyrighted manufacturer publication; cited facts only",
+    "license_url": "https://embraer.com/legal/en/",
+    "attribution": "Embraer E175 public product specifications",
+    "accuracy_disclaimer": "Published performance figures are indicative and not for flight planning or dispatch.",
+    "redistribution_permitted": true
+  },
+  {
+    "id": "airbus",
+    "name": "Airbus commercial aircraft publications",
+    "homepage_url": "https://www.aircraft.airbus.com/en/aircraft/a320-family/a320neo",
+    "license_name": "Copyrighted manufacturer publication; cited facts only",
+    "license_url": "https://www.airbus.com/en/website-terms-of-use",
+    "attribution": "Airbus A320neo public product specifications",
+    "accuracy_disclaimer": "Published maximum and typical figures vary by option and configuration and are not flight-planning data.",
+    "redistribution_permitted": true
+  },
+  {
+    "id": "boeing",
+    "name": "Boeing commercial aircraft publications",
+    "homepage_url": "https://www.boeing.com/commercial/737max",
+    "license_name": "Copyrighted manufacturer publication; cited facts only",
+    "license_url": "https://www.boeing.com/terms",
+    "attribution": "Boeing 737-8 public product specifications",
+    "accuracy_disclaimer": "Published maximum and typical figures vary by option and configuration and are not flight-planning data.",
+    "redistribution_permitted": true
+  },
+  {
+    "id": "faa",
+    "name": "United States Federal Aviation Administration certification publications",
+    "homepage_url": "https://www.faa.gov/aircraft/air_cert/design_approvals",
+    "license_name": "United States government work",
+    "license_url": "https://www.faa.gov/privacy",
+    "attribution": "Federal Aviation Administration type-certification publications",
+    "accuracy_disclaimer": "Certification references establish variant identity; this catalog is not an airworthiness or dispatch authority.",
+    "redistribution_permitted": true
+  }
+]

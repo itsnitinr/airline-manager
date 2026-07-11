@@ -1,7 +1,7 @@
 # Build the curated reference-data catalog pipeline
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 03
 
 ## Goal
@@ -55,4 +55,17 @@ variants.
 
 ## Comments
 
-None yet.
+- 2026-07-11: Added the PostgreSQL/Kysely reference catalog pipeline with source registry,
+  checksum/versioned idempotent raw imports, quarantined validation results, explicit curated
+  promotion, IANA 2026b timezone definitions, field-level sourced/derived/balance provenance,
+  immutable published releases, immutable active world rulesets, data-driven production/acquisition
+  rules, and read-only domain/application/database query boundaries. Published a deterministic
+  redistributable slice-one fixture of 250 validated commercial airports across AF 25, AS 60, EU 60,
+  NA 60, OC 20, and SA 25, plus ATR 72-600, Embraer E175, Airbus A320neo, and Boeing 737-8 variants
+  backed by OurAirports public-domain data, IANA/Timezone Boundary Builder data, manufacturer pages,
+  and FAA TCDS references. Validation passed for frozen install, formatting, lint, eight boundary
+  probes, OpenAPI freshness, type-check, 39 offline unit tests, build, blank and repeat migrations,
+  generated Kysely type freshness, 16 real-PostgreSQL integration tests covering idempotency,
+  quarantine/constraints, release and ruleset immutability/selection, acquisition overrides and
+  read-only queries, byte-for-byte offline fixture regeneration, Compose configuration, ignored-file
+  checks, attribution/license review, diff/whitespace review, and public-repository secret scanning.

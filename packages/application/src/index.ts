@@ -61,3 +61,5 @@ export function createApplicationServices(
     },
   };
 }
+
+export { GetPublishedCatalogHandler, type GetPublishedCatalog } from "./catalog.js";

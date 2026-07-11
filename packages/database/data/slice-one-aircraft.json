@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "effective_from": "2026-07-11",
+  "formula_version": "aircraft-envelope-v1",
+  "ruleset_version": "slice-one-balance-v1",
+  "variants": [
+    {
+      "code": "atr-72-600",
+      "manufacturer": "ATR",
+      "model": "ATR 72-600",
+      "certification_reference": "FAA TCDS A53EU (ATR 72-212A)",
+      "category": "turboprop",
+      "passenger_only": true,
+      "typical_seats": 72,
+      "maximum_seats": 78,
+      "range_nm": 740,
+      "maximum_takeoff_weight_kg": 23000,
+      "minimum_runway_ft": 4314,
+      "production_status": "in_production",
+      "source_id": "atr",
+      "source_locator": "https://www.atr-aircraft.com/aircraft-services/aircraft-family/atr-72-600/"
+    },
+    {
+      "code": "embraer-e175",
+      "manufacturer": "Embraer",
+      "model": "E175",
+      "certification_reference": "FAA TCDS A56NM (ERJ 170-200)",
+      "category": "regional_jet",
+      "passenger_only": true,
+      "typical_seats": 76,
+      "maximum_seats": 88,
+      "range_nm": 2200,
+      "maximum_takeoff_weight_kg": 40370,
+      "minimum_runway_ft": 5000,
+      "production_status": "in_production",
+      "source_id": "embraer",
+      "source_locator": "https://embraer.com/e-jets/e175/en/"
+    },
+    {
+      "code": "airbus-a320neo",
+      "manufacturer": "Airbus",
+      "model": "A320neo",
+      "certification_reference": "FAA TCDS A28NM (A320 neo models)",
+      "category": "narrow_body",
+      "passenger_only": true,
+      "typical_seats": 150,
+      "maximum_seats": 194,
+      "range_nm": 3400,
+      "maximum_takeoff_weight_kg": 79000,
+      "minimum_runway_ft": 6500,
+      "production_status": "in_production",
+      "source_id": "airbus",
+      "source_locator": "https://www.aircraft.airbus.com/en/aircraft/a320-family/a320neo"
+    },
+    {
+      "code": "boeing-737-8",
+      "manufacturer": "Boeing",
+      "model": "737-8",
+      "certification_reference": "FAA TCDS A16WE (737-8)",
+      "category": "narrow_body",
+      "passenger_only": true,
+      "typical_seats": 160,
+      "maximum_seats": 210,
+      "range_nm": 3500,
+      "maximum_takeoff_weight_kg": 82640,
+      "minimum_runway_ft": 7000,
+      "production_status": "in_production",
+      "source_id": "boeing",
+      "source_locator": "https://www.boeing.com/commercial/737max"
+    }
+  ]
+}

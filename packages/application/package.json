@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@airline-manager/domain": "workspace:*"
+  },
   "exports": {
     ".": {
       "types": "./src/index.ts",

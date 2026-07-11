@@ -16,3 +16,16 @@ export interface Repository<TEntity, TIdentifier> {
 export interface VersionedEntity {
   readonly version: number;
 }
+
+export {
+  aircraftVariantPlayableFields,
+  airportPlayableFields,
+  type AcquisitionChannel,
+  type AircraftCategory,
+  type CatalogAircraftVariant,
+  type CatalogAirport,
+  type CatalogRepository,
+  type FieldProvenance,
+  type ProvenanceClassification,
+  type PublishedCatalog,
+} from "./catalog.js";

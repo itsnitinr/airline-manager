@@ -15,6 +15,18 @@ export {
   type TransactionIsolationLevel,
   type TransactionOptions,
 } from "./transactions.js";
+export { KyselyCatalogRepository } from "./catalog/repository.js";
+export {
+  importOurAirports,
+  type AirportImportInput,
+  type AirportImportResult,
+} from "./catalog/import.js";
+export { seedSliceOneCatalog, type SeedCatalogResult } from "./catalog/seed.js";
+export {
+  validateAirportCandidate,
+  type AirportCandidate,
+  type AirportValidationResult,
+} from "./catalog/validation.js";
 
 export interface DatabaseLifecycle {
   connect(): Promise<void>;
