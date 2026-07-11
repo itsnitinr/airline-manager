@@ -1,5 +1,11 @@
 import { createServer, type Server, type ServerResponse } from "node:http";
 import { pathToFileURL } from "node:url";
+import type {
+  ApplicationServices,
+  CommandContext,
+  SampleCommand,
+  SampleCommandResult,
+} from "@airline-manager/application";
 import {
   readOptionalInteger,
   readOptionalString,
@@ -18,6 +24,14 @@ import {
 } from "@airline-manager/database";
 
 export type ReadinessCheck = () => Promise<DependencyReadiness>;
+
+export function executeWorkerSampleCommand(
+  services: ApplicationServices,
+  command: SampleCommand,
+  context: CommandContext,
+): Promise<SampleCommandResult> {
+  return services.sampleCommand.execute(command, context);
+}
 
 export function workerHealth(): HealthResponse {
   return createHealthResponse("worker");

@@ -17,6 +17,8 @@
   },
   "packageManager": "pnpm@11.11.0",
   "scripts": {
+    "api:contract:check": "turbo run build --filter=@airline-manager/api... && pnpm --filter @airline-manager/api contract:check",
+    "api:contract:generate": "turbo run build --filter=@airline-manager/api... && pnpm --filter @airline-manager/api contract:generate",
     "build": "turbo run build",
     "clean": "turbo run clean && rimraf .turbo coverage",
     "db:migrate": "pnpm --filter @airline-manager/database db:migrate",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createHealthResponse, createReadinessResponse } from "./index.js";
+import { createHealthResponse, createReadinessResponse, paginationQuerySchema } from "./index.js";
 
 describe("health contract", () => {
   it("creates a stable public response", () => {
@@ -12,5 +12,9 @@ describe("health contract", () => {
       status: "not_ready",
       dependencies: { postgres: "up", redis: "down" },
     });
+  });
+
+  it("defines bounded cursor pagination for future queries", () => {
+    expect(paginationQuerySchema.properties.limit).toMatchObject({ minimum: 1, maximum: 100 });
   });
 });

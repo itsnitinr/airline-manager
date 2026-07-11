@@ -42,6 +42,9 @@ jobs:
       - name: Verify dependency boundaries
         run: pnpm test:boundaries
 
+      - name: Verify OpenAPI document and typed client
+        run: pnpm api:contract:check
+
       - name: Type-check
         run: pnpm typecheck
 

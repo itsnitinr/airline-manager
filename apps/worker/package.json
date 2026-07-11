@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@airline-manager/application": "workspace:*",
     "@airline-manager/config": "workspace:*",
     "@airline-manager/contracts": "workspace:*",
     "@airline-manager/database": "workspace:*"

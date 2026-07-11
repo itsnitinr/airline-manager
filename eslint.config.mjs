@@ -73,6 +73,33 @@ export default defineConfig(
     },
   },
   {
+    files: ["packages/application/src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "fastify", message: domainBoundaryMessage },
+            { name: "bullmq", message: domainBoundaryMessage },
+            { name: "@airline-manager/api", message: domainBoundaryMessage },
+            { name: "@airline-manager/worker", message: domainBoundaryMessage },
+          ],
+          patterns: [
+            {
+              group: [
+                "fastify/*",
+                "bullmq/*",
+                "@airline-manager/api/*",
+                "@airline-manager/worker/*",
+              ],
+              message: domainBoundaryMessage,
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ["apps/web/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [

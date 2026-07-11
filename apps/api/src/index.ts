@@ -1,55 +1,32 @@
-import { createServer, type Server, type ServerResponse } from "node:http";
 import { pathToFileURL } from "node:url";
 import {
   readOptionalInteger,
   readOptionalString,
   readRequiredString,
 } from "@airline-manager/config";
-import { createHealthResponse, createReadinessResponse } from "@airline-manager/contracts";
 import {
   createDatabaseRuntime,
   createInfrastructureReadinessCheck,
   readDatabasePoolOptions,
-  type DependencyReadiness,
 } from "@airline-manager/database";
+import type { FastifyInstance } from "fastify";
+import { createApiServer } from "./app.js";
 
-export type ReadinessCheck = () => Promise<DependencyReadiness>;
+export { createApiServer } from "./app.js";
+export { createOpenApiDocument } from "./openapi.js";
+export type { ApiAppOptions } from "./app.js";
 
-function writeJson(response: ServerResponse, statusCode: number, body: unknown): void {
-  response.writeHead(statusCode, { "content-type": "application/json" });
-  response.end(JSON.stringify(body));
+function readCorsOrigins(environment: NodeJS.ProcessEnv): readonly string[] {
+  const configured = readOptionalString("API_CORS_ORIGINS", environment);
+  return (
+    configured
+      ?.split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean) ?? ["http://localhost:3000"]
+  );
 }
 
-export function createApiServer(
-  checkReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true }),
-): Server {
-  return createServer((request, response) => {
-    if (request.method === "GET" && request.url === "/health") {
-      writeJson(response, 200, createHealthResponse("api"));
-      return;
-    }
-
-    if (request.method === "GET" && request.url === "/ready") {
-      void checkReadiness()
-        .then((dependencies) => {
-          const readiness = createReadinessResponse("api", dependencies);
-          writeJson(response, readiness.status === "ready" ? 200 : 503, readiness);
-        })
-        .catch(() => {
-          writeJson(
-            response,
-            503,
-            createReadinessResponse("api", { postgres: false, redis: false }),
-          );
-        });
-      return;
-    }
-
-    writeJson(response, 404, { error: "not_found" });
-  });
-}
-
-export function startApi(environment = process.env): Server {
+export async function startApi(environment = process.env): Promise<FastifyInstance> {
   const host = readOptionalString("API_HOST", environment) ?? "127.0.0.1";
   const port = readOptionalInteger("API_PORT", environment) ?? 3001;
   const databaseRuntime = createDatabaseRuntime(readDatabasePoolOptions("api", environment));
@@ -57,33 +34,40 @@ export function startApi(environment = process.env): Server {
     databaseRuntime,
     redisUrl: readRequiredString("REDIS_URL", environment),
   });
-  const server = createApiServer(checkReadiness);
-  server.listen(port, host, () => {
-    process.stdout.write(`API listening on ${host}:${port}\n`);
+  const rateLimitMax = readOptionalInteger("API_RATE_LIMIT_MAX", environment);
+  const sseHeartbeatMs = readOptionalInteger("API_SSE_HEARTBEAT_MS", environment);
+  const app = createApiServer({
+    checkReadiness,
+    corsOrigins: readCorsOrigins(environment),
+    ...(rateLimitMax === undefined ? {} : { rateLimitMax }),
+    ...(sseHeartbeatMs === undefined ? {} : { sseHeartbeatMs }),
   });
+  await app.listen({ port, host });
 
   let shuttingDown = false;
-  const shutdown = (signal: NodeJS.Signals): void => {
+  const shutdown = async (signal: NodeJS.Signals): Promise<void> => {
     if (shuttingDown) return;
     shuttingDown = true;
-    process.stdout.write(`API received ${signal}; draining connections\n`);
-    server.close((error) => {
-      if (error) {
-        process.stderr.write("API shutdown failed\n");
-        process.exitCode = 1;
-      }
-      void databaseRuntime.destroy().catch(() => {
-        process.stderr.write("API database shutdown failed\n");
-        process.exitCode = 1;
-      });
-    });
+    app.log.info({ signal }, "API draining connections");
+    try {
+      await app.close();
+      await databaseRuntime.destroy();
+    } catch {
+      app.log.error({ signal }, "API shutdown failed");
+      process.exitCode = 1;
+    }
   };
-  process.once("SIGTERM", shutdown);
-  process.once("SIGINT", shutdown);
-  return server;
+  process.once("SIGTERM", () => void shutdown("SIGTERM"));
+  process.once("SIGINT", () => void shutdown("SIGINT"));
+  return app;
 }
 
 const entryPath = process.argv[1];
 if (entryPath && import.meta.url === pathToFileURL(entryPath).href) {
-  startApi();
+  void startApi().catch((error: unknown) => {
+    process.stderr.write(
+      `API startup failed: ${error instanceof Error ? error.message : "unknown error"}\n`,
+    );
+    process.exitCode = 1;
+  });
 }
