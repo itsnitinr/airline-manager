@@ -1,7 +1,7 @@
 # Establish local infrastructure and CI quality gates
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 01
 
 ## Goal
@@ -44,4 +44,16 @@ that every later ticket must satisfy.
 
 ## Comments
 
-None yet.
+- 2026-07-11: Added non-root production API and worker images, a Compose Watch web
+  development image, and the complete web/API/worker/PostgreSQL/Redis topology with
+  dependency-aware readiness, health-gated startup, named volumes, graceful shutdown,
+  local-only environment defaults, and documented up/down/reset/reseed workflows. Added
+  pull-request/main CI for frozen install, formatting, lint and boundary enforcement,
+  type-checking, 14 unit tests, build, container validation, and redacted history secret
+  scanning with a pnpm-store-only cache. Validation passed for all local quality gates,
+  Compose configuration, current API/worker/web image builds, clean stack startup,
+  reset/reseed, independent PostgreSQL and Redis outage/recovery for both API and worker,
+  zero-exit SIGTERM shutdown and retained volumes, ignored local state, trackable-file and
+  history secret scans, and runtime image/context inspection. The live stack used supported
+  host-port overrides because unrelated local Next.js processes occupied ports 3000/3001;
+  committed defaults and container-internal ports remain unchanged.

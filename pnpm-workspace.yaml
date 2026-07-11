@@ -4,6 +4,7 @@ packages:
 
 saveExact: true
 strictPeerDependencies: true
+injectWorkspacePackages: true
 
 allowBuilds:
   esbuild: true

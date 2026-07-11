@@ -1,0 +1,113 @@
+name: airline-manager
+
+services:
+  postgres:
+    image: postgres:18.3-bookworm
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-airline_manager}
+      POSTGRES_USER: ${POSTGRES_USER:-airline_manager}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airline_manager_local_only}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    stop_grace_period: 30s
+    restart: unless-stopped
+
+  redis:
+    image: redis:8.2.7-bookworm
+    command: ["redis-server", "--appendonly", "yes", "--save", "60", "1"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    stop_grace_period: 30s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER:-airline_manager}:${POSTGRES_PASSWORD:-airline_manager_local_only}@postgres:5432/${POSTGRES_DB:-airline_manager}
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "127.0.0.1:${API_PORT:-3001}:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    init: true
+    stop_grace_period: 30s
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    environment:
+      WORKER_HEALTH_HOST: 0.0.0.0
+      WORKER_HEALTH_PORT: 3002
+      DATABASE_URL: postgresql://${POSTGRES_USER:-airline_manager}:${POSTGRES_PASSWORD:-airline_manager_local_only}@postgres:5432/${POSTGRES_DB:-airline_manager}
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "127.0.0.1:${WORKER_HEALTH_PORT:-3002}:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    init: true
+    stop_grace_period: 60s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile.dev
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    init: true
+    stop_grace_period: 30s
+    develop:
+      watch:
+        - action: sync
+          path: apps/web
+          target: /workspace/apps/web
+          ignore:
+            - .next/
+            - node_modules/
+        - action: sync
+          path: packages
+          target: /workspace/packages
+          ignore:
+            - "**/dist/"
+            - "**/node_modules/"
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: pnpm-lock.yaml
+
+volumes:
+  postgres-data:
+  redis-data:

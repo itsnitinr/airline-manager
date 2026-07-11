@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@airline-manager/config": "workspace:*",
-    "@airline-manager/contracts": "workspace:*"
+    "@airline-manager/contracts": "workspace:*",
+    "@airline-manager/database": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",

@@ -3,6 +3,14 @@ export function readOptionalString(name: string, environment = process.env): str
   return value ? value : undefined;
 }
 
+export function readRequiredString(name: string, environment = process.env): string {
+  const value = readOptionalString(name, environment);
+  if (value === undefined) {
+    throw new Error(`${name} is required.`);
+  }
+  return value;
+}
+
 export function readOptionalInteger(name: string, environment = process.env): number | undefined {
   const value = readOptionalString(name, environment);
   if (value === undefined) {

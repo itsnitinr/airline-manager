@@ -47,9 +47,11 @@ pnpm-debug.log*
 
 # Local databases and container volumes
 .data/
+.docker/
 docker-data/
 postgres-data/
 redis-data/
+*.volume/
 *.sqlite
 *.sqlite3
 *.db
