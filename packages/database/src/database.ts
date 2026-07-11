@@ -7,6 +7,7 @@ export type Database = Kysely<DB>;
 
 export interface DatabaseRuntime {
   readonly database: Database;
+  readonly pool: pg.Pool;
   isReady(): Promise<boolean>;
   destroy(): Promise<void>;
 }
@@ -18,6 +19,7 @@ export function createDatabaseRuntime(options: DatabasePoolOptions): DatabaseRun
 
   return {
     database,
+    pool,
     async isReady() {
       try {
         await pool.query("SELECT 1");

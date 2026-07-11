@@ -1,7 +1,7 @@
 # Implement authentication, accounts, and ownership authorization
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 04
 
 ## Goal
@@ -48,4 +48,20 @@ be created or accessed.
 
 ## Comments
 
-None yet.
+- Implemented Better Auth 1.6.23 as the Fastify authentication adapter with verified
+  email/password registration, sign-in/out, deterministic verification and recovery email capture,
+  password-reset session revocation, rolling PostgreSQL sessions, optional environment-only Google
+  OAuth, trusted origins/CSRF checks, secure cookie policy, and endpoint-specific rate limits.
+- Added reviewed forward SQL for isolated Better Auth tables plus distinct player accounts,
+  server-owned roles, opaque resource ownership, and append-only security audit events. Auth-user,
+  player-account, and ordinary-role creation is atomic. The authorization contract always reloads
+  roles/ownership server-side and returns the same denial for missing and foreign resource IDs.
+- Documented public-safe setup and the exact ticket 08 transaction handoff: create the airline and
+  bind its opaque UUID with a transaction-scoped identity repository before committing. No airline,
+  ledger, gameplay, or gameplay-email schema was added.
+- Validated frozen install, formatting, lint, dependency boundaries, OpenAPI/client freshness,
+  type-check, unit tests, build, Compose configuration, API/migration images, blank/repeat
+  migrations, generated Kysely types, 16 database integration tests, and 7 real-PostgreSQL auth and
+  authorization integration tests. Verified cookie/origin/CORS/CSRF behavior, fake Google config,
+  rate limiting, transaction rollback, immutable audits, log/API redaction, ignored files, diff
+  whitespace, and clean Gitleaks scans of source plus Git history.

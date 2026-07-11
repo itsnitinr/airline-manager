@@ -1,13 +1,12 @@
-export type AuthorizationContext = Readonly<{
-  authenticated: boolean;
-  principalId?: string;
-  roles: readonly string[];
-}>;
-
-export const anonymousAuthorizationContext: AuthorizationContext = Object.freeze({
-  authenticated: false,
-  roles: Object.freeze([]),
-});
+export {
+  anonymousAuthorizationContext,
+  AuthorizationError,
+  requireAdministrator,
+  requireOwnedResource,
+  requireVerifiedPlayer,
+  type AuthorizationContext,
+} from "./authorization.js";
+import type { AuthorizationContext } from "./authorization.js";
 
 export type CommandContext = Readonly<{
   requestId: string;

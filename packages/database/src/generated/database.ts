@@ -40,6 +40,52 @@ export interface AdministrativeAuditRecords {
   resource_type: string;
 }
 
+export interface AuthAccount {
+  accessToken: string | null;
+  accessTokenExpiresAt: Timestamp | null;
+  accountId: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  idToken: string | null;
+  password: string | null;
+  providerId: string;
+  refreshToken: string | null;
+  refreshTokenExpiresAt: Timestamp | null;
+  scope: string | null;
+  updatedAt: Timestamp;
+  userId: string;
+}
+
+export interface AuthSession {
+  createdAt: Generated<Timestamp>;
+  expiresAt: Timestamp;
+  id: Generated<string>;
+  ipAddress: string | null;
+  token: string;
+  updatedAt: Timestamp;
+  userAgent: string | null;
+  userId: string;
+}
+
+export interface AuthUser {
+  createdAt: Generated<Timestamp>;
+  email: string;
+  emailVerified: Generated<boolean>;
+  id: Generated<string>;
+  image: string | null;
+  name: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface AuthVerification {
+  createdAt: Generated<Timestamp>;
+  expiresAt: Timestamp;
+  id: Generated<string>;
+  identifier: string;
+  updatedAt: Generated<Timestamp>;
+  value: string;
+}
+
 export interface CatalogReleaseAircraftVariants {
   aircraft_variant_id: string;
   release_id: string;
@@ -134,6 +180,19 @@ export interface OutboxEvents {
   published_at: Timestamp | null;
 }
 
+export interface PlayerAccountRoles {
+  granted_at: Generated<Timestamp>;
+  granted_by_player_account_id: string | null;
+  player_account_id: string;
+  role: string;
+}
+
+export interface PlayerAccounts {
+  authentication_user_id: string;
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+}
+
 export interface RawReferenceImports {
   dataset_name: string;
   first_retrieved_at: Timestamp;
@@ -198,10 +257,30 @@ export interface ReferenceValidationResults {
   validated_at: Generated<Timestamp>;
 }
 
+export interface ResourceOwnerships {
+  bound_at: Generated<Timestamp>;
+  player_account_id: string;
+  resource_id: string;
+  resource_type: string;
+}
+
 export interface SchemaMigrations {
   applied_at: Generated<Timestamp>;
   checksum: string;
   name: string;
+}
+
+export interface SecurityAuditEvents {
+  authentication_user_id: string | null;
+  event_type: string;
+  id: Generated<string>;
+  metadata: Generated<Json>;
+  occurred_at: Generated<Timestamp>;
+  outcome: string;
+  player_account_id: string | null;
+  request_id: string | null;
+  target_identifier: string;
+  target_type: string;
 }
 
 export interface TimezoneDatasetVersions {
@@ -240,6 +319,10 @@ export interface WorldRulesets {
 
 export interface DB {
   administrative_audit_records: AdministrativeAuditRecords;
+  auth_account: AuthAccount;
+  auth_session: AuthSession;
+  auth_user: AuthUser;
+  auth_verification: AuthVerification;
   catalog_release_aircraft_variants: CatalogReleaseAircraftVariants;
   catalog_release_airports: CatalogReleaseAirports;
   catalog_releases: CatalogReleases;
@@ -247,12 +330,16 @@ export interface DB {
   curated_airports: CuratedAirports;
   idempotency_commands: IdempotencyCommands;
   outbox_events: OutboxEvents;
+  player_account_roles: PlayerAccountRoles;
+  player_accounts: PlayerAccounts;
   raw_reference_imports: RawReferenceImports;
   raw_reference_records: RawReferenceRecords;
   reference_provenance: ReferenceProvenance;
   reference_sources: ReferenceSources;
   reference_validation_results: ReferenceValidationResults;
+  resource_ownerships: ResourceOwnerships;
   schema_migrations: SchemaMigrations;
+  security_audit_events: SecurityAuditEvents;
   timezone_dataset_versions: TimezoneDatasetVersions;
   timezone_definitions: TimezoneDefinitions;
   world_ruleset_acquisition_overrides: WorldRulesetAcquisitionOverrides;

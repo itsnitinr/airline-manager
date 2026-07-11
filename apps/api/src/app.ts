@@ -4,6 +4,7 @@ import {
   createApplicationServices,
   type ApplicationServices,
 } from "@airline-manager/application";
+import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
@@ -13,6 +14,8 @@ import { registerErrorMapping } from "./errors.js";
 import { registerEventRoutes } from "./routes/events.js";
 import { registerSystemRoutes, type ReadinessCheck } from "./routes/system.js";
 import type { AuthorizationResolver, SseAuthorizationHook } from "./types.js";
+import type { AuthenticationAdapter } from "./auth/better-auth.js";
+import { registerAuthenticationRoutes } from "./auth/fastify.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -24,6 +27,7 @@ export type ApiAppOptions = Readonly<{
   sseHeartbeatMs?: number;
   sseReconnectMs?: number;
   logger?: FastifyServerOptions["logger"];
+  authentication?: Readonly<{ adapter: AuthenticationAdapter; database: Database }>;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -90,6 +94,13 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
   });
 
   void app.register(async (routes) => {
+    if (options.authentication) {
+      registerAuthenticationRoutes(
+        routes,
+        options.authentication.adapter,
+        options.authentication.database,
+      );
+    }
     registerSystemRoutes(routes, {
       applicationServices: options.applicationServices ?? createApplicationServices(),
       checkReadiness: options.checkReadiness ?? defaultReadiness,

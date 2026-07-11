@@ -1,8 +1,8 @@
 # Airline Manager
 
 Airline Manager is a production TypeScript monorepo with independently deployable web, API, and
-simulation-worker applications. This foundation intentionally contains no gameplay, authentication,
-database schema, migrations, or production-provider configuration.
+simulation-worker applications. It includes PostgreSQL persistence, curated reference data, and a
+Better Auth authentication adapter while intentionally deferring airline gameplay to later tickets.
 
 ## Prerequisites
 
@@ -17,10 +17,12 @@ corepack enable
 pnpm install --frozen-lockfile
 ```
 
-The committed `.env.example` contains public-safe local-only values. Compose uses the same safe
-defaults so a clean checkout starts without creating an environment file. Copy it to `.env` only to
-change local ports or credentials; `.env` and every non-example environment file are ignored. Never
-reuse the example database password outside the local Compose network.
+The committed `.env.example` contains public-safe local-only values and blank authentication secret
+and OAuth fields. Before starting the API, copy it to `.env`, generate a local Better Auth secret
+with `openssl rand -base64 32`, and assign that value to `BETTER_AUTH_SECRET`. `.env` and every
+non-example environment file are ignored. Never reuse the example database password or generated
+auth secret outside the local environment. See `docs/authentication.md` for authentication,
+provider, cookie, email-capture, and ownership setup.
 
 ## Common commands
 
@@ -59,7 +61,7 @@ apps/
 packages/
   domain/        deterministic, framework-independent domain logic
   contracts/     public API contract types
-  database/      SQL migrations, generated types, and persistence adapters
+  database/      SQL migrations, generated types, identity, and persistence adapters
   config/        environment/configuration access
   test-support/  reusable deterministic test helpers
 ```

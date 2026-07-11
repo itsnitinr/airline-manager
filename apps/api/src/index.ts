@@ -11,10 +11,45 @@ import {
 } from "@airline-manager/database";
 import type { FastifyInstance } from "fastify";
 import { createApiServer } from "./app.js";
+import { createAuthenticationAdapter } from "./auth/better-auth.js";
+import { createAuthorizationResolver } from "./auth/authorization.js";
+import {
+  CapturingAuthenticationEmailDelivery,
+  type AuthenticationEmailDelivery,
+} from "./auth/email.js";
 
 export { createApiServer } from "./app.js";
 export { createOpenApiDocument } from "./openapi.js";
 export type { ApiAppOptions } from "./app.js";
+export {
+  createAuthenticationAdapter,
+  type AuthenticationAdapter,
+  type AuthenticationAdapterOptions,
+} from "./auth/better-auth.js";
+export {
+  CapturingAuthenticationEmailDelivery,
+  type AuthenticationEmail,
+  type AuthenticationEmailDelivery,
+} from "./auth/email.js";
+
+export function readGoogleProvider(environment: NodeJS.ProcessEnv) {
+  const clientId = readOptionalString("GOOGLE_OAUTH_CLIENT_ID", environment);
+  const clientSecret = readOptionalString("GOOGLE_OAUTH_CLIENT_SECRET", environment);
+  if ((clientId && !clientSecret) || (!clientId && clientSecret)) {
+    throw new Error(
+      "GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET must be configured together.",
+    );
+  }
+  return clientId && clientSecret ? { clientId, clientSecret } : undefined;
+}
+
+function readSecureCookies(environment: NodeJS.ProcessEnv, baseUrl: string): boolean {
+  const configured = readOptionalString("AUTH_COOKIE_SECURE", environment);
+  if (configured === undefined) return baseUrl.startsWith("https://");
+  if (configured === "true") return true;
+  if (configured === "false") return false;
+  throw new Error("AUTH_COOKIE_SECURE must be true or false.");
+}
 
 function readCorsOrigins(environment: NodeJS.ProcessEnv): readonly string[] {
   const configured = readOptionalString("API_CORS_ORIGINS", environment);
@@ -26,7 +61,10 @@ function readCorsOrigins(environment: NodeJS.ProcessEnv): readonly string[] {
   );
 }
 
-export async function startApi(environment = process.env): Promise<FastifyInstance> {
+export async function startApi(
+  environment = process.env,
+  dependencies: Readonly<{ authenticationEmailDelivery?: AuthenticationEmailDelivery }> = {},
+): Promise<FastifyInstance> {
   const host = readOptionalString("API_HOST", environment) ?? "127.0.0.1";
   const port = readOptionalInteger("API_PORT", environment) ?? 3001;
   const databaseRuntime = createDatabaseRuntime(readDatabasePoolOptions("api", environment));
@@ -36,9 +74,29 @@ export async function startApi(environment = process.env): Promise<FastifyInstan
   });
   const rateLimitMax = readOptionalInteger("API_RATE_LIMIT_MAX", environment);
   const sseHeartbeatMs = readOptionalInteger("API_SSE_HEARTBEAT_MS", environment);
+  const corsOrigins = readCorsOrigins(environment);
+  const authBaseUrl = readOptionalString("BETTER_AUTH_URL", environment) ?? "http://localhost:3001";
+  const emailDelivery =
+    dependencies.authenticationEmailDelivery ?? new CapturingAuthenticationEmailDelivery();
+  const google = readGoogleProvider(environment);
+  const authenticationAdapter = createAuthenticationAdapter({
+    database: databaseRuntime.database,
+    pool: databaseRuntime.pool,
+    baseUrl: authBaseUrl,
+    secret: readRequiredString("BETTER_AUTH_SECRET", environment),
+    trustedOrigins: corsOrigins,
+    secureCookies: readSecureCookies(environment, authBaseUrl),
+    emailDelivery,
+    ...(google ? { google } : {}),
+  });
   const app = createApiServer({
     checkReadiness,
-    corsOrigins: readCorsOrigins(environment),
+    corsOrigins,
+    authentication: { adapter: authenticationAdapter, database: databaseRuntime.database },
+    authorizationResolver: createAuthorizationResolver(
+      authenticationAdapter,
+      databaseRuntime.database,
+    ),
     ...(rateLimitMax === undefined ? {} : { rateLimitMax }),
     ...(sseHeartbeatMs === undefined ? {} : { sseHeartbeatMs }),
   });

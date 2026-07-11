@@ -29,3 +29,10 @@ export {
   type ProvenanceClassification,
   type PublishedCatalog,
 } from "./catalog.js";
+export {
+  playerRoles,
+  type IdentityRepository,
+  type OwnedResource,
+  type PlayerAccount,
+  type PlayerRole,
+} from "./identity.js";

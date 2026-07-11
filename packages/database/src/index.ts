@@ -16,6 +16,14 @@ export {
   type TransactionOptions,
 } from "./transactions.js";
 export { KyselyCatalogRepository } from "./catalog/repository.js";
+export { KyselyIdentityRepository } from "./identity/repository.js";
+export {
+  createSecurityAuditWriter,
+  securityAuditEventTypes,
+  type SecurityAuditEventType,
+  type SecurityAuditWriter,
+} from "./identity/audit.js";
+export { setPlayerRole } from "./identity/roles.js";
 export {
   importOurAirports,
   type AirportImportInput,

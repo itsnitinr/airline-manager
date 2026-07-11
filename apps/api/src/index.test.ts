@@ -2,7 +2,7 @@ import { Writable } from "node:stream";
 import type { ApplicationServices } from "@airline-manager/application";
 import type { FastifyInstance } from "fastify";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createApiServer, createOpenApiDocument } from "./index.js";
+import { createApiServer, createOpenApiDocument, readGoogleProvider } from "./index.js";
 import { formatSseConnectedEvent } from "./routes/events.js";
 
 const apps = new Set<FastifyInstance>();
@@ -18,6 +18,19 @@ afterEach(async () => {
 });
 
 describe("Fastify API shell", () => {
+  it("accepts only complete environment-provided Google credentials", () => {
+    expect(readGoogleProvider({})).toBeUndefined();
+    expect(
+      readGoogleProvider({
+        GOOGLE_OAUTH_CLIENT_ID: "fake-client",
+        GOOGLE_OAUTH_CLIENT_SECRET: "fake-secret",
+      }),
+    ).toEqual({ clientId: "fake-client", clientSecret: "fake-secret" });
+    expect(() => readGoogleProvider({ GOOGLE_OAUTH_CLIENT_ID: "partial" })).toThrow(
+      "must be configured together",
+    );
+  });
+
   it("preserves public health and dependency-aware readiness", async () => {
     const app = track(
       createApiServer({
@@ -175,7 +188,7 @@ describe("Fastify API shell", () => {
     expect(new TextDecoder().decode(firstChunk?.value)).toContain("id: event-42");
     expect(new TextDecoder().decode(heartbeatChunk?.value)).toContain(": heartbeat");
     expect(authorize).toHaveBeenCalledWith({
-      authorization: { authenticated: false, roles: [] },
+      authorization: { authenticated: false, emailVerified: false, roles: [] },
       cursor: "event-42",
     });
     expect(formatSseConnectedEvent(undefined)).toContain("retry: 5000");

@@ -1,4 +1,5 @@
 import type { ErrorEnvelope } from "@airline-manager/contracts";
+import { AuthorizationError } from "@airline-manager/application";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
 function envelope(
@@ -27,6 +28,10 @@ export function registerErrorMapping(app: FastifyInstance): void {
   });
 
   app.setErrorHandler((error: FastifyError, request, reply) => {
+    if (error instanceof AuthorizationError) {
+      void reply.status(error.statusCode).send(envelope(request, error.code, error.message));
+      return;
+    }
     if (error.validation) {
       void reply
         .status(400)
