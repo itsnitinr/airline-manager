@@ -35,7 +35,7 @@
     "lint": "eslint .",
     "test": "turbo run test",
     "test:boundaries": "node scripts/test-boundaries.mjs",
-    "test:database": "pnpm --filter @airline-manager/database test:integration",
+    "test:database": "turbo run build --filter=@airline-manager/database... && pnpm --filter @airline-manager/database test:integration",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
