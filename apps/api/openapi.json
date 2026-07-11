@@ -3062,6 +3062,3657 @@
         "tags": ["fleet"]
       }
     },
+    "/v1/airlines/{airlineId}/fuel/capacity-offers": {
+      "get": {
+        "operationId": "getFuelCapacityOffers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "capacityKg": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "currency": {
+                        "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                        "type": "string"
+                      },
+                      "fuelRulesVersion": {
+                        "type": "string"
+                      },
+                      "incrementalCapacityKg": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "priceMinor": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "tier": {
+                        "minimum": 2,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "tier",
+                      "capacityKg",
+                      "incrementalCapacityKg",
+                      "currency",
+                      "priceMinor",
+                      "fuelRulesVersion"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/capacity-upgrades": {
+      "post": {
+        "operationId": "purchaseFuelCapacity",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "tier": {
+                    "minimum": 2,
+                    "type": "integer"
+                  }
+                },
+                "required": ["tier"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "capacityKg": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                      "type": "string"
+                    },
+                    "fromTier": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "inventory": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "airlineId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "availableKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "capacityKg": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "capacityTier": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "currency": {
+                          "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                          "type": "string"
+                        },
+                        "inventoryValueMinor": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "minimumReserveKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "onHandKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "planningReservedKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "protectedKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "unit": {
+                          "enum": ["kg"],
+                          "type": "string"
+                        },
+                        "utilizationBasisPoints": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "version": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "weightedUnitCostDenominator": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "weightedUnitCostNumerator": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "airlineId",
+                        "unit",
+                        "onHandKg",
+                        "planningReservedKg",
+                        "minimumReserveKg",
+                        "protectedKg",
+                        "availableKg",
+                        "capacityKg",
+                        "capacityTier",
+                        "utilizationBasisPoints",
+                        "inventoryValueMinor",
+                        "currency",
+                        "weightedUnitCostNumerator",
+                        "weightedUnitCostDenominator",
+                        "version"
+                      ],
+                      "type": "object"
+                    },
+                    "journalEntryId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "priceMinor": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "toTier": {
+                      "minimum": 2,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "airlineId",
+                    "fromTier",
+                    "toTier",
+                    "capacityKg",
+                    "priceMinor",
+                    "currency",
+                    "journalEntryId",
+                    "inventory"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/forecast": {
+      "post": {
+        "operationId": "forecastFuel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "projectedConsumptionKg": {
+                    "pattern": "^[0-9]+$",
+                    "type": "string"
+                  }
+                },
+                "required": ["projectedConsumptionKg"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "advisoryOnly": {
+                      "enum": [true],
+                      "type": "boolean"
+                    },
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "minimumReserveKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "onHandKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "planningReservedKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "projectedAvailableKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "projectedConsumptionKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "projectedOnHandKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "projectedShortageKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "airlineId",
+                    "onHandKg",
+                    "planningReservedKg",
+                    "minimumReserveKg",
+                    "projectedConsumptionKg",
+                    "projectedOnHandKg",
+                    "projectedAvailableKg",
+                    "projectedShortageKg",
+                    "advisoryOnly"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/inventory": {
+      "get": {
+        "operationId": "getFuelInventory",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "availableKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "capacityKg": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "capacityTier": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "currency": {
+                      "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                      "type": "string"
+                    },
+                    "inventoryValueMinor": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "minimumReserveKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "onHandKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "planningReservedKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "protectedKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "unit": {
+                      "enum": ["kg"],
+                      "type": "string"
+                    },
+                    "utilizationBasisPoints": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "version": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "weightedUnitCostDenominator": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "weightedUnitCostNumerator": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "airlineId",
+                    "unit",
+                    "onHandKg",
+                    "planningReservedKg",
+                    "minimumReserveKg",
+                    "protectedKg",
+                    "availableKg",
+                    "capacityKg",
+                    "capacityTier",
+                    "utilizationBasisPoints",
+                    "inventoryValueMinor",
+                    "currency",
+                    "weightedUnitCostNumerator",
+                    "weightedUnitCostDenominator",
+                    "version"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/lots": {
+      "get": {
+        "operationId": "listFuelLots",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "appliedFxSnapshot": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "denominator": {
+                            "pattern": "^[1-9][0-9]*$",
+                            "type": "string"
+                          },
+                          "importId": {
+                            "anyOf": [
+                              {
+                                "format": "uuid",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "numerator": {
+                            "pattern": "^[1-9][0-9]*$",
+                            "type": "string"
+                          }
+                        },
+                        "required": ["importId", "numerator", "denominator"],
+                        "type": "object"
+                      },
+                      "costBasisMinor": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "currency": {
+                        "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                        "type": "string"
+                      },
+                      "derivedRemainingCostMinor": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "derivedRemainingQuantityKg": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "fuelRulesVersion": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "priceFormulaVersion": {
+                        "type": "string"
+                      },
+                      "provenance": {
+                        "additionalProperties": true,
+                        "type": "object"
+                      },
+                      "purchasedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "quantityKg": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "quoteId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "unitPriceDenominator": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "unitPriceNumerator": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "quoteId",
+                      "quantityKg",
+                      "costBasisMinor",
+                      "derivedRemainingQuantityKg",
+                      "derivedRemainingCostMinor",
+                      "currency",
+                      "unitPriceNumerator",
+                      "unitPriceDenominator",
+                      "fuelRulesVersion",
+                      "priceFormulaVersion",
+                      "appliedFxSnapshot",
+                      "purchasedAt",
+                      "provenance"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/movements": {
+      "get": {
+        "operationId": "listFuelMovements",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "balanceAfterKg": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "id": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "inventoryValueAfterMinor": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "inventoryValueDeltaMinor": {
+                        "pattern": "^-?[0-9]+$",
+                        "type": "string"
+                      },
+                      "occurredAt": {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "quantityDeltaKg": {
+                        "pattern": "^-?[0-9]+$",
+                        "type": "string"
+                      },
+                      "reservedAfterKg": {
+                        "pattern": "^[0-9]+$",
+                        "type": "string"
+                      },
+                      "reservedDeltaKg": {
+                        "pattern": "^-?[0-9]+$",
+                        "type": "string"
+                      },
+                      "reversesMovementId": {
+                        "anyOf": [
+                          {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "sourceId": {
+                        "type": "string"
+                      },
+                      "sourceType": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "enum": [
+                          "purchase",
+                          "consumption",
+                          "reservation",
+                          "release",
+                          "correction",
+                          "reversal",
+                          "capacity_adjustment"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "quantityDeltaKg",
+                      "reservedDeltaKg",
+                      "inventoryValueDeltaMinor",
+                      "balanceAfterKg",
+                      "reservedAfterKg",
+                      "inventoryValueAfterMinor",
+                      "sourceType",
+                      "sourceId",
+                      "reversesMovementId",
+                      "occurredAt"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/prices": {
+      "get": {
+        "operationId": "getFuelPrices",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "recentBuckets",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 48,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "bucketEnd": {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "bucketStart": {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "currency": {
+                        "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                        "type": "string"
+                      },
+                      "fuelRulesVersion": {
+                        "type": "string"
+                      },
+                      "priceFormulaVersion": {
+                        "type": "string"
+                      },
+                      "pricePerTonneMinor": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "rulesetVersion": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "enum": ["kg"],
+                        "type": "string"
+                      },
+                      "unitPriceDenominator": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      },
+                      "unitPriceNumerator": {
+                        "pattern": "^[1-9][0-9]*$",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "currency",
+                      "bucketStart",
+                      "bucketEnd",
+                      "unit",
+                      "unitPriceNumerator",
+                      "unitPriceDenominator",
+                      "pricePerTonneMinor",
+                      "rulesetVersion",
+                      "fuelRulesVersion",
+                      "priceFormulaVersion"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/purchases": {
+      "post": {
+        "operationId": "purchaseFuel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "quoteId": {
+                    "format": "uuid",
+                    "type": "string"
+                  }
+                },
+                "required": ["quoteId"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "inventory": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "airlineId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "availableKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "capacityKg": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "capacityTier": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "currency": {
+                          "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                          "type": "string"
+                        },
+                        "inventoryValueMinor": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "minimumReserveKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "onHandKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "planningReservedKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "protectedKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "unit": {
+                          "enum": ["kg"],
+                          "type": "string"
+                        },
+                        "utilizationBasisPoints": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "version": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "weightedUnitCostDenominator": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "weightedUnitCostNumerator": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "airlineId",
+                        "unit",
+                        "onHandKg",
+                        "planningReservedKg",
+                        "minimumReserveKg",
+                        "protectedKg",
+                        "availableKg",
+                        "capacityKg",
+                        "capacityTier",
+                        "utilizationBasisPoints",
+                        "inventoryValueMinor",
+                        "currency",
+                        "weightedUnitCostNumerator",
+                        "weightedUnitCostDenominator",
+                        "version"
+                      ],
+                      "type": "object"
+                    },
+                    "journalEntryId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "lot": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "appliedFxSnapshot": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "denominator": {
+                              "pattern": "^[1-9][0-9]*$",
+                              "type": "string"
+                            },
+                            "importId": {
+                              "anyOf": [
+                                {
+                                  "format": "uuid",
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "numerator": {
+                              "pattern": "^[1-9][0-9]*$",
+                              "type": "string"
+                            }
+                          },
+                          "required": ["importId", "numerator", "denominator"],
+                          "type": "object"
+                        },
+                        "costBasisMinor": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "currency": {
+                          "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                          "type": "string"
+                        },
+                        "derivedRemainingCostMinor": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "derivedRemainingQuantityKg": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "fuelRulesVersion": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "priceFormulaVersion": {
+                          "type": "string"
+                        },
+                        "provenance": {
+                          "additionalProperties": true,
+                          "type": "object"
+                        },
+                        "purchasedAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "quantityKg": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "quoteId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "unitPriceDenominator": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "unitPriceNumerator": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "quoteId",
+                        "quantityKg",
+                        "costBasisMinor",
+                        "derivedRemainingQuantityKg",
+                        "derivedRemainingCostMinor",
+                        "currency",
+                        "unitPriceNumerator",
+                        "unitPriceDenominator",
+                        "fuelRulesVersion",
+                        "priceFormulaVersion",
+                        "appliedFxSnapshot",
+                        "purchasedAt",
+                        "provenance"
+                      ],
+                      "type": "object"
+                    },
+                    "movementId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "quote": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "airlineId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "bucketStart": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "currency": {
+                          "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "priceFormulaVersion": {
+                          "type": "string"
+                        },
+                        "quantityKg": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "rulesetVersion": {
+                          "type": "string"
+                        },
+                        "totalPriceMinor": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "unitPriceDenominator": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        },
+                        "unitPriceNumerator": {
+                          "pattern": "^[1-9][0-9]*$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "airlineId",
+                        "quantityKg",
+                        "currency",
+                        "unitPriceNumerator",
+                        "unitPriceDenominator",
+                        "totalPriceMinor",
+                        "rulesetVersion",
+                        "priceFormulaVersion",
+                        "bucketStart",
+                        "createdAt",
+                        "expiresAt"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["quote", "lot", "inventory", "journalEntryId", "movementId"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/quotes": {
+      "post": {
+        "operationId": "createFuelQuote",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "quantityKg": {
+                    "pattern": "^[1-9][0-9]*$",
+                    "type": "string"
+                  }
+                },
+                "required": ["quantityKg"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "bucketStart": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "priceFormulaVersion": {
+                      "type": "string"
+                    },
+                    "quantityKg": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "rulesetVersion": {
+                      "type": "string"
+                    },
+                    "totalPriceMinor": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "unitPriceDenominator": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "unitPriceNumerator": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "airlineId",
+                    "quantityKg",
+                    "currency",
+                    "unitPriceNumerator",
+                    "unitPriceDenominator",
+                    "totalPriceMinor",
+                    "rulesetVersion",
+                    "priceFormulaVersion",
+                    "bucketStart",
+                    "createdAt",
+                    "expiresAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
+    "/v1/airlines/{airlineId}/fuel/reserve": {
+      "put": {
+        "operationId": "setFuelReserve",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "planningReservedKg": {
+                    "pattern": "^[0-9]+$",
+                    "type": "string"
+                  }
+                },
+                "required": ["planningReservedKg"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "availableKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "capacityKg": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "capacityTier": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "currency": {
+                      "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                      "type": "string"
+                    },
+                    "inventoryValueMinor": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "minimumReserveKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "onHandKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "planningReservedKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "protectedKg": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "unit": {
+                      "enum": ["kg"],
+                      "type": "string"
+                    },
+                    "utilizationBasisPoints": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    },
+                    "version": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "weightedUnitCostDenominator": {
+                      "pattern": "^[1-9][0-9]*$",
+                      "type": "string"
+                    },
+                    "weightedUnitCostNumerator": {
+                      "pattern": "^[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "airlineId",
+                    "unit",
+                    "onHandKg",
+                    "planningReservedKg",
+                    "minimumReserveKg",
+                    "protectedKg",
+                    "availableKg",
+                    "capacityKg",
+                    "capacityTier",
+                    "utilizationBasisPoints",
+                    "inventoryValueMinor",
+                    "currency",
+                    "weightedUnitCostNumerator",
+                    "weightedUnitCostDenominator",
+                    "version"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["fuel"]
+      }
+    },
     "/v1/airlines/{airlineId}/next-step": {
       "get": {
         "operationId": "getAirlineNextStepGuidance",
@@ -4741,6 +8392,10 @@
     {
       "description": "Founder lease and individual aircraft commands and queries.",
       "name": "fleet"
+    },
+    {
+      "description": "Global fuel market, inventory, reserves, and capacity.",
+      "name": "fuel"
     }
   ]
 }

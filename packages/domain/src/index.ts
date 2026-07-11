@@ -39,3 +39,4 @@ export {
 export * from "./finance.js";
 export * from "./fleet.js";
 export * from "./airline.js";
+export * from "./fuel.js";

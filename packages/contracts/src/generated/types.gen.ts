@@ -1042,6 +1042,1157 @@ export type PreviewFounderLeaseResponses = {
 export type PreviewFounderLeaseResponse =
   PreviewFounderLeaseResponses[keyof PreviewFounderLeaseResponses];
 
+export type GetFuelCapacityOffersData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/capacity-offers";
+};
+
+export type GetFuelCapacityOffersErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFuelCapacityOffersError =
+  GetFuelCapacityOffersErrors[keyof GetFuelCapacityOffersErrors];
+
+export type GetFuelCapacityOffersResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    capacityKg: string;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    fuelRulesVersion: string;
+    incrementalCapacityKg: string;
+    priceMinor: string;
+    tier: number;
+  }>;
+};
+
+export type GetFuelCapacityOffersResponse =
+  GetFuelCapacityOffersResponses[keyof GetFuelCapacityOffersResponses];
+
+export type PurchaseFuelCapacityData = {
+  body: {
+    tier: number;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/capacity-upgrades";
+};
+
+export type PurchaseFuelCapacityErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type PurchaseFuelCapacityError =
+  PurchaseFuelCapacityErrors[keyof PurchaseFuelCapacityErrors];
+
+export type PurchaseFuelCapacityResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    airlineId: string;
+    capacityKg: string;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    fromTier: number;
+    inventory: {
+      airlineId: string;
+      availableKg: string;
+      capacityKg: string;
+      capacityTier: number;
+      currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      inventoryValueMinor: string;
+      minimumReserveKg: string;
+      onHandKg: string;
+      planningReservedKg: string;
+      protectedKg: string;
+      unit: "kg";
+      utilizationBasisPoints: string;
+      version: string;
+      weightedUnitCostDenominator: string;
+      weightedUnitCostNumerator: string;
+    };
+    journalEntryId: string;
+    priceMinor: string;
+    toTier: number;
+  };
+};
+
+export type PurchaseFuelCapacityResponse =
+  PurchaseFuelCapacityResponses[keyof PurchaseFuelCapacityResponses];
+
+export type ForecastFuelData = {
+  body: {
+    projectedConsumptionKg: string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/forecast";
+};
+
+export type ForecastFuelErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ForecastFuelError = ForecastFuelErrors[keyof ForecastFuelErrors];
+
+export type ForecastFuelResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    advisoryOnly: true;
+    airlineId: string;
+    minimumReserveKg: string;
+    onHandKg: string;
+    planningReservedKg: string;
+    projectedAvailableKg: string;
+    projectedConsumptionKg: string;
+    projectedOnHandKg: string;
+    projectedShortageKg: string;
+  };
+};
+
+export type ForecastFuelResponse = ForecastFuelResponses[keyof ForecastFuelResponses];
+
+export type GetFuelInventoryData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/inventory";
+};
+
+export type GetFuelInventoryErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFuelInventoryError = GetFuelInventoryErrors[keyof GetFuelInventoryErrors];
+
+export type GetFuelInventoryResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    airlineId: string;
+    availableKg: string;
+    capacityKg: string;
+    capacityTier: number;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    inventoryValueMinor: string;
+    minimumReserveKg: string;
+    onHandKg: string;
+    planningReservedKg: string;
+    protectedKg: string;
+    unit: "kg";
+    utilizationBasisPoints: string;
+    version: string;
+    weightedUnitCostDenominator: string;
+    weightedUnitCostNumerator: string;
+  };
+};
+
+export type GetFuelInventoryResponse = GetFuelInventoryResponses[keyof GetFuelInventoryResponses];
+
+export type ListFuelLotsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/lots";
+};
+
+export type ListFuelLotsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListFuelLotsError = ListFuelLotsErrors[keyof ListFuelLotsErrors];
+
+export type ListFuelLotsResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    appliedFxSnapshot: {
+      denominator: string;
+      importId: string | unknown;
+      numerator: string;
+    };
+    costBasisMinor: string;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    derivedRemainingCostMinor: string;
+    derivedRemainingQuantityKg: string;
+    fuelRulesVersion: string;
+    id: string;
+    priceFormulaVersion: string;
+    provenance: {
+      [key: string]: unknown;
+    };
+    purchasedAt: string;
+    quantityKg: string;
+    quoteId: string;
+    unitPriceDenominator: string;
+    unitPriceNumerator: string;
+  }>;
+};
+
+export type ListFuelLotsResponse = ListFuelLotsResponses[keyof ListFuelLotsResponses];
+
+export type ListFuelMovementsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/movements";
+};
+
+export type ListFuelMovementsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListFuelMovementsError = ListFuelMovementsErrors[keyof ListFuelMovementsErrors];
+
+export type ListFuelMovementsResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    balanceAfterKg: string;
+    id: string;
+    inventoryValueAfterMinor: string;
+    inventoryValueDeltaMinor: string;
+    occurredAt: string;
+    quantityDeltaKg: string;
+    reservedAfterKg: string;
+    reservedDeltaKg: string;
+    reversesMovementId: string | unknown;
+    sourceId: string;
+    sourceType: string;
+    type:
+      | "purchase"
+      | "consumption"
+      | "reservation"
+      | "release"
+      | "correction"
+      | "reversal"
+      | "capacity_adjustment";
+  }>;
+};
+
+export type ListFuelMovementsResponse =
+  ListFuelMovementsResponses[keyof ListFuelMovementsResponses];
+
+export type GetFuelPricesData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: {
+    recentBuckets?: number;
+  };
+  url: "/v1/airlines/{airlineId}/fuel/prices";
+};
+
+export type GetFuelPricesErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFuelPricesError = GetFuelPricesErrors[keyof GetFuelPricesErrors];
+
+export type GetFuelPricesResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    bucketEnd: string;
+    bucketStart: string;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    fuelRulesVersion: string;
+    priceFormulaVersion: string;
+    pricePerTonneMinor: string;
+    rulesetVersion: string;
+    unit: "kg";
+    unitPriceDenominator: string;
+    unitPriceNumerator: string;
+  }>;
+};
+
+export type GetFuelPricesResponse = GetFuelPricesResponses[keyof GetFuelPricesResponses];
+
+export type PurchaseFuelData = {
+  body: {
+    quoteId: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/purchases";
+};
+
+export type PurchaseFuelErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type PurchaseFuelError = PurchaseFuelErrors[keyof PurchaseFuelErrors];
+
+export type PurchaseFuelResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    inventory: {
+      airlineId: string;
+      availableKg: string;
+      capacityKg: string;
+      capacityTier: number;
+      currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      inventoryValueMinor: string;
+      minimumReserveKg: string;
+      onHandKg: string;
+      planningReservedKg: string;
+      protectedKg: string;
+      unit: "kg";
+      utilizationBasisPoints: string;
+      version: string;
+      weightedUnitCostDenominator: string;
+      weightedUnitCostNumerator: string;
+    };
+    journalEntryId: string;
+    lot: {
+      appliedFxSnapshot: {
+        denominator: string;
+        importId: string | unknown;
+        numerator: string;
+      };
+      costBasisMinor: string;
+      currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      derivedRemainingCostMinor: string;
+      derivedRemainingQuantityKg: string;
+      fuelRulesVersion: string;
+      id: string;
+      priceFormulaVersion: string;
+      provenance: {
+        [key: string]: unknown;
+      };
+      purchasedAt: string;
+      quantityKg: string;
+      quoteId: string;
+      unitPriceDenominator: string;
+      unitPriceNumerator: string;
+    };
+    movementId: string;
+    quote: {
+      airlineId: string;
+      bucketStart: string;
+      createdAt: string;
+      currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      expiresAt: string;
+      id: string;
+      priceFormulaVersion: string;
+      quantityKg: string;
+      rulesetVersion: string;
+      totalPriceMinor: string;
+      unitPriceDenominator: string;
+      unitPriceNumerator: string;
+    };
+  };
+};
+
+export type PurchaseFuelResponse = PurchaseFuelResponses[keyof PurchaseFuelResponses];
+
+export type CreateFuelQuoteData = {
+  body: {
+    quantityKg: string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/quotes";
+};
+
+export type CreateFuelQuoteErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type CreateFuelQuoteError = CreateFuelQuoteErrors[keyof CreateFuelQuoteErrors];
+
+export type CreateFuelQuoteResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    airlineId: string;
+    bucketStart: string;
+    createdAt: string;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    expiresAt: string;
+    id: string;
+    priceFormulaVersion: string;
+    quantityKg: string;
+    rulesetVersion: string;
+    totalPriceMinor: string;
+    unitPriceDenominator: string;
+    unitPriceNumerator: string;
+  };
+};
+
+export type CreateFuelQuoteResponse = CreateFuelQuoteResponses[keyof CreateFuelQuoteResponses];
+
+export type SetFuelReserveData = {
+  body: {
+    planningReservedKg: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fuel/reserve";
+};
+
+export type SetFuelReserveErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type SetFuelReserveError = SetFuelReserveErrors[keyof SetFuelReserveErrors];
+
+export type SetFuelReserveResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    airlineId: string;
+    availableKg: string;
+    capacityKg: string;
+    capacityTier: number;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    inventoryValueMinor: string;
+    minimumReserveKg: string;
+    onHandKg: string;
+    planningReservedKg: string;
+    protectedKg: string;
+    unit: "kg";
+    utilizationBasisPoints: string;
+    version: string;
+    weightedUnitCostDenominator: string;
+    weightedUnitCostNumerator: string;
+  };
+};
+
+export type SetFuelReserveResponse = SetFuelReserveResponses[keyof SetFuelReserveResponses];
+
 export type GetAirlineNextStepGuidanceData = {
   body?: never;
   path: {

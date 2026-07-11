@@ -47,6 +47,11 @@ export type FoundingSelectionRequest = Readonly<{
 }>;
 
 export type FounderLeaseSelectionRequest = Readonly<{ optionCode: string }>;
+export type FuelQuantityRequest = Readonly<{ quantityKg: string }>;
+export type FuelQuotePurchaseRequest = Readonly<{ quoteId: string }>;
+export type FuelReserveRequest = Readonly<{ planningReservedKg: string }>;
+export type FuelForecastRequest = Readonly<{ projectedConsumptionKg: string }>;
+export type FuelCapacityUpgradeRequest = Readonly<{ tier: number }>;
 
 const exactMinorSchema = { type: "string", pattern: "^[0-9]+$" } as const;
 const foundingSelectionProperties = {
@@ -308,6 +313,330 @@ export const founderLeaseSelectionRequestSchema = {
   additionalProperties: false,
   required: ["optionCode"],
   properties: { optionCode: { type: "string", pattern: "^founder-[a-z0-9-]+$" } },
+} as const;
+
+const exactIntegerStringSchema = { type: "string", pattern: "^-?[0-9]+$" } as const;
+const exactPositiveStringSchema = { type: "string", pattern: "^[1-9][0-9]*$" } as const;
+const fuelCurrencySchema = {
+  type: "string",
+  enum: ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+} as const;
+
+export const fuelQuantityRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["quantityKg"],
+  properties: { quantityKg: exactPositiveStringSchema },
+} as const;
+export const fuelQuotePurchaseRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["quoteId"],
+  properties: { quoteId: { type: "string", format: "uuid" } },
+} as const;
+export const fuelReserveRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["planningReservedKg"],
+  properties: { planningReservedKg: exactMinorSchema },
+} as const;
+export const fuelForecastRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["projectedConsumptionKg"],
+  properties: { projectedConsumptionKg: exactMinorSchema },
+} as const;
+export const fuelCapacityUpgradeRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["tier"],
+  properties: { tier: { type: "integer", minimum: 2 } },
+} as const;
+
+export const fuelPriceResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "currency",
+    "bucketStart",
+    "bucketEnd",
+    "unit",
+    "unitPriceNumerator",
+    "unitPriceDenominator",
+    "pricePerTonneMinor",
+    "rulesetVersion",
+    "fuelRulesVersion",
+    "priceFormulaVersion",
+  ],
+  properties: {
+    currency: fuelCurrencySchema,
+    bucketStart: { type: "string", format: "date-time" },
+    bucketEnd: { type: "string", format: "date-time" },
+    unit: { type: "string", const: "kg" },
+    unitPriceNumerator: exactPositiveStringSchema,
+    unitPriceDenominator: exactPositiveStringSchema,
+    pricePerTonneMinor: exactPositiveStringSchema,
+    rulesetVersion: { type: "string" },
+    fuelRulesVersion: { type: "string" },
+    priceFormulaVersion: { type: "string" },
+  },
+} as const;
+export const fuelPricesResponseSchema = { type: "array", items: fuelPriceResponseSchema } as const;
+
+export const fuelQuoteResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "airlineId",
+    "quantityKg",
+    "currency",
+    "unitPriceNumerator",
+    "unitPriceDenominator",
+    "totalPriceMinor",
+    "rulesetVersion",
+    "priceFormulaVersion",
+    "bucketStart",
+    "createdAt",
+    "expiresAt",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    airlineId: { type: "string", format: "uuid" },
+    quantityKg: exactPositiveStringSchema,
+    currency: fuelCurrencySchema,
+    unitPriceNumerator: exactPositiveStringSchema,
+    unitPriceDenominator: exactPositiveStringSchema,
+    totalPriceMinor: exactPositiveStringSchema,
+    rulesetVersion: { type: "string" },
+    priceFormulaVersion: { type: "string" },
+    bucketStart: { type: "string", format: "date-time" },
+    createdAt: { type: "string", format: "date-time" },
+    expiresAt: { type: "string", format: "date-time" },
+  },
+} as const;
+
+export const fuelInventoryResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "airlineId",
+    "unit",
+    "onHandKg",
+    "planningReservedKg",
+    "minimumReserveKg",
+    "protectedKg",
+    "availableKg",
+    "capacityKg",
+    "capacityTier",
+    "utilizationBasisPoints",
+    "inventoryValueMinor",
+    "currency",
+    "weightedUnitCostNumerator",
+    "weightedUnitCostDenominator",
+    "version",
+  ],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    unit: { type: "string", const: "kg" },
+    onHandKg: exactMinorSchema,
+    planningReservedKg: exactMinorSchema,
+    minimumReserveKg: exactMinorSchema,
+    protectedKg: exactMinorSchema,
+    availableKg: exactMinorSchema,
+    capacityKg: exactPositiveStringSchema,
+    capacityTier: { type: "integer", minimum: 1 },
+    utilizationBasisPoints: exactMinorSchema,
+    inventoryValueMinor: exactMinorSchema,
+    currency: fuelCurrencySchema,
+    weightedUnitCostNumerator: exactMinorSchema,
+    weightedUnitCostDenominator: exactPositiveStringSchema,
+    version: exactPositiveStringSchema,
+  },
+} as const;
+
+export const fuelLotResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "quoteId",
+    "quantityKg",
+    "costBasisMinor",
+    "derivedRemainingQuantityKg",
+    "derivedRemainingCostMinor",
+    "currency",
+    "unitPriceNumerator",
+    "unitPriceDenominator",
+    "fuelRulesVersion",
+    "priceFormulaVersion",
+    "appliedFxSnapshot",
+    "purchasedAt",
+    "provenance",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    quoteId: { type: "string", format: "uuid" },
+    quantityKg: exactPositiveStringSchema,
+    costBasisMinor: exactPositiveStringSchema,
+    derivedRemainingQuantityKg: exactMinorSchema,
+    derivedRemainingCostMinor: exactMinorSchema,
+    currency: fuelCurrencySchema,
+    unitPriceNumerator: exactPositiveStringSchema,
+    unitPriceDenominator: exactPositiveStringSchema,
+    fuelRulesVersion: { type: "string" },
+    priceFormulaVersion: { type: "string" },
+    appliedFxSnapshot: {
+      type: "object",
+      additionalProperties: false,
+      required: ["importId", "numerator", "denominator"],
+      properties: {
+        importId: { anyOf: [{ type: "string", format: "uuid" }, { type: "null" }] },
+        numerator: exactPositiveStringSchema,
+        denominator: exactPositiveStringSchema,
+      },
+    },
+    purchasedAt: { type: "string", format: "date-time" },
+    provenance: { type: "object", additionalProperties: true },
+  },
+} as const;
+export const fuelLotsResponseSchema = { type: "array", items: fuelLotResponseSchema } as const;
+
+export const fuelMovementResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "type",
+    "quantityDeltaKg",
+    "reservedDeltaKg",
+    "inventoryValueDeltaMinor",
+    "balanceAfterKg",
+    "reservedAfterKg",
+    "inventoryValueAfterMinor",
+    "sourceType",
+    "sourceId",
+    "reversesMovementId",
+    "occurredAt",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    type: {
+      type: "string",
+      enum: [
+        "purchase",
+        "consumption",
+        "reservation",
+        "release",
+        "correction",
+        "reversal",
+        "capacity_adjustment",
+      ],
+    },
+    quantityDeltaKg: exactIntegerStringSchema,
+    reservedDeltaKg: exactIntegerStringSchema,
+    inventoryValueDeltaMinor: exactIntegerStringSchema,
+    balanceAfterKg: exactMinorSchema,
+    reservedAfterKg: exactMinorSchema,
+    inventoryValueAfterMinor: exactMinorSchema,
+    sourceType: { type: "string" },
+    sourceId: { type: "string" },
+    reversesMovementId: { anyOf: [{ type: "string", format: "uuid" }, { type: "null" }] },
+    occurredAt: { type: "string", format: "date-time" },
+  },
+} as const;
+export const fuelMovementsResponseSchema = {
+  type: "array",
+  items: fuelMovementResponseSchema,
+} as const;
+
+export const fuelPurchaseResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["quote", "lot", "inventory", "journalEntryId", "movementId"],
+  properties: {
+    quote: fuelQuoteResponseSchema,
+    lot: fuelLotResponseSchema,
+    inventory: fuelInventoryResponseSchema,
+    journalEntryId: { type: "string", format: "uuid" },
+    movementId: { type: "string", format: "uuid" },
+  },
+} as const;
+
+export const fuelForecastResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "airlineId",
+    "onHandKg",
+    "planningReservedKg",
+    "minimumReserveKg",
+    "projectedConsumptionKg",
+    "projectedOnHandKg",
+    "projectedAvailableKg",
+    "projectedShortageKg",
+    "advisoryOnly",
+  ],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    onHandKg: exactMinorSchema,
+    planningReservedKg: exactMinorSchema,
+    minimumReserveKg: exactMinorSchema,
+    projectedConsumptionKg: exactMinorSchema,
+    projectedOnHandKg: exactMinorSchema,
+    projectedAvailableKg: exactMinorSchema,
+    projectedShortageKg: exactMinorSchema,
+    advisoryOnly: { type: "boolean", const: true },
+  },
+} as const;
+
+export const fuelCapacityOfferResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "tier",
+    "capacityKg",
+    "incrementalCapacityKg",
+    "currency",
+    "priceMinor",
+    "fuelRulesVersion",
+  ],
+  properties: {
+    tier: { type: "integer", minimum: 2 },
+    capacityKg: exactPositiveStringSchema,
+    incrementalCapacityKg: exactPositiveStringSchema,
+    currency: fuelCurrencySchema,
+    priceMinor: exactPositiveStringSchema,
+    fuelRulesVersion: { type: "string" },
+  },
+} as const;
+export const fuelCapacityOffersResponseSchema = {
+  type: "array",
+  items: fuelCapacityOfferResponseSchema,
+} as const;
+export const fuelCapacityUpgradeResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "airlineId",
+    "fromTier",
+    "toTier",
+    "capacityKg",
+    "priceMinor",
+    "currency",
+    "journalEntryId",
+    "inventory",
+  ],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    fromTier: { type: "integer", minimum: 1 },
+    toTier: { type: "integer", minimum: 2 },
+    capacityKg: exactPositiveStringSchema,
+    priceMinor: exactPositiveStringSchema,
+    currency: fuelCurrencySchema,
+    journalEntryId: { type: "string", format: "uuid" },
+    inventory: fuelInventoryResponseSchema,
+  },
 } as const;
 
 const founderVariantSchema = {

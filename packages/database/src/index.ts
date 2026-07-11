@@ -35,6 +35,7 @@ export {
   fleetMaterialStages,
   type FleetMaterialStage,
 } from "./fleet/repository.js";
+export { KyselyFuelRepository } from "./fuel/repository.js";
 export {
   importOurAirports,
   type AirportImportInput,

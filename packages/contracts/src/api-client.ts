@@ -15,6 +15,36 @@ import type {
   GetAirlineNextStepGuidanceResponse,
   GetReadinessError,
   GetReadinessResponse,
+  GetFuelCapacityOffersData,
+  GetFuelCapacityOffersError,
+  GetFuelCapacityOffersResponse,
+  PurchaseFuelCapacityData,
+  PurchaseFuelCapacityError,
+  PurchaseFuelCapacityResponse,
+  ForecastFuelData,
+  ForecastFuelError,
+  ForecastFuelResponse,
+  GetFuelInventoryData,
+  GetFuelInventoryError,
+  GetFuelInventoryResponse,
+  ListFuelLotsData,
+  ListFuelLotsError,
+  ListFuelLotsResponse,
+  ListFuelMovementsData,
+  ListFuelMovementsError,
+  ListFuelMovementsResponse,
+  GetFuelPricesData,
+  GetFuelPricesError,
+  GetFuelPricesResponse,
+  PurchaseFuelData,
+  PurchaseFuelError,
+  PurchaseFuelResponse,
+  CreateFuelQuoteData,
+  CreateFuelQuoteError,
+  CreateFuelQuoteResponse,
+  SetFuelReserveData,
+  SetFuelReserveError,
+  SetFuelReserveResponse,
   PreviewAirlineFoundingData,
   PreviewAirlineFoundingError,
   PreviewAirlineFoundingResponse,
@@ -51,6 +81,32 @@ export type AirlineManagerApiClient = Readonly<{
   getAirlineNextStepGuidance: (
     input: Pick<GetAirlineNextStepGuidanceData, "path">,
   ) => Promise<GetAirlineNextStepGuidanceResponse>;
+  getFuelPrices: (
+    input: Pick<GetFuelPricesData, "path" | "query">,
+  ) => Promise<GetFuelPricesResponse>;
+  createFuelQuote: (
+    input: Pick<CreateFuelQuoteData, "path" | "body">,
+  ) => Promise<CreateFuelQuoteResponse>;
+  purchaseFuel: (
+    input: Pick<PurchaseFuelData, "path" | "body" | "headers">,
+  ) => Promise<PurchaseFuelResponse>;
+  getFuelInventory: (
+    input: Pick<GetFuelInventoryData, "path">,
+  ) => Promise<GetFuelInventoryResponse>;
+  listFuelLots: (input: Pick<ListFuelLotsData, "path">) => Promise<ListFuelLotsResponse>;
+  listFuelMovements: (
+    input: Pick<ListFuelMovementsData, "path">,
+  ) => Promise<ListFuelMovementsResponse>;
+  setFuelReserve: (
+    input: Pick<SetFuelReserveData, "path" | "body" | "headers">,
+  ) => Promise<SetFuelReserveResponse>;
+  forecastFuel: (input: Pick<ForecastFuelData, "path" | "body">) => Promise<ForecastFuelResponse>;
+  getFuelCapacityOffers: (
+    input: Pick<GetFuelCapacityOffersData, "path">,
+  ) => Promise<GetFuelCapacityOffersResponse>;
+  purchaseFuelCapacity: (
+    input: Pick<PurchaseFuelCapacityData, "path" | "body" | "headers">,
+  ) => Promise<PurchaseFuelCapacityResponse>;
   eventsUrl: (input?: Pick<SubscribeToEventsData, "query">) => string;
 }>;
 
@@ -122,6 +178,95 @@ export function createApiClient(
       readJson<GetAirlineNextStepGuidanceResponse, GetAirlineNextStepGuidanceError>(
         `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/next-step`,
         { credentials: "include" },
+      ),
+    getFuelPrices: (input) => {
+      const query = input.query?.recentBuckets ? `?recentBuckets=${input.query.recentBuckets}` : "";
+      return readJson<GetFuelPricesResponse, GetFuelPricesError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/prices${query}`,
+        { credentials: "include" },
+      );
+    },
+    createFuelQuote: (input) =>
+      readJson<CreateFuelQuoteResponse, CreateFuelQuoteError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/quotes`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(input.body),
+        },
+        [201],
+      ),
+    purchaseFuel: (input) =>
+      readJson<PurchaseFuelResponse, PurchaseFuelError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/purchases`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+            "idempotency-key": input.headers["idempotency-key"],
+          },
+          body: JSON.stringify(input.body),
+        },
+        [201],
+      ),
+    getFuelInventory: (input) =>
+      readJson<GetFuelInventoryResponse, GetFuelInventoryError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/inventory`,
+        { credentials: "include" },
+      ),
+    listFuelLots: (input) =>
+      readJson<ListFuelLotsResponse, ListFuelLotsError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/lots`,
+        { credentials: "include" },
+      ),
+    listFuelMovements: (input) =>
+      readJson<ListFuelMovementsResponse, ListFuelMovementsError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/movements`,
+        { credentials: "include" },
+      ),
+    setFuelReserve: (input) =>
+      readJson<SetFuelReserveResponse, SetFuelReserveError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/reserve`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+            "idempotency-key": input.headers["idempotency-key"],
+          },
+          body: JSON.stringify(input.body),
+        },
+      ),
+    forecastFuel: (input) =>
+      readJson<ForecastFuelResponse, ForecastFuelError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/forecast`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(input.body),
+        },
+      ),
+    getFuelCapacityOffers: (input) =>
+      readJson<GetFuelCapacityOffersResponse, GetFuelCapacityOffersError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/capacity-offers`,
+        { credentials: "include" },
+      ),
+    purchaseFuelCapacity: (input) =>
+      readJson<PurchaseFuelCapacityResponse, PurchaseFuelCapacityError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fuel/capacity-upgrades`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+            "idempotency-key": input.headers["idempotency-key"],
+          },
+          body: JSON.stringify(input.body),
+        },
+        [201],
       ),
     eventsUrl: (input) => {
       const url = new URL(`${baseUrl}/v1/events`);

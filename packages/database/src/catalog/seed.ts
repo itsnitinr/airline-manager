@@ -9,6 +9,7 @@ import {
   readAircraftFixture,
   readAirportFixture,
   readFounderPackageFixture,
+  readFuelRulesFixture,
   readFoundingBalanceFixture,
   readSourceFixture,
 } from "./fixtures.js";
@@ -430,6 +431,33 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
   }
   await sql`UPDATE founder_package_versions SET status = 'active'
     WHERE id = ${packageVersionId}::uuid AND status = 'draft'`.execute(database);
+
+  const fuel = await readFuelRulesFixture();
+  if (fuel.world_ruleset_version !== worldRulesetVersion) {
+    throw new Error("Fuel rules fixture selects a different world ruleset.");
+  }
+  await sql`INSERT INTO fuel_ruleset_versions
+    (world_ruleset_id, version, status, price_formula_version, time_bucket_minutes,
+     quote_ttl_seconds, world_seed, base_price_per_tonne_minor, volatility_basis_points,
+     minimum_reserve_kg, activated_at)
+    VALUES (${rulesetId}::uuid, ${fuel.version}, 'draft', ${fuel.price_formula_version},
+      ${fuel.time_bucket_minutes}, ${fuel.quote_ttl_seconds}, ${fuel.world_seed},
+      ${JSON.stringify(fuel.base_price_per_tonne_minor)}::jsonb,
+      ${fuel.volatility_basis_points}, ${fuel.minimum_reserve_kg}::bigint, NULL)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  const fuelVersion = await sql<{ id: string }>`SELECT id FROM fuel_ruleset_versions
+    WHERE version = ${fuel.version}`.execute(database);
+  const fuelVersionId = fuelVersion.rows[0]?.id;
+  if (!fuelVersionId) throw new Error("Fuel ruleset version was not created.");
+  for (const tier of fuel.capacity_tiers) {
+    await sql`INSERT INTO fuel_capacity_tiers
+      (fuel_ruleset_version_id, tier, capacity_kg, upgrade_price_minor)
+      VALUES (${fuelVersionId}::uuid, ${tier.tier}, ${tier.capacity_kg}::bigint,
+        ${JSON.stringify(tier.upgrade_price_minor)}::jsonb)
+      ON CONFLICT (fuel_ruleset_version_id, tier) DO NOTHING`.execute(database);
+  }
+  await sql`UPDATE fuel_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
+    WHERE id = ${fuelVersionId}::uuid AND status = 'draft'`.execute(database);
 
   return {
     releaseVersion,

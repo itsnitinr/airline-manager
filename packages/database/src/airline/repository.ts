@@ -391,6 +391,24 @@ export class KyselyAirlineFoundingRepository implements AirlineFoundingRepositor
               ${context.normalizedName}, true, ${selection.homeJurisdiction}, ${context.airport.id}::uuid,
               ${selection.reportingCurrency}, ${JSON.stringify(selection.brand)}::jsonb,
               ${now.toISOString()}::timestamptz)`.execute(transaction);
+          await sql`INSERT INTO airline_fuel_inventories
+            (airline_id, fuel_ruleset_version_id, capacity_tier_id, minimum_reserve_kg,
+             created_at, updated_at)
+            SELECT ${airlineId}::uuid, fr.id, t.id, fr.minimum_reserve_kg,
+              ${now.toISOString()}::timestamptz, ${now.toISOString()}::timestamptz
+            FROM fuel_ruleset_versions fr JOIN fuel_capacity_tiers t
+              ON t.fuel_ruleset_version_id = fr.id AND t.tier = 1
+            WHERE fr.world_ruleset_id = ${context.rulesetId}::uuid AND fr.status = 'active'`.execute(
+            transaction,
+          );
+          await sql`INSERT INTO fuel_capacity_history
+            (airline_id, from_tier_id, to_tier_id, price_minor, currency,
+             source_idempotency_key, applied_at)
+            SELECT ${airlineId}::uuid, NULL, i.capacity_tier_id, 0, ${selection.reportingCurrency},
+              ${`founding:${idempotencyKey}`}, ${now.toISOString()}::timestamptz
+            FROM airline_fuel_inventories i WHERE i.airline_id = ${airlineId}::uuid`.execute(
+            transaction,
+          );
           await this.stage("airline");
 
           const station = await sql<{ id: string }>`INSERT INTO airline_stations

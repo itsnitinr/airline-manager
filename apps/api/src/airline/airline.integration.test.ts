@@ -1,9 +1,10 @@
 import { randomBytes, randomUUID } from "node:crypto";
-import { AirlineFoundingService, FleetService } from "@airline-manager/application";
+import { AirlineFoundingService, FleetService, FuelService } from "@airline-manager/application";
 import type { FoundingSelectionRequest } from "@airline-manager/contracts";
 import {
   KyselyAirlineFoundingRepository,
   KyselyFleetRepository,
+  KyselyFuelRepository,
   KyselyIdentityRepository,
   createDatabaseRuntime,
   readDatabasePoolOptions,
@@ -67,6 +68,11 @@ function createFixture() {
     ),
     fleetService: new FleetService(
       new KyselyFleetRepository(runtime.database),
+      new KyselyIdentityRepository(runtime.database),
+      { now: () => new Date("2026-07-11T12:00:00.000Z") },
+    ),
+    fuelService: new FuelService(
+      new KyselyFuelRepository(runtime.database),
       new KyselyIdentityRepository(runtime.database),
       { now: () => new Date("2026-07-11T12:00:00.000Z") },
     ),
@@ -381,5 +387,150 @@ describe("authenticated airline founding API", () => {
     expect(foreign.statusCode).toBe(403);
     expect(missing.statusCode).toBe(403);
     expect(foreign.body).not.toMatch(/cookie|token|password|SELECT|constraint/i);
+  });
+});
+
+describe("authenticated global fuel API", () => {
+  async function foundApiAirline() {
+    const fixture = createFixture();
+    const cookie = await registerVerifiedSession(fixture.app, fixture.email);
+    const founded = await fixture.app.inject({
+      method: "POST",
+      url: "/v1/airlines/founding/confirm",
+      headers: { cookie, "idempotency-key": `fuel-founding-${randomUUID()}` },
+      payload: {
+        ...selection,
+        airlineName: `Fuel API ${randomUUID().slice(0, 8)}`,
+        acceptFoundingLoan: false,
+      },
+    });
+    expect(founded.statusCode).toBe(201);
+    return { ...fixture, cookie, airlineId: String(founded.json().airlineId) };
+  }
+
+  it("serves prices, quote, purchase, inventory, lots, movements, reserve, forecast, and upgrades", async () => {
+    const { app, cookie, airlineId } = await foundApiAirline();
+    const prices = await app.inject({
+      method: "GET",
+      url: `/v1/airlines/${airlineId}/fuel/prices?recentBuckets=2`,
+      headers: { cookie },
+    });
+    expect(prices.statusCode).toBe(200);
+    expect(prices.json()).toHaveLength(2);
+    const quote = await app.inject({
+      method: "POST",
+      url: `/v1/airlines/${airlineId}/fuel/quotes`,
+      headers: { cookie },
+      payload: { quantityKg: "10000" },
+    });
+    expect(quote.statusCode).toBe(201);
+    const purchaseInput = {
+      method: "POST" as const,
+      url: `/v1/airlines/${airlineId}/fuel/purchases`,
+      headers: { cookie, "idempotency-key": "api-fuel-purchase" },
+      payload: { quoteId: String(quote.json().id) },
+    };
+    const purchase = await app.inject(purchaseInput);
+    expect(purchase.statusCode).toBe(201);
+    expect((await app.inject(purchaseInput)).json()).toEqual(purchase.json());
+    const inventory = await app.inject({
+      method: "GET",
+      url: `/v1/airlines/${airlineId}/fuel/inventory`,
+      headers: { cookie },
+    });
+    expect(inventory.json()).toMatchObject({ onHandKg: "10000", capacityKg: "100000", unit: "kg" });
+    expect(
+      (
+        await app.inject({
+          method: "GET",
+          url: `/v1/airlines/${airlineId}/fuel/lots`,
+          headers: { cookie },
+        })
+      ).json(),
+    ).toHaveLength(1);
+    expect(
+      (
+        await app.inject({
+          method: "GET",
+          url: `/v1/airlines/${airlineId}/fuel/movements`,
+          headers: { cookie },
+        })
+      ).json(),
+    ).toHaveLength(1);
+    const reserve = await app.inject({
+      method: "PUT",
+      url: `/v1/airlines/${airlineId}/fuel/reserve`,
+      headers: { cookie, "idempotency-key": "api-fuel-reserve" },
+      payload: { planningReservedKg: "6000" },
+    });
+    expect(reserve.json()).toMatchObject({ planningReservedKg: "6000", availableKg: "4000" });
+    const forecast = await app.inject({
+      method: "POST",
+      url: `/v1/airlines/${airlineId}/fuel/forecast`,
+      headers: { cookie },
+      payload: { projectedConsumptionKg: "8000" },
+    });
+    expect(forecast.json()).toMatchObject({
+      projectedOnHandKg: "2000",
+      projectedShortageKg: "4000",
+      advisoryOnly: true,
+    });
+    const offers = await app.inject({
+      method: "GET",
+      url: `/v1/airlines/${airlineId}/fuel/capacity-offers`,
+      headers: { cookie },
+    });
+    expect(offers.json()).toHaveLength(2);
+    const upgrade = await app.inject({
+      method: "POST",
+      url: `/v1/airlines/${airlineId}/fuel/capacity-upgrades`,
+      headers: { cookie, "idempotency-key": "api-capacity-upgrade" },
+      payload: { tier: 2 },
+    });
+    expect(upgrade.statusCode).toBe(201);
+    expect(upgrade.json()).toMatchObject({ fromTier: 1, toTier: 2, capacityKg: "250000" });
+  });
+
+  it("requires ownership, rejects ID substitution, and returns explainable bounded errors", async () => {
+    const owner = await foundApiAirline();
+    const attacker = await foundApiAirline();
+    const foreign = await attacker.app.inject({
+      method: "GET",
+      url: `/v1/airlines/${owner.airlineId}/fuel/inventory`,
+      headers: { cookie: attacker.cookie },
+    });
+    const missing = await attacker.app.inject({
+      method: "GET",
+      url: `/v1/airlines/${randomUUID()}/fuel/inventory`,
+      headers: { cookie: attacker.cookie },
+    });
+    expect(foreign.statusCode).toBe(403);
+    expect(missing.statusCode).toBe(403);
+    expect(foreign.json().error.message).toBe(missing.json().error.message);
+    const malformed = await owner.app.inject({
+      method: "POST",
+      url: `/v1/airlines/${owner.airlineId}/fuel/quotes`,
+      headers: { cookie: owner.cookie },
+      payload: { quantityKg: "1.5", token: "must-not-echo" },
+    });
+    expect(malformed.statusCode).toBe(400);
+    expect(malformed.body).not.toContain("must-not-echo");
+    const tooLargeQuote = await owner.app.inject({
+      method: "POST",
+      url: `/v1/airlines/${owner.airlineId}/fuel/quotes`,
+      headers: { cookie: owner.cookie },
+      payload: { quantityKg: "100001" },
+    });
+    const denied = await owner.app.inject({
+      method: "POST",
+      url: `/v1/airlines/${owner.airlineId}/fuel/purchases`,
+      headers: { cookie: owner.cookie, "idempotency-key": "capacity-denial" },
+      payload: { quoteId: String(tooLargeQuote.json().id) },
+    });
+    expect(denied.statusCode).toBe(409);
+    expect(denied.json()).toMatchObject({
+      error: { code: "fuel_capacity_exceeded", message: expect.stringContaining("capacity") },
+    });
+    expect(denied.body).not.toMatch(/SELECT|constraint|password|cookie|token/i);
   });
 });

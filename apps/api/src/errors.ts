@@ -1,6 +1,6 @@
 import type { ErrorEnvelope } from "@airline-manager/contracts";
 import { AuthorizationError } from "@airline-manager/application";
-import { FleetDomainError, FoundingDomainError } from "@airline-manager/domain";
+import { FleetDomainError, FoundingDomainError, FuelDomainError } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
 function envelope(
@@ -55,6 +55,27 @@ export function registerErrorMapping(app: FastifyInstance): void {
         "invalid_lease_transition",
       ]);
       const hiddenCodes = new Set(["aircraft_not_found", "founder_package_not_found"]);
+      void reply
+        .status(hiddenCodes.has(error.code) ? 403 : conflictCodes.has(error.code) ? 409 : 400)
+        .send(envelope(request, error.code, error.message));
+      return;
+    }
+    if (error instanceof FuelDomainError) {
+      const conflictCodes = new Set([
+        "idempotency_conflict",
+        "fuel_quote_expired",
+        "fuel_quote_already_accepted",
+        "insufficient_cash",
+        "fuel_capacity_exceeded",
+        "insufficient_fuel",
+        "fuel_movement_already_reversed",
+      ]);
+      const hiddenCodes = new Set([
+        "fuel_not_found",
+        "fuel_quote_not_found",
+        "fuel_quote_wrong_airline",
+        "fuel_movement_not_found",
+      ]);
       void reply
         .status(hiddenCodes.has(error.code) ? 403 : conflictCodes.has(error.code) ? 409 : 400)
         .send(envelope(request, error.code, error.message));

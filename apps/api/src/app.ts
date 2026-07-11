@@ -5,6 +5,7 @@ import {
   type ApplicationServices,
   type AirlineFoundingService,
   type FleetService,
+  type FuelService,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -19,6 +20,7 @@ import type { AuthorizationResolver, SseAuthorizationHook } from "./types.js";
 import type { AuthenticationAdapter } from "./auth/better-auth.js";
 import { registerAuthenticationRoutes } from "./auth/fastify.js";
 import { registerAirlineRoutes } from "./routes/airlines.js";
+import { registerFuelRoutes } from "./routes/fuel.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -33,6 +35,7 @@ export type ApiAppOptions = Readonly<{
   authentication?: Readonly<{ adapter: AuthenticationAdapter; database: Database }>;
   airlineFoundingService?: AirlineFoundingService;
   fleetService?: FleetService;
+  fuelService?: FuelService;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -80,6 +83,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
           name: "fleet",
           description: "Founder lease and individual aircraft commands and queries.",
         },
+        { name: "fuel", description: "Global fuel market, inventory, reserves, and capacity." },
       ],
     },
   });
@@ -116,6 +120,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
       checkReadiness: options.checkReadiness ?? defaultReadiness,
     });
     registerAirlineRoutes(routes, options.airlineFoundingService, options.fleetService);
+    registerFuelRoutes(routes, options.fuelService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,
       heartbeatMs: options.sseHeartbeatMs ?? 15_000,

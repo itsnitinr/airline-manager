@@ -1,0 +1,56 @@
+{
+  "version": "fuel-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "price_formula_version": "seeded-bucket-fnv1a64-v1",
+  "world_seed": "slice-one-global-fuel-2026",
+  "time_bucket_minutes": 60,
+  "quote_ttl_seconds": 300,
+  "volatility_basis_points": 1200,
+  "minimum_reserve_kg": "5000",
+  "base_price_per_tonne_minor": {
+    "CHF": "78000",
+    "EUR": "82000",
+    "GBP": "70000",
+    "JPY": "13200000",
+    "KWD": "250000",
+    "USD": "90000"
+  },
+  "capacity_tiers": [
+    {
+      "tier": 1,
+      "capacity_kg": "100000",
+      "upgrade_price_minor": {
+        "CHF": "0",
+        "EUR": "0",
+        "GBP": "0",
+        "JPY": "0",
+        "KWD": "0",
+        "USD": "0"
+      }
+    },
+    {
+      "tier": 2,
+      "capacity_kg": "250000",
+      "upgrade_price_minor": {
+        "CHF": "15000000",
+        "EUR": "15500000",
+        "GBP": "13500000",
+        "JPY": "2500000000",
+        "KWD": "47000000",
+        "USD": "17000000"
+      }
+    },
+    {
+      "tier": 3,
+      "capacity_kg": "500000",
+      "upgrade_price_minor": {
+        "CHF": "30000000",
+        "EUR": "31000000",
+        "GBP": "27000000",
+        "JPY": "5000000000",
+        "KWD": "94000000",
+        "USD": "34000000"
+      }
+    }
+  ]
+}

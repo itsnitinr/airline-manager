@@ -103,6 +103,19 @@ export interface AircraftLifecycleEvents {
   occurred_at: Timestamp;
 }
 
+export interface AirlineFuelInventories {
+  airline_id: string;
+  capacity_tier_id: string;
+  created_at: Generated<Timestamp>;
+  fuel_ruleset_version_id: string;
+  inventory_value_minor: Generated<Int8>;
+  minimum_reserve_kg: Generated<Int8>;
+  on_hand_kg: Generated<Int8>;
+  planning_reserved_kg: Generated<Int8>;
+  updated_at: Generated<Timestamp>;
+  version: Generated<Int8>;
+}
+
 export interface Airlines {
   brand: Json;
   career_id: string;
@@ -391,6 +404,101 @@ export interface FoundingLoanSchedule {
   principal_minor: Int8;
   status: Generated<string>;
   total_minor: Generated<Int8 | null>;
+}
+
+export interface FuelCapacityHistory {
+  airline_id: string;
+  applied_at: Timestamp;
+  currency: string;
+  from_tier_id: string | null;
+  id: Generated<string>;
+  ledger_journal_entry_id: string | null;
+  price_minor: Int8;
+  source_idempotency_key: string;
+  to_tier_id: string;
+}
+
+export interface FuelCapacityTiers {
+  capacity_kg: Int8;
+  fuel_ruleset_version_id: string;
+  id: Generated<string>;
+  tier: number;
+  upgrade_price_minor: Json;
+}
+
+export interface FuelInventoryMovements {
+  airline_id: string;
+  balance_after_kg: Int8;
+  id: Generated<string>;
+  inventory_value_after_minor: Int8;
+  inventory_value_delta_minor: Int8;
+  ledger_journal_entry_id: string | null;
+  metadata: Generated<Json>;
+  movement_type: string;
+  occurred_at: Timestamp;
+  purchase_lot_id: string | null;
+  quantity_delta_kg: Int8;
+  reserved_after_kg: Int8;
+  reserved_delta_kg: Generated<Int8>;
+  reverses_movement_id: string | null;
+  source_id: string;
+  source_idempotency_key: string;
+  source_type: string;
+}
+
+export interface FuelPurchaseLots {
+  airline_id: string;
+  cost_basis_minor: Int8;
+  currency: string;
+  exchange_rate_denominator: Int8;
+  exchange_rate_import_id: string | null;
+  exchange_rate_numerator: Int8;
+  fuel_ruleset_version: string;
+  id: Generated<string>;
+  ledger_journal_entry_id: string;
+  price_formula_version: string;
+  provenance: Json;
+  purchased_at: Timestamp;
+  quantity_kg: Int8;
+  quote_id: string;
+  source_idempotency_key: string;
+  unit_price_denominator: Int8;
+  unit_price_numerator: Int8;
+}
+
+export interface FuelPurchaseQuotes {
+  accepted_at: Timestamp | null;
+  airline_id: string;
+  created_at: Timestamp;
+  currency: string;
+  exchange_rate_denominator: Int8;
+  exchange_rate_import_id: string | null;
+  exchange_rate_numerator: Int8;
+  expires_at: Timestamp;
+  fuel_ruleset_version_id: string;
+  id: Generated<string>;
+  price_formula_version: string;
+  quantity_kg: Int8;
+  time_bucket_start: Timestamp;
+  total_price_minor: Int8;
+  unit_price_denominator: Int8;
+  unit_price_numerator: Int8;
+}
+
+export interface FuelRulesetVersions {
+  activated_at: Timestamp | null;
+  base_price_per_tonne_minor: Json;
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  minimum_reserve_kg: Int8;
+  price_formula_version: string;
+  quote_ttl_seconds: number;
+  status: string;
+  time_bucket_minutes: number;
+  version: string;
+  volatility_basis_points: number;
+  world_ruleset_id: string;
+  world_seed: string;
 }
 
 export interface GameWorlds {
@@ -737,6 +845,7 @@ export interface DB {
   aircraft_cabin_configurations: AircraftCabinConfigurations;
   aircraft_lessors: AircraftLessors;
   aircraft_lifecycle_events: AircraftLifecycleEvents;
+  airline_fuel_inventories: AirlineFuelInventories;
   airline_stations: AirlineStations;
   airlines: Airlines;
   auth_account: AuthAccount;
@@ -762,6 +871,12 @@ export interface DB {
   founding_balance_versions: FoundingBalanceVersions;
   founding_loan_schedule: FoundingLoanSchedule;
   founding_loans: FoundingLoans;
+  fuel_capacity_history: FuelCapacityHistory;
+  fuel_capacity_tiers: FuelCapacityTiers;
+  fuel_inventory_movements: FuelInventoryMovements;
+  fuel_purchase_lots: FuelPurchaseLots;
+  fuel_purchase_quotes: FuelPurchaseQuotes;
+  fuel_ruleset_versions: FuelRulesetVersions;
   game_worlds: GameWorlds;
   idempotency_commands: IdempotencyCommands;
   journal_entries: JournalEntries;

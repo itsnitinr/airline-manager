@@ -65,3 +65,4 @@ export { GetPublishedCatalogHandler, type GetPublishedCatalog } from "./catalog.
 export { FinancePostingService } from "./finance.js";
 export { AirlineFoundingService } from "./airline.js";
 export { DueAircraftDeliveryHandler, FleetService } from "./fleet.js";
+export { FuelConsumptionService, FuelService } from "./fuel.js";

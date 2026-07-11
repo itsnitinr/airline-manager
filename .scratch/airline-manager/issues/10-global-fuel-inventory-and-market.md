@@ -1,7 +1,7 @@
 # Implement global fuel inventory, capacity, and purchasing
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 07, 08
 
 ## Goal
@@ -43,6 +43,32 @@ inventory that later flight settlement can consume safely.
 - ADR-0031: Bounded offline failure and reserves.
 - ADR-0027: Ledger-backed inventory value.
 
+## Answer
+
+Implemented the global fuel market, exact inventory and valuation model,
+capacity investments, generic consumption boundary, authenticated APIs, and
+required deterministic/property/PostgreSQL verification described below.
+
 ## Comments
 
-None yet.
+- Implemented one airline-wide integer-kilogram inventory because mass is stable
+  across temperature and permits exact `bigint` conservation. Fuel rules,
+  deterministic hourly global prices, quote lifetime, reserve default, and the
+  finite capacity ladder are offline, versioned, and immutable after activation.
+- Chose perpetual weighted-average valuation. Consumption removes a half-even
+  proportional cost (or the complete residual value on final consumption),
+  while immutable lots retain acquisition/price/FX provenance and append-only
+  movements retain every physical and valuation effect. Corrections and
+  reversals are explicit movements and adjusting/reversing ledger journals.
+- Purchases, externally calculated consumption, reserve changes, corrections,
+  reversals, and capacity upgrades lock the global inventory in serializable
+  transactions and commit idempotency, ledger, movements/lots/history, and
+  outbox state atomically. Forecasts and reserves remain advisory partitions and
+  never make authoritative on-hand fuel negative.
+- Validation passed: frozen install; formatting, lint, boundary, type, unit and
+  250-run property tests; production build; OpenAPI/generated-client freshness;
+  blank and repeat migrations, fixture seed, migration and generated Kysely type
+  freshness; 66 real-PostgreSQL database integration tests and 15 authenticated
+  API integration tests, including concurrent cash/capacity contention,
+  ownership substitution denial, exact ledger reconciliation, all movement
+  classes, quote expiry, reserve/forecast behavior, and sensitive-error checks.

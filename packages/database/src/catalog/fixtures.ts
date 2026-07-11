@@ -102,6 +102,23 @@ export type FounderPackageFixture = Readonly<{
   }>[];
 }>;
 
+export type FuelRulesFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  price_formula_version: string;
+  world_seed: string;
+  time_bucket_minutes: number;
+  quote_ttl_seconds: number;
+  volatility_basis_points: number;
+  minimum_reserve_kg: string;
+  base_price_per_tonne_minor: Readonly<Record<string, string>>;
+  capacity_tiers: readonly Readonly<{
+    tier: number;
+    capacity_kg: string;
+    upgrade_price_minor: Readonly<Record<string, string>>;
+  }>[];
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -124,4 +141,8 @@ export function readFoundingBalanceFixture(): Promise<FoundingBalanceFixture> {
 
 export function readFounderPackageFixture(): Promise<FounderPackageFixture> {
   return readJson(new URL("../../data/founder-packages-v1.json", import.meta.url));
+}
+
+export function readFuelRulesFixture(): Promise<FuelRulesFixture> {
+  return readJson(new URL("../../data/fuel-rules-v1.json", import.meta.url));
 }
