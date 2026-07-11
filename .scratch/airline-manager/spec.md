@@ -1,6 +1,6 @@
 # Airline Manager Product Spec
 
-Status: awaiting-shared-understanding-confirmation
+Status: implementation-planned
 
 ## Vision
 
@@ -324,15 +324,46 @@ an actual backend and database.
 No core product or architecture branches remain open for the first playable
 slice. Detailed balance constants, the exact curated records, and implementation
 task estimates are delivery work governed by the accepted rules above.
-2. Definition and boundaries of realism.
-3. Core gameplay loop and progression.
-4. Flight scheduling and operational simulation.
-5. Passenger and cargo demand model.
-6. Pricing, finance, fuel, maintenance, staffing, and disruptions.
-7. Future multiplayer competition, cooperation, and anti-abuse rules.
-8. Data licensing and update strategy.
-9. Backend architecture, persistence, and simulation processing.
-10. MVP boundary and delivery sequence.
+
+## Slice-one implementation tickets
+
+### Foundation
+
+1. [Scaffold the TypeScript monorepo](issues/01-scaffold-typescript-monorepo.md)
+2. [Establish local infrastructure and CI quality gates](issues/02-local-infrastructure-and-ci.md)
+3. [Build the PostgreSQL and Kysely persistence foundation](issues/03-postgresql-kysely-foundation.md)
+4. [Implement the Fastify API and worker application shells](issues/04-fastify-api-and-worker-shell.md)
+5. [Build the curated reference-data catalog pipeline](issues/05-reference-data-catalog-pipeline.md)
+6. [Implement authentication, accounts, and ownership authorization](issues/06-authentication-accounts-and-ownership.md)
+7. [Implement the double-entry ledger and multi-currency foundation](issues/07-double-entry-ledger-and-currencies.md)
+
+### Career and airline operations
+
+8. [Implement airline founding and career bootstrap](issues/08-airline-founding-career-bootstrap.md)
+9. [Implement the founder lease and fleet model](issues/09-founder-lease-and-fleet-model.md)
+10. [Implement global fuel inventory, capacity, and purchasing](issues/10-global-fuel-inventory-and-market.md)
+11. [Implement direct passenger demand, bookings, competition, and pricing](issues/11-direct-passenger-market-bookings-and-pricing.md)
+12. [Implement routes, recurring timetables, and aircraft rotations](issues/12-routes-timetables-and-aircraft-rotations.md)
+13. [Implement slice-one qualified workforce capacity](issues/13-basic-qualified-workforce.md)
+14. [Implement slice-one aircraft maintenance and condition](issues/14-basic-aircraft-maintenance.md)
+15. [Implement generated weather and operational flight planning](issues/15-generated-weather-and-flight-planning.md)
+
+### Persistent lifecycle
+
+16. [Implement outbox delivery, BullMQ workers, and reconciliation](issues/16-outbox-bullmq-and-reconciliation-runtime.md)
+17. [Implement the persistent flight lifecycle and settlement](issues/17-persistent-flight-lifecycle-and-settlement.md)
+18. [Implement persisted notifications, SSE, and browser delivery](issues/18-notifications-sse-and-browser-delivery.md)
+
+### Product surfaces
+
+19. [Build the player shell, design system, map, and onboarding](issues/19-player-shell-design-system-and-onboarding.md)
+20. [Build route, fleet, and operations planning UI](issues/20-route-fleet-and-operations-planning-ui.md)
+21. [Build live operations, finance, and notification views](issues/21-operations-finance-and-notification-ui.md)
+22. [Build the protected administration console](issues/22-protected-administration-console.md)
+
+### Release
+
+23. [Harden, verify, and release the first playable slice](issues/23-end-to-end-hardening-and-slice-one-release.md)
 
 ## Decision log
 
