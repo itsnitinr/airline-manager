@@ -37,3 +37,4 @@ export {
   type PlayerRole,
 } from "./identity.js";
 export * from "./finance.js";
+export * from "./airline.js";

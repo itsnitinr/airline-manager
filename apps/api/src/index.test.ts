@@ -204,6 +204,18 @@ describe("Fastify API shell", () => {
       paths: {
         "/v1/system/commands/sample": { post: { operationId: "executeSampleCommand" } },
         "/v1/events": { get: { operationId: "subscribeToEvents" } },
+        "/v1/airlines/founding/preview": {
+          post: { operationId: "previewAirlineFounding" },
+        },
+        "/v1/airlines/founding/confirm": {
+          post: { operationId: "confirmAirlineFounding" },
+        },
+        "/v1/airlines/{airlineId}": {
+          get: { operationId: "getAirlineCareerSummary" },
+        },
+        "/v1/airlines/{airlineId}/next-step": {
+          get: { operationId: "getAirlineNextStepGuidance" },
+        },
       },
     });
   });

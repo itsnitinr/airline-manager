@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { sql, type Transaction } from "kysely";
+import { sql, type Kysely, type Transaction } from "kysely";
 import type {
   CreateLedgerBookCommand,
   CurrencyCode,
@@ -40,11 +40,24 @@ function requestHash(value: unknown): string {
 type JournalInsertOptions = Readonly<{ reversalOf?: string }>;
 
 export class KyselyLedgerRepository implements LedgerRepository {
-  public constructor(private readonly database: Database) {}
+  public constructor(
+    private readonly database: Database | Transaction<DB>,
+    private readonly transactionScoped = false,
+  ) {}
+
+  private run<TResult>(
+    callback: (transaction: Transaction<DB>) => Promise<TResult>,
+    options: Readonly<{
+      isolationLevel?: "read committed" | "repeatable read" | "serializable";
+      maximumAttempts?: number;
+    }> = {},
+  ): Promise<TResult> {
+    if (this.transactionScoped) return callback(this.database as Transaction<DB>);
+    return runInTransaction(this.database as Kysely<DB>, callback, options);
+  }
 
   public async createBook(command: CreateLedgerBookCommand): Promise<LedgerBook> {
-    return runInTransaction(
-      this.database,
+    return this.run(
       async (transaction) => {
         const version = await sql<{
           id: string;
@@ -103,8 +116,7 @@ export class KyselyLedgerRepository implements LedgerRepository {
       occurredAt: command.occurredAt.toISOString(),
       reversalOf: options.reversalOf,
     });
-    return runInTransaction(
-      this.database,
+    return this.run(
       async (transaction) => {
         await sql`SELECT id FROM ledger_books WHERE id = ${command.ledgerBookId}::uuid FOR UPDATE`.execute(
           transaction,
@@ -289,8 +301,7 @@ export class KyselyLedgerRepository implements LedgerRepository {
   }
 
   public async closePeriod(accountingPeriodId: string, lock = false): Promise<void> {
-    await runInTransaction(
-      this.database,
+    await this.run(
       async (transaction) => {
         const period = await sql<{
           ledger_book_id: string;

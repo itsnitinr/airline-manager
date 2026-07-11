@@ -3,6 +3,7 @@ import {
   anonymousAuthorizationContext,
   createApplicationServices,
   type ApplicationServices,
+  type AirlineFoundingService,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -16,6 +17,7 @@ import { registerSystemRoutes, type ReadinessCheck } from "./routes/system.js";
 import type { AuthorizationResolver, SseAuthorizationHook } from "./types.js";
 import type { AuthenticationAdapter } from "./auth/better-auth.js";
 import { registerAuthenticationRoutes } from "./auth/fastify.js";
+import { registerAirlineRoutes } from "./routes/airlines.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -28,6 +30,7 @@ export type ApiAppOptions = Readonly<{
   sseReconnectMs?: number;
   logger?: FastifyServerOptions["logger"];
   authentication?: Readonly<{ adapter: AuthenticationAdapter; database: Database }>;
+  airlineFoundingService?: AirlineFoundingService;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -70,6 +73,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
         { name: "operations", description: "Process health and readiness." },
         { name: "system", description: "Non-gameplay application shell operations." },
         { name: "events", description: "Recoverable advisory event stream." },
+        { name: "airlines", description: "Authenticated airline career commands and queries." },
       ],
     },
   });
@@ -105,6 +109,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
       applicationServices: options.applicationServices ?? createApplicationServices(),
       checkReadiness: options.checkReadiness ?? defaultReadiness,
     });
+    registerAirlineRoutes(routes, options.airlineFoundingService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,
       heartbeatMs: options.sseHeartbeatMs ?? 15_000,

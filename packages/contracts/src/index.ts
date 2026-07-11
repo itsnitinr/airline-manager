@@ -35,6 +35,262 @@ export type SampleCommandResponse = Readonly<{
   executedAt: string;
 }>;
 
+export type FoundingSelectionRequest = Readonly<{
+  airlineName: string;
+  fictionalIdentityConfirmed: boolean;
+  homeJurisdiction: string;
+  principalBaseIataCode: string;
+  reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+  brand: Readonly<{ primaryColor: string; secondaryColor: string; logoMark: string }>;
+  acceptFoundingLoan: boolean;
+  worldRulesetVersion: string;
+}>;
+
+const exactMinorSchema = { type: "string", pattern: "^[0-9]+$" } as const;
+const foundingSelectionProperties = {
+  airlineName: { type: "string", minLength: 3, maxLength: 80 },
+  fictionalIdentityConfirmed: { type: "boolean" },
+  homeJurisdiction: { type: "string", pattern: "^[A-Z]{2}$" },
+  principalBaseIataCode: { type: "string", pattern: "^[A-Z]{3}$" },
+  reportingCurrency: { type: "string", enum: ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"] },
+  brand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["primaryColor", "secondaryColor", "logoMark"],
+    properties: {
+      primaryColor: { type: "string", pattern: "^#[0-9A-F]{6}$" },
+      secondaryColor: { type: "string", pattern: "^#[0-9A-F]{6}$" },
+      logoMark: { type: "string", pattern: "^[A-Z0-9]{1,3}$" },
+    },
+  },
+  acceptFoundingLoan: { type: "boolean" },
+  worldRulesetVersion: { type: "string", minLength: 1, maxLength: 100 },
+} as const;
+
+export const foundingSelectionRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "airlineName",
+    "fictionalIdentityConfirmed",
+    "homeJurisdiction",
+    "principalBaseIataCode",
+    "reportingCurrency",
+    "brand",
+    "acceptFoundingLoan",
+    "worldRulesetVersion",
+  ],
+  properties: foundingSelectionProperties,
+} as const;
+
+const principalBaseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airportId", "iataCode", "name", "countryCode", "stationServiceModel"],
+  properties: {
+    airportId: { type: "string", format: "uuid" },
+    iataCode: { type: "string" },
+    name: { type: "string" },
+    countryCode: { type: "string" },
+    stationServiceModel: { type: "string", const: "outsourced" },
+  },
+} as const;
+
+const assumptionsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["included", "excludedUntilTicket09", "method"],
+  properties: {
+    included: { type: "array", items: { type: "string" } },
+    excludedUntilTicket09: { type: "array", items: { type: "string" } },
+    method: { type: "string" },
+  },
+} as const;
+
+const runwaySchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "currency",
+    "openingCashMinor",
+    "founderEquityMinor",
+    "foundingLoanProceedsMinor",
+    "baselineDailyObligationMinor",
+    "scheduledLoanRepaymentsMinor",
+    "runwayDays",
+    "forecastHorizonDays",
+    "assumptions",
+    "explanation",
+  ],
+  properties: {
+    currency: foundingSelectionProperties.reportingCurrency,
+    openingCashMinor: exactMinorSchema,
+    founderEquityMinor: exactMinorSchema,
+    foundingLoanProceedsMinor: exactMinorSchema,
+    baselineDailyObligationMinor: exactMinorSchema,
+    scheduledLoanRepaymentsMinor: exactMinorSchema,
+    runwayDays: { anyOf: [{ type: "integer", minimum: 0 }, { type: "null" }] },
+    forecastHorizonDays: { type: "integer", minimum: 1 },
+    assumptions: assumptionsSchema,
+    explanation: { type: "string" },
+  },
+} as const;
+
+const financingSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["founderEquityMinor", "optionalLoan"],
+  properties: {
+    founderEquityMinor: exactMinorSchema,
+    optionalLoan: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "principalMinor",
+        "annualRateBasisPoints",
+        "termDays",
+        "installmentCount",
+        "selected",
+        "schedule",
+      ],
+      properties: {
+        principalMinor: exactMinorSchema,
+        annualRateBasisPoints: { type: "integer", minimum: 0 },
+        termDays: { type: "integer", minimum: 1 },
+        installmentCount: { type: "integer", minimum: 1 },
+        selected: { type: "boolean" },
+        schedule: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: [
+              "installmentNumber",
+              "dueAt",
+              "principalMinor",
+              "interestMinor",
+              "totalMinor",
+            ],
+            properties: {
+              installmentNumber: { type: "integer", minimum: 1 },
+              dueAt: { type: "string", format: "date-time" },
+              principalMinor: exactMinorSchema,
+              interestMinor: exactMinorSchema,
+              totalMinor: exactMinorSchema,
+            },
+          },
+        },
+      },
+    },
+  },
+} as const;
+
+const foundingPreviewProperties = {
+  normalizedAirlineName: { type: "string" },
+  catalogReleaseVersion: { type: "string" },
+  worldRulesetVersion: { type: "string" },
+  foundingBalanceVersion: { type: "string" },
+  principalBase: principalBaseSchema,
+  financing: financingSchema,
+  runway: runwaySchema,
+  nextStep: { type: "string", const: "select_founder_aircraft" },
+  nextStepGuidance: { type: "string" },
+} as const;
+
+const foundingPreviewRequired = [
+  "normalizedAirlineName",
+  "catalogReleaseVersion",
+  "worldRulesetVersion",
+  "foundingBalanceVersion",
+  "principalBase",
+  "financing",
+  "runway",
+  "nextStep",
+  "nextStepGuidance",
+] as const;
+
+export const foundingPreviewResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: foundingPreviewRequired,
+  properties: foundingPreviewProperties,
+} as const;
+
+export const foundingConfirmationResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    ...foundingPreviewRequired,
+    "careerId",
+    "airlineId",
+    "stationId",
+    "ledgerBookId",
+    "careerStatus",
+    "foundedAt",
+  ],
+  properties: {
+    ...foundingPreviewProperties,
+    careerId: { type: "string", format: "uuid" },
+    airlineId: { type: "string", format: "uuid" },
+    stationId: { type: "string", format: "uuid" },
+    ledgerBookId: { type: "string", format: "uuid" },
+    careerStatus: { type: "string", const: "active" },
+    foundedAt: { type: "string", format: "date-time" },
+  },
+} as const;
+
+export const airlineIdentifierParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId"],
+  properties: { airlineId: { type: "string", format: "uuid" } },
+} as const;
+
+export const airlineSummaryResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "careerId",
+    "airlineId",
+    "name",
+    "normalizedAirlineName",
+    "brand",
+    "careerStatus",
+    "airlineStatus",
+    "homeJurisdiction",
+    "reportingCurrency",
+    "catalogReleaseVersion",
+    "worldRulesetVersion",
+    "foundingBalanceVersion",
+    "principalBase",
+    "cashMinor",
+    "equityMinor",
+    "loanLiabilityMinor",
+    "nextStep",
+    "nextStepGuidance",
+  ],
+  properties: {
+    careerId: { type: "string", format: "uuid" },
+    airlineId: { type: "string", format: "uuid" },
+    name: { type: "string" },
+    normalizedAirlineName: { type: "string" },
+    brand: foundingSelectionProperties.brand,
+    careerStatus: { type: "string", enum: ["active", "insolvent", "closed"] },
+    airlineStatus: { type: "string", enum: ["active", "insolvent", "closed"] },
+    homeJurisdiction: { type: "string" },
+    reportingCurrency: foundingSelectionProperties.reportingCurrency,
+    catalogReleaseVersion: { type: "string" },
+    worldRulesetVersion: { type: "string" },
+    foundingBalanceVersion: { type: "string" },
+    principalBase: principalBaseSchema,
+    cashMinor: exactMinorSchema,
+    equityMinor: exactMinorSchema,
+    loanLiabilityMinor: exactMinorSchema,
+    nextStep: { type: "string", const: "select_founder_aircraft" },
+    nextStepGuidance: { type: "string" },
+  },
+} as const;
+
 export const healthResponseSchema = {
   type: "object",
   additionalProperties: false,

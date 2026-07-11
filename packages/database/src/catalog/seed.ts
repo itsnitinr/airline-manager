@@ -5,7 +5,12 @@ import {
   type FieldProvenance,
 } from "@airline-manager/domain";
 import type { Database } from "../database.js";
-import { readAircraftFixture, readAirportFixture, readSourceFixture } from "./fixtures.js";
+import {
+  readAircraftFixture,
+  readAirportFixture,
+  readFoundingBalanceFixture,
+  readSourceFixture,
+} from "./fixtures.js";
 import { importOurAirports } from "./import.js";
 
 const releaseVersion = "slice-one-2026.07.11";
@@ -340,6 +345,26 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
     await sql`UPDATE world_rulesets SET status = 'active', activated_at = CURRENT_TIMESTAMP
       WHERE id = ${rulesetId}::uuid AND status = 'draft'`.execute(database);
   }
+
+  const foundingBalance = await readFoundingBalanceFixture();
+  if (foundingBalance.world_ruleset_version !== worldRulesetVersion) {
+    throw new Error("Founding balance fixture selects a different world ruleset.");
+  }
+  await sql`INSERT INTO founding_balance_versions
+    (version, world_ruleset_id, status, founder_equity_minor,
+     founding_loan_principal_minor, founding_loan_annual_rate_basis_points,
+     founding_loan_term_days, founding_loan_installment_count,
+     baseline_daily_obligation_minor, forecast_horizon_days, assumptions)
+    VALUES (${foundingBalance.version}, ${rulesetId}::uuid, 'active',
+      ${JSON.stringify(foundingBalance.founder_equity_minor)}::jsonb,
+      ${JSON.stringify(foundingBalance.founding_loan_principal_minor)}::jsonb,
+      ${foundingBalance.founding_loan_annual_rate_basis_points},
+      ${foundingBalance.founding_loan_term_days},
+      ${foundingBalance.founding_loan_installment_count},
+      ${JSON.stringify(foundingBalance.baseline_daily_obligation_minor)}::jsonb,
+      ${foundingBalance.forecast_horizon_days},
+      ${JSON.stringify(foundingBalance.assumptions)}::jsonb)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
 
   return {
     releaseVersion,

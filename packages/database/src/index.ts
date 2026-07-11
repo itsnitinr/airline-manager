@@ -26,6 +26,11 @@ export {
 export { setPlayerRole } from "./identity/roles.js";
 export { KyselyExchangeRateRepository, KyselyLedgerRepository } from "./finance/repository.js";
 export {
+  KyselyAirlineFoundingRepository,
+  foundingMaterialStages,
+  type FoundingMaterialStage,
+} from "./airline/repository.js";
+export {
   importOurAirports,
   type AirportImportInput,
   type AirportImportResult,

@@ -1,0 +1,44 @@
+{
+  "version": "founding-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "founder_equity_minor": {
+    "CHF": "50000000",
+    "EUR": "50000000",
+    "GBP": "45000000",
+    "JPY": "8000000000",
+    "KWD": "150000000",
+    "USD": "55000000"
+  },
+  "founding_loan_principal_minor": {
+    "CHF": "10000000",
+    "EUR": "10000000",
+    "GBP": "9000000",
+    "JPY": "1600000000",
+    "KWD": "30000000",
+    "USD": "11000000"
+  },
+  "founding_loan_annual_rate_basis_points": 1200,
+  "founding_loan_term_days": 30,
+  "founding_loan_installment_count": 6,
+  "baseline_daily_obligation_minor": {
+    "CHF": "400000",
+    "EUR": "400000",
+    "GBP": "360000",
+    "JPY": "64000000",
+    "KWD": "1200000",
+    "USD": "440000"
+  },
+  "forecast_horizon_days": 365,
+  "assumptions": {
+    "included": ["corporate administration baseline", "outsourced principal-base station baseline"],
+    "excludedUntilTicket09": [
+      "aircraft lease payments",
+      "aircraft fuel",
+      "aircraft maintenance",
+      "aircraft workforce",
+      "route-specific airport costs",
+      "flight revenue"
+    ],
+    "method": "daily baseline obligations plus exact scheduled founding-loan repayments; no aircraft-specific costs are inferred"
+  }
+}

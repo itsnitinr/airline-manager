@@ -1,5 +1,6 @@
 import type { ErrorEnvelope } from "@airline-manager/contracts";
 import { AuthorizationError } from "@airline-manager/application";
+import { FoundingDomainError } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
 function envelope(
@@ -30,6 +31,19 @@ export function registerErrorMapping(app: FastifyInstance): void {
   app.setErrorHandler((error: FastifyError, request, reply) => {
     if (error instanceof AuthorizationError) {
       void reply.status(error.statusCode).send(envelope(request, error.code, error.message));
+      return;
+    }
+    if (error instanceof FoundingDomainError) {
+      const conflictCodes = new Set([
+        "active_airline_exists",
+        "airline_name_unavailable",
+        "idempotency_conflict",
+      ]);
+      void reply
+        .status(
+          conflictCodes.has(error.code) ? 409 : error.code === "founding_not_found" ? 403 : 400,
+        )
+        .send(envelope(request, error.code, error.message));
       return;
     }
     if (error.validation) {

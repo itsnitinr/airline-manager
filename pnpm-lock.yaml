@@ -72,6 +72,9 @@ importers:
       '@airline-manager/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@airline-manager/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@fastify/cors':
         specifier: 11.3.0
         version: 11.3.0

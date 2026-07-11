@@ -1,7 +1,7 @@
 # Implement airline founding and career bootstrap
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 05, 06, 07
 
 ## Goal
@@ -47,4 +47,19 @@ financial and world state required to choose a founder aircraft lease.
 
 ## Comments
 
-None yet.
+- 2026-07-11: Implemented version-bound game-world, career, airline, fictional identity,
+  home-jurisdiction, principal-base, outsourced-station, ownership, accounting-book, founder-
+  financing, optional-loan, and exact deterministic repayment-schedule models. Founding is one
+  serializable, idempotent transaction using ticket 06 ownership and ticket 07 ledger/outbox
+  foundations, with PostgreSQL one-active-career enforcement and retained closed-career history.
+  Added authenticated preview, confirm, owned summary, and next-step APIs. The versioned runway
+  forecast includes administration, outsourced-station baseline, and selected loan repayments while
+  explicitly excluding all ticket 09 aircraft/lease and later operating inputs.
+- Validation passed frozen install, formatting, lint and eight boundary probes, OpenAPI/client
+  freshness, type-check, unit/property tests, production build, blank/repeat/current PostgreSQL
+  migrations, generated-type freshness, 46 real-PostgreSQL integration tests, and 11 authenticated
+  API integration tests. Coverage includes every material-stage rollback, concurrent idempotency and
+  one-active enforcement, ownership isolation, catalog/ruleset/base denials, immutable bindings,
+  station/outbox creation, exact equity/loan/report reconciliation, deterministic schedules, safe
+  errors, Compose validation, all three production images, ignored-file review, whitespace checks,
+  and clean ticket-diff plus Git-history Gitleaks scans.

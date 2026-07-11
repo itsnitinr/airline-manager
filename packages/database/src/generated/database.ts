@@ -50,6 +50,33 @@ export interface AdministrativeAuditRecords {
   resource_type: string;
 }
 
+export interface Airlines {
+  brand: Json;
+  career_id: string;
+  ended_at: Timestamp | null;
+  fictional_identity_confirmed: boolean;
+  founded_at: Timestamp;
+  game_world_id: string;
+  home_jurisdiction: string;
+  id: string;
+  name: string;
+  normalized_name: string;
+  principal_base_airport_id: string;
+  reporting_currency: string;
+  status: Generated<string>;
+  version: Generated<Int8>;
+}
+
+export interface AirlineStations {
+  airline_id: string;
+  airport_id: string;
+  facility_investment_minor: Generated<Int8>;
+  id: Generated<string>;
+  opened_at: Timestamp;
+  service_model: string;
+  station_role: string;
+}
+
 export interface AuthAccount {
   accessToken: string | null;
   accessTokenExpiresAt: Timestamp | null;
@@ -94,6 +121,18 @@ export interface AuthVerification {
   identifier: string;
   updatedAt: Generated<Timestamp>;
   value: string;
+}
+
+export interface Careers {
+  catalog_release_id: string;
+  ended_at: Timestamp | null;
+  founded_at: Timestamp;
+  founding_balance_version_id: string;
+  game_world_id: string;
+  id: Generated<string>;
+  player_account_id: string;
+  status: Generated<string>;
+  world_ruleset_id: string;
 }
 
 export interface CatalogReleaseAircraftVariants {
@@ -212,6 +251,70 @@ export interface ExchangeRateSources {
   id: string;
   interface_version: number;
   name: string;
+}
+
+export interface FounderFinancingOffers {
+  annual_rate_basis_points: number;
+  balance_version_id: string;
+  career_id: string;
+  currency: string;
+  founder_equity_minor: Int8;
+  id: Generated<string>;
+  installment_count: number;
+  loan_principal_minor: Int8;
+  selected_at: Timestamp;
+  selection: string;
+  term_days: number;
+}
+
+export interface FoundingBalanceVersions {
+  assumptions: Json;
+  baseline_daily_obligation_minor: Json;
+  created_at: Generated<Timestamp>;
+  forecast_horizon_days: number;
+  founder_equity_minor: Json;
+  founding_loan_annual_rate_basis_points: number;
+  founding_loan_installment_count: number;
+  founding_loan_principal_minor: Json;
+  founding_loan_term_days: number;
+  id: Generated<string>;
+  status: string;
+  version: string;
+  world_ruleset_id: string;
+}
+
+export interface FoundingLoans {
+  airline_id: string;
+  annual_rate_basis_points: number;
+  currency: string;
+  financing_offer_id: string;
+  id: Generated<string>;
+  installment_count: number;
+  matures_at: Timestamp;
+  original_principal_minor: Int8;
+  outstanding_principal_minor: Int8;
+  starts_at: Timestamp;
+  status: Generated<string>;
+  term_days: number;
+}
+
+export interface FoundingLoanSchedule {
+  due_at: Timestamp;
+  installment_number: number;
+  interest_minor: Int8;
+  loan_id: string;
+  principal_minor: Int8;
+  status: Generated<string>;
+  total_minor: Generated<Int8 | null>;
+}
+
+export interface GameWorlds {
+  catalog_release_id: string;
+  code: string;
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  status: Generated<string>;
+  world_ruleset_id: string;
 }
 
 export interface IdempotencyCommands {
@@ -500,10 +603,13 @@ export interface WorldRulesets {
 export interface DB {
   accounting_periods: AccountingPeriods;
   administrative_audit_records: AdministrativeAuditRecords;
+  airline_stations: AirlineStations;
+  airlines: Airlines;
   auth_account: AuthAccount;
   auth_session: AuthSession;
   auth_user: AuthUser;
   auth_verification: AuthVerification;
+  careers: Careers;
   catalog_release_aircraft_variants: CatalogReleaseAircraftVariants;
   catalog_release_airports: CatalogReleaseAirports;
   catalog_releases: CatalogReleases;
@@ -516,6 +622,11 @@ export interface DB {
   exchange_rate_imports: ExchangeRateImports;
   exchange_rate_sources: ExchangeRateSources;
   exchange_rates: ExchangeRates;
+  founder_financing_offers: FounderFinancingOffers;
+  founding_balance_versions: FoundingBalanceVersions;
+  founding_loan_schedule: FoundingLoanSchedule;
+  founding_loans: FoundingLoans;
+  game_worlds: GameWorlds;
   idempotency_commands: IdempotencyCommands;
   journal_entries: JournalEntries;
   ledger_account_balances: LedgerAccountBalances;

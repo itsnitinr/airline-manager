@@ -62,6 +62,487 @@ export type GetReadinessResponses = {
 
 export type GetReadinessResponse = GetReadinessResponses[keyof GetReadinessResponses];
 
+export type GetAirlineCareerSummaryData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}";
+};
+
+export type GetAirlineCareerSummaryErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetAirlineCareerSummaryError =
+  GetAirlineCareerSummaryErrors[keyof GetAirlineCareerSummaryErrors];
+
+export type GetAirlineCareerSummaryResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    airlineId: string;
+    airlineStatus: "active" | "insolvent" | "closed";
+    brand: {
+      logoMark: string;
+      primaryColor: string;
+      secondaryColor: string;
+    };
+    careerId: string;
+    careerStatus: "active" | "insolvent" | "closed";
+    cashMinor: string;
+    catalogReleaseVersion: string;
+    equityMinor: string;
+    foundingBalanceVersion: string;
+    homeJurisdiction: string;
+    loanLiabilityMinor: string;
+    name: string;
+    nextStep: "select_founder_aircraft";
+    nextStepGuidance: string;
+    normalizedAirlineName: string;
+    principalBase: {
+      airportId: string;
+      countryCode: string;
+      iataCode: string;
+      name: string;
+      stationServiceModel: "outsourced";
+    };
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    worldRulesetVersion: string;
+  };
+};
+
+export type GetAirlineCareerSummaryResponse =
+  GetAirlineCareerSummaryResponses[keyof GetAirlineCareerSummaryResponses];
+
+export type GetAirlineNextStepGuidanceData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/next-step";
+};
+
+export type GetAirlineNextStepGuidanceErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetAirlineNextStepGuidanceError =
+  GetAirlineNextStepGuidanceErrors[keyof GetAirlineNextStepGuidanceErrors];
+
+export type GetAirlineNextStepGuidanceResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    nextStep: "select_founder_aircraft";
+    nextStepGuidance: string;
+  };
+};
+
+export type GetAirlineNextStepGuidanceResponse =
+  GetAirlineNextStepGuidanceResponses[keyof GetAirlineNextStepGuidanceResponses];
+
+export type ConfirmAirlineFoundingData = {
+  body: {
+    acceptFoundingLoan: boolean;
+    airlineName: string;
+    brand: {
+      logoMark: string;
+      primaryColor: string;
+      secondaryColor: string;
+    };
+    fictionalIdentityConfirmed: boolean;
+    homeJurisdiction: string;
+    principalBaseIataCode: string;
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    worldRulesetVersion: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path?: never;
+  query?: never;
+  url: "/v1/airlines/founding/confirm";
+};
+
+export type ConfirmAirlineFoundingErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ConfirmAirlineFoundingError =
+  ConfirmAirlineFoundingErrors[keyof ConfirmAirlineFoundingErrors];
+
+export type ConfirmAirlineFoundingResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    airlineId: string;
+    careerId: string;
+    careerStatus: "active";
+    catalogReleaseVersion: string;
+    financing: {
+      founderEquityMinor: string;
+      optionalLoan: {
+        annualRateBasisPoints: number;
+        installmentCount: number;
+        principalMinor: string;
+        schedule: Array<{
+          dueAt: string;
+          installmentNumber: number;
+          interestMinor: string;
+          principalMinor: string;
+          totalMinor: string;
+        }>;
+        selected: boolean;
+        termDays: number;
+      };
+    };
+    foundedAt: string;
+    foundingBalanceVersion: string;
+    ledgerBookId: string;
+    nextStep: "select_founder_aircraft";
+    nextStepGuidance: string;
+    normalizedAirlineName: string;
+    principalBase: {
+      airportId: string;
+      countryCode: string;
+      iataCode: string;
+      name: string;
+      stationServiceModel: "outsourced";
+    };
+    runway: {
+      assumptions: {
+        excludedUntilTicket09: Array<string>;
+        included: Array<string>;
+        method: string;
+      };
+      baselineDailyObligationMinor: string;
+      currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      explanation: string;
+      forecastHorizonDays: number;
+      founderEquityMinor: string;
+      foundingLoanProceedsMinor: string;
+      openingCashMinor: string;
+      runwayDays: number | unknown;
+      scheduledLoanRepaymentsMinor: string;
+    };
+    stationId: string;
+    worldRulesetVersion: string;
+  };
+};
+
+export type ConfirmAirlineFoundingResponse =
+  ConfirmAirlineFoundingResponses[keyof ConfirmAirlineFoundingResponses];
+
+export type PreviewAirlineFoundingData = {
+  body: {
+    acceptFoundingLoan: boolean;
+    airlineName: string;
+    brand: {
+      logoMark: string;
+      primaryColor: string;
+      secondaryColor: string;
+    };
+    fictionalIdentityConfirmed: boolean;
+    homeJurisdiction: string;
+    principalBaseIataCode: string;
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    worldRulesetVersion: string;
+  };
+  path?: never;
+  query?: never;
+  url: "/v1/airlines/founding/preview";
+};
+
+export type PreviewAirlineFoundingErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type PreviewAirlineFoundingError =
+  PreviewAirlineFoundingErrors[keyof PreviewAirlineFoundingErrors];
+
+export type PreviewAirlineFoundingResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    catalogReleaseVersion: string;
+    financing: {
+      founderEquityMinor: string;
+      optionalLoan: {
+        annualRateBasisPoints: number;
+        installmentCount: number;
+        principalMinor: string;
+        schedule: Array<{
+          dueAt: string;
+          installmentNumber: number;
+          interestMinor: string;
+          principalMinor: string;
+          totalMinor: string;
+        }>;
+        selected: boolean;
+        termDays: number;
+      };
+    };
+    foundingBalanceVersion: string;
+    nextStep: "select_founder_aircraft";
+    nextStepGuidance: string;
+    normalizedAirlineName: string;
+    principalBase: {
+      airportId: string;
+      countryCode: string;
+      iataCode: string;
+      name: string;
+      stationServiceModel: "outsourced";
+    };
+    runway: {
+      assumptions: {
+        excludedUntilTicket09: Array<string>;
+        included: Array<string>;
+        method: string;
+      };
+      baselineDailyObligationMinor: string;
+      currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      explanation: string;
+      forecastHorizonDays: number;
+      founderEquityMinor: string;
+      foundingLoanProceedsMinor: string;
+      openingCashMinor: string;
+      runwayDays: number | unknown;
+      scheduledLoanRepaymentsMinor: string;
+    };
+    worldRulesetVersion: string;
+  };
+};
+
+export type PreviewAirlineFoundingResponse =
+  PreviewAirlineFoundingResponses[keyof PreviewAirlineFoundingResponses];
+
 export type SubscribeToEventsData = {
   body?: never;
   headers?: {

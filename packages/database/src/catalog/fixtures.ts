@@ -59,6 +59,23 @@ type AircraftFixture = Readonly<{
   variants: readonly AircraftFixtureVariant[];
 }>;
 
+export type FoundingBalanceFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  founder_equity_minor: Readonly<Record<string, string>>;
+  founding_loan_principal_minor: Readonly<Record<string, string>>;
+  founding_loan_annual_rate_basis_points: number;
+  founding_loan_term_days: number;
+  founding_loan_installment_count: number;
+  baseline_daily_obligation_minor: Readonly<Record<string, string>>;
+  forecast_horizon_days: number;
+  assumptions: Readonly<{
+    included: readonly string[];
+    excludedUntilTicket09: readonly string[];
+    method: string;
+  }>;
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -73,4 +90,8 @@ export function readAirportFixture(): Promise<AirportFixture> {
 
 export function readAircraftFixture(): Promise<AircraftFixture> {
   return readJson(new URL("../../data/slice-one-aircraft.json", import.meta.url));
+}
+
+export function readFoundingBalanceFixture(): Promise<FoundingBalanceFixture> {
+  return readJson(new URL("../../data/founding-balance-v1.json", import.meta.url));
 }
