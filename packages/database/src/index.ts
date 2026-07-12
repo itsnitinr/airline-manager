@@ -40,6 +40,7 @@ export { KyselyMarketRepository } from "./market/repository.js";
 export { KyselySchedulingRepository } from "./scheduling/repository.js";
 export { KyselyWorkforceRepository } from "./workforce/repository.js";
 export { KyselyMaintenanceRepository } from "./maintenance/repository.js";
+export { KyselyWeatherRepository } from "./weather/repository.js";
 export {
   importOurAirports,
   type AirportImportInput,

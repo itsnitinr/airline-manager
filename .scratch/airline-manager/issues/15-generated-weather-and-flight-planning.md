@@ -1,7 +1,7 @@
 # Implement generated weather and operational flight planning
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 05, 12
 
 ## Goal
@@ -45,4 +45,15 @@ fuel burn, congestion, and reliability without live weather feeds.
 
 ## Comments
 
-None yet.
+- 2026-07-12: Added published `slice-one-climate-v1` coverage and provenance for all 250
+  playable airports; active immutable `weather-v1` rules; deterministic geographically correlated,
+  seasonal forecast and seeded-realization logic; bounded wind, visibility, runway-capacity,
+  congestion/delay, block-time, diversion, fuel-burn, and reliability modifiers; explainable
+  immutable route/departure snapshots; realization checkpoint intent; and future ticket 17 material
+  input boundaries without adding ticket 16 consumers or flight settlement.
+- Added framework-independent domain/application contracts, PostgreSQL/Kysely persistence,
+  authenticated owner-only REST queries, checked-in OpenAPI/client artifacts, and documentation.
+  Validation passed frozen install; format, lint, eight boundary probes, typecheck, 49 domain tests
+  including a 500-case invariant matrix, full unit suite and production build; 90 PostgreSQL and 25
+  API integration tests; blank/repeat and 0014-to-0015 migrations; fresh 250-airport catalog seeds;
+  Kysely/OpenAPI freshness; and a rebuilt healthy five-service Compose topology.

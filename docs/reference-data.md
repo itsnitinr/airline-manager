@@ -44,3 +44,7 @@ immutable release, and creates its versioned world ruleset. It never promotes an
 row and is deliberately separate from `catalog:fetch`; there is no automated publication path.
 Once activated, the ruleset and its acquisition overrides are immutable just like the selected
 catalog release.
+
+Ticket 15 adds `slice-one-climate-v1` as a separate published, provenance-tracked derived-data
+layer over this release. Catalog seeding asserts an exact climate-profile join for all 250 playable
+airports before activating `weather-v1`; missing coverage prevents publication.

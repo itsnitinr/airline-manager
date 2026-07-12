@@ -10,6 +10,7 @@ import {
   type SchedulingService,
   type WorkforceService,
   type MaintenanceService,
+  type WeatherService,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -29,6 +30,7 @@ import { registerMarketRoutes } from "./routes/markets.js";
 import { registerSchedulingRoutes } from "./routes/scheduling.js";
 import { registerWorkforceRoutes } from "./routes/workforce.js";
 import { registerMaintenanceRoutes } from "./routes/maintenance.js";
+import { registerWeatherRoutes } from "./routes/weather.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -48,6 +50,7 @@ export type ApiAppOptions = Readonly<{
   schedulingService?: SchedulingService;
   workforceService?: WorkforceService;
   maintenanceService?: MaintenanceService;
+  weatherService?: WeatherService;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -110,6 +113,10 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
           description:
             "Aircraft maintenance programs, utilization, condition, faults, and dispatch readiness.",
         },
+        {
+          name: "weather",
+          description: "Deterministic route and departure operational weather planning.",
+        },
       ],
     },
   });
@@ -151,6 +158,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
     registerSchedulingRoutes(routes, options.schedulingService);
     registerWorkforceRoutes(routes, options.workforceService);
     registerMaintenanceRoutes(routes, options.maintenanceService);
+    registerWeatherRoutes(routes, options.weatherService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,
       heartbeatMs: options.sseHeartbeatMs ?? 15_000,

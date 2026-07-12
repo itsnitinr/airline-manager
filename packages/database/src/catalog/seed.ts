@@ -15,6 +15,7 @@ import {
   readMaintenanceRulesFixture,
   readSchedulingRulesFixture,
   readWorkforceRulesFixture,
+  readWeatherRulesFixture,
   readSourceFixture,
 } from "./fixtures.js";
 import { importOurAirports } from "./import.js";
@@ -588,6 +589,91 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
   }
   await sql`UPDATE maintenance_program_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
     WHERE id = ${maintenanceVersionId}::uuid AND status = 'draft'`.execute(database);
+
+  const weather = await readWeatherRulesFixture();
+  if (weather.world_ruleset_version !== worldRulesetVersion)
+    throw new Error("Weather rules fixture selects a different world ruleset.");
+  await sql`INSERT INTO climate_profile_versions
+    (catalog_release_id, version, status, formula_version, source_basis, effective_from, published_at)
+    VALUES (${releaseId}::uuid, ${weather.climate_data_version}, 'draft',
+      ${weather.profile_formula_version}, ${JSON.stringify(weather.source_basis)}::jsonb,
+      ${weather.effective_from}::timestamptz, NULL)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  const climateVersion = await sql<{ id: string }>`SELECT id FROM climate_profile_versions
+    WHERE version = ${weather.climate_data_version}`.execute(database);
+  const climateVersionId = climateVersion.rows[0]?.id;
+  if (!climateVersionId) throw new Error("Climate profile version was not created.");
+  for (const airport of airportSnapshots) {
+    const latitude = Number(airport.snapshot.latitudeDeg);
+    const longitude = Number(airport.snapshot.longitudeDeg);
+    const absoluteLatitude = Math.abs(latitude);
+    const zone =
+      absoluteLatitude < 23.5
+        ? "tropical"
+        : absoluteLatitude >= 60
+          ? "polar"
+          : absoluteLatitude >= 45
+            ? "continental"
+            : Math.abs(longitude) >= 15 && Math.abs(longitude) <= 55 && absoluteLatitude < 38
+              ? "arid"
+              : "temperate";
+    const balance = weather.zones[zone];
+    const wetSeasonPeakMonth = latitude < 0 ? 7 : 1;
+    const material = {
+      airportId: airport.id,
+      iataCode: airport.snapshot.iataCode,
+      latitudeDeg: airport.snapshot.latitudeDeg,
+      longitudeDeg: airport.snapshot.longitudeDeg,
+      elevationFt: airport.snapshot.elevationFt ?? null,
+      timezoneName: airport.snapshot.timezoneName,
+      climateDataVersion: weather.climate_data_version,
+      zone,
+      baselineWindKt: balance.baseline_wind_kt,
+      seasonalWindAmplitudeKt: balance.seasonal_wind_amplitude_kt,
+      storminessBasisPoints: balance.storminess_basis_points,
+      lowVisibilityBasisPoints: balance.low_visibility_basis_points,
+      wetSeasonPeakMonth,
+      provenance: {
+        ...weather.source_basis,
+        formulaVersion: weather.profile_formula_version,
+        rulesetVersion: weather.version,
+        materialFields: ["latitude_deg", "longitude_deg", "elevation_ft", "world_region"],
+      },
+    };
+    await sql`INSERT INTO airport_climate_profiles
+      (climate_profile_version_id, airport_id, zone, baseline_wind_kt,
+       seasonal_wind_amplitude_kt, storminess_basis_points, low_visibility_basis_points,
+       wet_season_peak_month, material_snapshot, provenance)
+      VALUES (${climateVersionId}::uuid, ${airport.id}::uuid, ${zone},
+        ${balance.baseline_wind_kt}, ${balance.seasonal_wind_amplitude_kt},
+        ${balance.storminess_basis_points}, ${balance.low_visibility_basis_points},
+        ${wetSeasonPeakMonth}, ${JSON.stringify(material)}::jsonb,
+        ${JSON.stringify(material.provenance)}::jsonb)
+      ON CONFLICT (climate_profile_version_id, airport_id) DO NOTHING`.execute(database);
+  }
+  const climateCoverage = await sql<{ missing: string }>`SELECT count(*)::text AS missing
+    FROM catalog_release_airports member
+    WHERE member.release_id = ${releaseId}::uuid AND NOT EXISTS (
+      SELECT 1 FROM airport_climate_profiles profile
+      WHERE profile.climate_profile_version_id = ${climateVersionId}::uuid
+        AND profile.airport_id = member.airport_id
+    )`.execute(database);
+  if (climateCoverage.rows[0]?.missing !== "0")
+    throw new Error("Every playable airport must have a provenance-tracked climate profile.");
+  await sql`UPDATE climate_profile_versions SET status = 'published', published_at = CURRENT_TIMESTAMP
+    WHERE id = ${climateVersionId}::uuid AND status = 'draft'`.execute(database);
+  await sql`INSERT INTO weather_ruleset_versions
+    (world_ruleset_id, climate_profile_version_id, version, status, world_seed,
+     formula_version, uncertainty_process_version, system_bucket_hours,
+     correlation_cell_degrees, maximum_forecast_lead_hours, bounds, effective_from, activated_at)
+    VALUES (${rulesetId}::uuid, ${climateVersionId}::uuid, ${weather.version}, 'draft',
+      ${weather.world_seed}, ${weather.formula_version}, ${weather.uncertainty_process_version},
+      ${weather.system_bucket_hours}, ${weather.correlation_cell_degrees},
+      ${weather.maximum_forecast_lead_hours}, ${JSON.stringify(weather.bounds)}::jsonb,
+      ${weather.effective_from}::timestamptz, NULL)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  await sql`UPDATE weather_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
+    WHERE version = ${weather.version} AND status = 'draft'`.execute(database);
 
   return {
     releaseVersion,

@@ -8,6 +8,7 @@ import {
   SchedulingDomainError,
   WorkforceDomainError,
   MaintenanceDomainError,
+  WeatherDomainError,
 } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
@@ -169,6 +170,14 @@ export function registerErrorMapping(app: FastifyInstance): void {
           error.explanations.map((issue) => ({ issue })),
         ),
       );
+      return;
+    }
+    if (error instanceof WeatherDomainError) {
+      const hidden = error.code === "weather_not_found";
+      const conflict = error.code === "idempotency_conflict";
+      void reply
+        .status(hidden ? 403 : conflict ? 409 : 400)
+        .send(envelope(request, error.code, error.message));
       return;
     }
     if (error.validation) {

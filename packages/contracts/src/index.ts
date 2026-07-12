@@ -1559,6 +1559,37 @@ export const timetableActivationResponseSchema = {
   },
 } as const;
 
+export const weatherRouteParamsSchema = routeIdentifierParamsSchema;
+export const weatherDepartureParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "datedFlightId"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    datedFlightId: { type: "string", format: "uuid" },
+  },
+} as const;
+export const weatherForecastQuerySchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["validAt"],
+  properties: { validAt: { type: "string", format: "date-time" } },
+} as const;
+export const weatherForecastResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: ["id", "scope", "scopeId", "issuedAt", "validAt", "plan", "materialInputSnapshot"],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    scope: { type: "string", enum: ["route", "departure"] },
+    scopeId: { type: "string", format: "uuid" },
+    issuedAt: { type: "string", format: "date-time" },
+    validAt: { type: "string", format: "date-time" },
+    plan: { type: "object", additionalProperties: true },
+    materialInputSnapshot: { type: "object", additionalProperties: true },
+  },
+} as const;
+
 const workforceRoleSchema = {
   type: "string",
   enum: ["pilot", "cabin_crew", "line_maintenance", "ground_handling"],

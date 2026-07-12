@@ -222,6 +222,33 @@ export type MaintenanceRulesFixture = Readonly<{
   assumptions: Readonly<Record<string, unknown>>;
 }>;
 
+export type WeatherRulesFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  climate_data_version: string;
+  formula_version: string;
+  uncertainty_process_version: "seeded-lead-spread-v1";
+  world_seed: string;
+  effective_from: string;
+  system_bucket_hours: number;
+  correlation_cell_degrees: number;
+  maximum_forecast_lead_hours: number;
+  profile_formula_version: string;
+  source_basis: Readonly<Record<string, unknown>>;
+  zones: Readonly<
+    Record<
+      "tropical" | "arid" | "temperate" | "continental" | "polar",
+      Readonly<{
+        baseline_wind_kt: number;
+        seasonal_wind_amplitude_kt: number;
+        storminess_basis_points: number;
+        low_visibility_basis_points: number;
+      }>
+    >
+  >;
+  bounds: Readonly<Record<string, readonly [number, number]>>;
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -264,4 +291,8 @@ export function readWorkforceRulesFixture(): Promise<WorkforceRulesFixture> {
 
 export function readMaintenanceRulesFixture(): Promise<MaintenanceRulesFixture> {
   return readJson(new URL("../../data/maintenance-rules-v1.json", import.meta.url));
+}
+
+export function readWeatherRulesFixture(): Promise<WeatherRulesFixture> {
+  return readJson(new URL("../../data/weather-rules-v1.json", import.meta.url));
 }

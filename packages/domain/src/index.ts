@@ -44,3 +44,4 @@ export * from "./market.js";
 export * from "./scheduling.js";
 export * from "./workforce.js";
 export * from "./maintenance.js";
+export * from "./weather.js";

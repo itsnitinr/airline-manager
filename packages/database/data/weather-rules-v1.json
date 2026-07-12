@@ -1,0 +1,58 @@
+{
+  "version": "weather-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "climate_data_version": "slice-one-climate-v1",
+  "formula_version": "geographic-weather-v1",
+  "uncertainty_process_version": "seeded-lead-spread-v1",
+  "world_seed": "slice-one-weather-seed-v1",
+  "effective_from": "2026-07-12T00:00:00.000Z",
+  "system_bucket_hours": 6,
+  "correlation_cell_degrees": 10,
+  "maximum_forecast_lead_hours": 2160,
+  "profile_formula_version": "latitude-geography-climate-profile-v1",
+  "source_basis": {
+    "classification": "derived",
+    "source_id": "ourairports",
+    "explanation": "Gameplay climate profiles are deterministically curated from the published airport latitude, longitude, elevation, region, and hemisphere. They are plausible operational inputs, not certified climatology or navigation data."
+  },
+  "zones": {
+    "tropical": {
+      "baseline_wind_kt": 8,
+      "seasonal_wind_amplitude_kt": 4,
+      "storminess_basis_points": 5200,
+      "low_visibility_basis_points": 1800
+    },
+    "arid": {
+      "baseline_wind_kt": 10,
+      "seasonal_wind_amplitude_kt": 5,
+      "storminess_basis_points": 900,
+      "low_visibility_basis_points": 700
+    },
+    "temperate": {
+      "baseline_wind_kt": 11,
+      "seasonal_wind_amplitude_kt": 6,
+      "storminess_basis_points": 3200,
+      "low_visibility_basis_points": 1500
+    },
+    "continental": {
+      "baseline_wind_kt": 12,
+      "seasonal_wind_amplitude_kt": 8,
+      "storminess_basis_points": 2800,
+      "low_visibility_basis_points": 1900
+    },
+    "polar": {
+      "baseline_wind_kt": 14,
+      "seasonal_wind_amplitude_kt": 9,
+      "storminess_basis_points": 2200,
+      "low_visibility_basis_points": 2400
+    }
+  },
+  "bounds": {
+    "wind_speed_kt": [0, 65],
+    "visibility_meters": [800, 25000],
+    "runway_capacity_basis_points": [4000, 10000],
+    "block_time_basis_points": [9000, 13500],
+    "fuel_burn_basis_points": [9500, 12500],
+    "reliability_basis_points": [8000, 10000]
+  }
+}

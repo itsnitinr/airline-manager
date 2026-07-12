@@ -1235,6 +1235,115 @@ export type RefreshCommercialFlightBookingsResponses = {
 export type RefreshCommercialFlightBookingsResponse =
   RefreshCommercialFlightBookingsResponses[keyof RefreshCommercialFlightBookingsResponses];
 
+export type GetDepartureWeatherForecastData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    datedFlightId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/departures/{datedFlightId}/weather-forecast";
+};
+
+export type GetDepartureWeatherForecastErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetDepartureWeatherForecastError =
+  GetDepartureWeatherForecastErrors[keyof GetDepartureWeatherForecastErrors];
+
+export type GetDepartureWeatherForecastResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    id: string;
+    issuedAt: string;
+    materialInputSnapshot: {
+      [key: string]: unknown;
+    };
+    plan: {
+      [key: string]: unknown;
+    };
+    scope: "route" | "departure";
+    scopeId: string;
+    validAt: string;
+    [key: string]: unknown;
+  };
+};
+
+export type GetDepartureWeatherForecastResponse =
+  GetDepartureWeatherForecastResponses[keyof GetDepartureWeatherForecastResponses];
+
 export type ListFleetData = {
   body?: never;
   path: {
@@ -4310,6 +4419,117 @@ export type ActivateWeeklyTimetableResponses = {
 
 export type ActivateWeeklyTimetableResponse =
   ActivateWeeklyTimetableResponses[keyof ActivateWeeklyTimetableResponses];
+
+export type GetRouteWeatherForecastData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    routeId: string;
+  };
+  query: {
+    validAt: string;
+  };
+  url: "/v1/airlines/{airlineId}/routes/{routeId}/weather-forecast";
+};
+
+export type GetRouteWeatherForecastErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetRouteWeatherForecastError =
+  GetRouteWeatherForecastErrors[keyof GetRouteWeatherForecastErrors];
+
+export type GetRouteWeatherForecastResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    id: string;
+    issuedAt: string;
+    materialInputSnapshot: {
+      [key: string]: unknown;
+    };
+    plan: {
+      [key: string]: unknown;
+    };
+    scope: "route" | "departure";
+    scopeId: string;
+    validAt: string;
+    [key: string]: unknown;
+  };
+};
+
+export type GetRouteWeatherForecastResponse =
+  GetRouteWeatherForecastResponses[keyof GetRouteWeatherForecastResponses];
 
 export type ResearchDirectRouteData = {
   body?: never;

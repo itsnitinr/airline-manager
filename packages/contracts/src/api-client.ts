@@ -36,6 +36,12 @@ import type {
   GetFuelPricesData,
   GetFuelPricesError,
   GetFuelPricesResponse,
+  GetRouteWeatherForecastData,
+  GetRouteWeatherForecastError,
+  GetRouteWeatherForecastResponse,
+  GetDepartureWeatherForecastData,
+  GetDepartureWeatherForecastError,
+  GetDepartureWeatherForecastResponse,
   PurchaseFuelData,
   PurchaseFuelError,
   PurchaseFuelResponse,
@@ -107,6 +113,12 @@ export type AirlineManagerApiClient = Readonly<{
   purchaseFuelCapacity: (
     input: Pick<PurchaseFuelCapacityData, "path" | "body" | "headers">,
   ) => Promise<PurchaseFuelCapacityResponse>;
+  getRouteWeatherForecast: (
+    input: Pick<GetRouteWeatherForecastData, "path" | "query">,
+  ) => Promise<GetRouteWeatherForecastResponse>;
+  getDepartureWeatherForecast: (
+    input: Pick<GetDepartureWeatherForecastData, "path">,
+  ) => Promise<GetDepartureWeatherForecastResponse>;
   eventsUrl: (input?: Pick<SubscribeToEventsData, "query">) => string;
 }>;
 
@@ -267,6 +279,18 @@ export function createApiClient(
           body: JSON.stringify(input.body),
         },
         [201],
+      ),
+    getRouteWeatherForecast: (input) => {
+      const query = new URLSearchParams({ validAt: input.query.validAt });
+      return readJson<GetRouteWeatherForecastResponse, GetRouteWeatherForecastError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/routes/${encodeURIComponent(input.path.routeId)}/weather-forecast?${query.toString()}`,
+        { credentials: "include" },
+      );
+    },
+    getDepartureWeatherForecast: (input) =>
+      readJson<GetDepartureWeatherForecastResponse, GetDepartureWeatherForecastError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/departures/${encodeURIComponent(input.path.datedFlightId)}/weather-forecast`,
+        { credentials: "include" },
       ),
     eventsUrl: (input) => {
       const url = new URL(`${baseUrl}/v1/events`);

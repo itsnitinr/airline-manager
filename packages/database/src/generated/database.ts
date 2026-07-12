@@ -187,6 +187,19 @@ export interface AirlineStations {
   station_role: string;
 }
 
+export interface AirportClimateProfiles {
+  airport_id: string;
+  baseline_wind_kt: number;
+  climate_profile_version_id: string;
+  low_visibility_basis_points: number;
+  material_snapshot: Json;
+  provenance: Json;
+  seasonal_wind_amplitude_kt: number;
+  storminess_basis_points: number;
+  wet_season_peak_month: number;
+  zone: string;
+}
+
 export interface AirportSchedulingRules {
   airport_id: string;
   congestion_fee_basis_points: Generated<number>;
@@ -326,6 +339,17 @@ export interface ChartOfAccountsTemplateVersions {
   status: Generated<string>;
   template_id: string;
   version: number;
+}
+
+export interface ClimateProfileVersions {
+  catalog_release_id: string;
+  effective_from: Timestamp;
+  formula_version: string;
+  id: Generated<string>;
+  published_at: Timestamp | null;
+  source_basis: Json;
+  status: string;
+  version: string;
 }
 
 export interface CommercialFlightOffers {
@@ -1193,6 +1217,57 @@ export interface TimezoneDefinitions {
   name: string;
 }
 
+export interface WeatherForecastSnapshots {
+  climate_profile_version_id: string;
+  created_at: Timestamp;
+  forecast_snapshot: Json;
+  game_world_id: string;
+  id: Generated<string>;
+  input_hash: string;
+  issued_at: Timestamp;
+  material_input_snapshot: Json;
+  scope: string;
+  scope_id: string;
+  valid_at: Timestamp;
+  weather_ruleset_version_id: string;
+}
+
+export interface WeatherRealizedSnapshots {
+  created_at: Timestamp;
+  forecast_snapshot_id: string;
+  id: Generated<string>;
+  material_input_snapshot: Json;
+  realized_at: Timestamp;
+  realized_snapshot: Json;
+  uncertainty_process_version: string;
+}
+
+export interface WeatherRulesetVersions {
+  activated_at: Timestamp | null;
+  bounds: Json;
+  climate_profile_version_id: string;
+  correlation_cell_degrees: number;
+  effective_from: Timestamp;
+  formula_version: string;
+  id: Generated<string>;
+  maximum_forecast_lead_hours: number;
+  status: string;
+  system_bucket_hours: number;
+  uncertainty_process_version: string;
+  version: string;
+  world_ruleset_id: string;
+  world_seed: string;
+}
+
+export interface WeatherSnapshotIntents {
+  available_at: Timestamp;
+  intent_type: string;
+  material_snapshot: Json;
+  scope: string;
+  scope_id: string;
+  updated_at: Timestamp;
+}
+
 export interface WorkforceAllocations {
   allocated_at: Timestamp;
   capacity: number;
@@ -1331,6 +1406,7 @@ export interface DB {
   airline_routes: AirlineRoutes;
   airline_stations: AirlineStations;
   airlines: Airlines;
+  airport_climate_profiles: AirportClimateProfiles;
   airport_scheduling_rules: AirportSchedulingRules;
   auth_account: AuthAccount;
   auth_session: AuthSession;
@@ -1345,6 +1421,7 @@ export interface DB {
   chart_of_accounts_template_accounts: ChartOfAccountsTemplateAccounts;
   chart_of_accounts_template_versions: ChartOfAccountsTemplateVersions;
   chart_of_accounts_templates: ChartOfAccountsTemplates;
+  climate_profile_versions: ClimateProfileVersions;
   commercial_flight_offers: CommercialFlightOffers;
   curated_aircraft_variants: CuratedAircraftVariants;
   curated_airports: CuratedAirports;
@@ -1410,6 +1487,10 @@ export interface DB {
   timetable_versions: TimetableVersions;
   timezone_dataset_versions: TimezoneDatasetVersions;
   timezone_definitions: TimezoneDefinitions;
+  weather_forecast_snapshots: WeatherForecastSnapshots;
+  weather_realized_snapshots: WeatherRealizedSnapshots;
+  weather_ruleset_versions: WeatherRulesetVersions;
+  weather_snapshot_intents: WeatherSnapshotIntents;
   workforce_allocations: WorkforceAllocations;
   workforce_checkpoint_intents: WorkforceCheckpointIntents;
   workforce_hiring_orders: WorkforceHiringOrders;
