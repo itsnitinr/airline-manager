@@ -12,6 +12,7 @@ import {
   readFuelRulesFixture,
   readFoundingBalanceFixture,
   readMarketRulesFixture,
+  readSchedulingRulesFixture,
   readSourceFixture,
 } from "./fixtures.js";
 import { importOurAirports } from "./import.js";
@@ -476,6 +477,37 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
     ON CONFLICT (version) DO NOTHING`.execute(database);
   await sql`UPDATE market_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
     WHERE version = ${market.version} AND status = 'draft'`.execute(database);
+
+  const scheduling = await readSchedulingRulesFixture();
+  if (scheduling.world_ruleset_version !== worldRulesetVersion)
+    throw new Error("Scheduling rules fixture selects a different world ruleset.");
+  await sql`INSERT INTO scheduling_ruleset_versions (world_ruleset_id, version, status, effective_from,
+    block_time_formula_version, operating_cost_formula_version, turnaround_formula_version,
+    default_horizon_days, maximum_horizon_days, assumptions, activated_at)
+    VALUES (${rulesetId}::uuid, ${scheduling.version}, 'draft', ${scheduling.effective_from}::timestamptz,
+      ${scheduling.block_time_formula_version}, ${scheduling.operating_cost_formula_version}, ${scheduling.turnaround_formula_version},
+      ${scheduling.default_horizon_days}, ${scheduling.maximum_horizon_days}, ${JSON.stringify(scheduling.assumptions)}::jsonb, NULL)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  const scheduleVersion = await sql<{
+    id: string;
+  }>`SELECT id FROM scheduling_ruleset_versions WHERE version = ${scheduling.version}`.execute(
+    database,
+  );
+  const scheduleVersionId = scheduleVersion.rows[0]?.id;
+  if (!scheduleVersionId) throw new Error("Scheduling ruleset was not created.");
+  for (const snapshot of airportSnapshots) {
+    const override = scheduling.airport_overrides[String(snapshot.snapshot.iataCode)];
+    const defaults = scheduling.default_airport_rule;
+    await sql`INSERT INTO airport_scheduling_rules (scheduling_ruleset_version_id, airport_id, outsourced_service_eligible,
+      hourly_movement_ceiling, curfew_starts_local, curfew_ends_local, congestion_fee_basis_points, minimum_turnaround_adjustment_minutes)
+      VALUES (${scheduleVersionId}::uuid, ${snapshot.id}::uuid, ${defaults.outsourced_service_eligible},
+        ${Number(snapshot.snapshot.longestRunwayFt) >= defaults.long_runway_threshold_ft ? defaults.long_runway_hourly_movement_ceiling : defaults.hourly_movement_ceiling},
+        ${override?.curfew_starts_local ?? null}::time, ${override?.curfew_ends_local ?? null}::time,
+        ${defaults.congestion_fee_basis_points}, ${defaults.minimum_turnaround_adjustment_minutes})
+      ON CONFLICT (scheduling_ruleset_version_id, airport_id) DO NOTHING`.execute(database);
+  }
+  await sql`UPDATE scheduling_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
+    WHERE id = ${scheduleVersionId}::uuid AND status = 'draft'`.execute(database);
 
   return {
     releaseVersion,

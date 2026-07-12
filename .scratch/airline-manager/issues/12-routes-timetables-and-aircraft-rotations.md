@@ -1,7 +1,7 @@
 # Implement routes, recurring timetables, and aircraft rotations
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 05, 09, 11
 
 ## Goal
@@ -49,4 +49,6 @@ and assign one aircraft through a physically coherent rotation.
 
 ## Comments
 
-None yet.
+- 2026-07-12: Implemented researched direct routes, immutable effective-dated weekly timetable versions, flight-leg templates, one-aircraft rotations, versioned airport scheduling rules, and bounded dated-flight generation. Validation covers delivery state, range, runway, outsourced-service eligibility, simplified cabotage, local curfews, persisted congestion ceilings, chronology, turnaround, aircraft position, and aircraft occupancy; errors include suggested corrections. Deterministic versioned distance, block-time, turnaround, congestion-adjusted cost, and ticket-11 demand forecasts are retained as snapshots.
+- Dated-flight generation uses IANA local-wall-time conversion with DST gap/ambiguity handling, per-aircraft transactional locks, unique service-date keys, a PostgreSQL occupancy exclusion constraint, monotonic historical status protection, prospective version boundaries, and idempotent horizon extension. Generated flights bind through ticket 11's opaque commercial-offer port; ticket 12 persists outbox intent without adding ticket 16 queue consumers.
+- Validation passed frozen install, formatting, lint, eight boundary probes, type-check, 31 domain/unit tests, full build, generated Kysely and OpenAPI/client freshness, blank/repeat and prior-schema migrations, 76 PostgreSQL integration tests, 19 authenticated API integration tests, and a rebuilt healthy five-service Docker Compose topology. Staged diff, whitespace, ignored-file, and public-repository secret review completed before the focused local commit.

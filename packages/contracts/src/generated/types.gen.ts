@@ -3127,6 +3127,678 @@ export type GetAirlineNextStepGuidanceResponses = {
 export type GetAirlineNextStepGuidanceResponse =
   GetAirlineNextStepGuidanceResponses[keyof GetAirlineNextStepGuidanceResponses];
 
+export type ListDirectRoutesData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/routes";
+};
+
+export type ListDirectRoutesErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListDirectRoutesError = ListDirectRoutesErrors[keyof ListDirectRoutesErrors];
+
+export type ListDirectRoutesResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    airlineId: string;
+    createdAt: string;
+    destination: {
+      countryCode: string;
+      hourlyMovementCeiling: number;
+      iataCode: string;
+      id: string;
+      longestRunwayFt: number;
+      outsourcedServiceEligible: boolean;
+      timezoneName: string;
+      [key: string]: unknown;
+    };
+    distanceNm: number;
+    id: string;
+    marketId: string;
+    origin: {
+      countryCode: string;
+      hourlyMovementCeiling: number;
+      iataCode: string;
+      id: string;
+      longestRunwayFt: number;
+      outsourcedServiceEligible: boolean;
+      timezoneName: string;
+      [key: string]: unknown;
+    };
+    routeNumber: number;
+    rulesetVersion: string;
+    status: "researched" | "active";
+  }>;
+};
+
+export type ListDirectRoutesResponse = ListDirectRoutesResponses[keyof ListDirectRoutesResponses];
+
+export type CreateDirectRouteData = {
+  body: {
+    aircraftId: string;
+    destinationIataCode: string;
+    originIataCode: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/routes";
+};
+
+export type CreateDirectRouteErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type CreateDirectRouteError = CreateDirectRouteErrors[keyof CreateDirectRouteErrors];
+
+export type CreateDirectRouteResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    airlineId: string;
+    createdAt: string;
+    destination: {
+      countryCode: string;
+      hourlyMovementCeiling: number;
+      iataCode: string;
+      id: string;
+      longestRunwayFt: number;
+      outsourcedServiceEligible: boolean;
+      timezoneName: string;
+      [key: string]: unknown;
+    };
+    distanceNm: number;
+    id: string;
+    marketId: string;
+    origin: {
+      countryCode: string;
+      hourlyMovementCeiling: number;
+      iataCode: string;
+      id: string;
+      longestRunwayFt: number;
+      outsourcedServiceEligible: boolean;
+      timezoneName: string;
+      [key: string]: unknown;
+    };
+    routeNumber: number;
+    rulesetVersion: string;
+    status: "researched" | "active";
+  };
+};
+
+export type CreateDirectRouteResponse =
+  CreateDirectRouteResponses[keyof CreateDirectRouteResponses];
+
+export type ActivateWeeklyTimetableData = {
+  body: {
+    aircraftId: string;
+    effectiveFromLocalDate: string;
+    horizonDays?: number;
+    legs: Array<{
+      dayOfWeek: number;
+      departureLocalTime: string;
+      destinationIataCode: string;
+      originIataCode: string;
+    }>;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+    routeId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/routes/{routeId}/timetables";
+};
+
+export type ActivateWeeklyTimetableErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ActivateWeeklyTimetableError =
+  ActivateWeeklyTimetableErrors[keyof ActivateWeeklyTimetableErrors];
+
+export type ActivateWeeklyTimetableResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    aircraftId: string;
+    effectiveFrom: string;
+    flights: Array<{
+      [key: string]: unknown;
+    }>;
+    generatedThrough: string;
+    route: {
+      airlineId: string;
+      createdAt: string;
+      destination: {
+        countryCode: string;
+        hourlyMovementCeiling: number;
+        iataCode: string;
+        id: string;
+        longestRunwayFt: number;
+        outsourcedServiceEligible: boolean;
+        timezoneName: string;
+        [key: string]: unknown;
+      };
+      distanceNm: number;
+      id: string;
+      marketId: string;
+      origin: {
+        countryCode: string;
+        hourlyMovementCeiling: number;
+        iataCode: string;
+        id: string;
+        longestRunwayFt: number;
+        outsourcedServiceEligible: boolean;
+        timezoneName: string;
+        [key: string]: unknown;
+      };
+      routeNumber: number;
+      rulesetVersion: string;
+      status: "researched" | "active";
+    };
+    timetableVersionId: string;
+    validation: {
+      [key: string]: unknown;
+    };
+    version: number;
+    [key: string]: unknown;
+  };
+};
+
+export type ActivateWeeklyTimetableResponse =
+  ActivateWeeklyTimetableResponses[keyof ActivateWeeklyTimetableResponses];
+
+export type ResearchDirectRouteData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query: {
+    origin: string;
+    destination: string;
+    aircraftId: string;
+    at?: string;
+  };
+  url: "/v1/airlines/{airlineId}/routes/research";
+};
+
+export type ResearchDirectRouteErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ResearchDirectRouteError = ResearchDirectRouteErrors[keyof ResearchDirectRouteErrors];
+
+export type ResearchDirectRouteResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    explanations: Array<string>;
+    forecast: {
+      [key: string]: unknown;
+    };
+    issues: Array<{
+      code: string;
+      field?: string;
+      message: string;
+      suggestedCorrection: string;
+    }>;
+    market: {
+      competition: {
+        [key: string]: unknown;
+      };
+      explanation: Array<string>;
+      forecast: {
+        [key: string]: unknown;
+      };
+      marketId: string;
+      recommendedPricing: {
+        [key: string]: unknown;
+      };
+    };
+    valid: boolean;
+  };
+};
+
+export type ResearchDirectRouteResponse =
+  ResearchDirectRouteResponses[keyof ResearchDirectRouteResponses];
+
+export type ExtendTimetableHorizonData = {
+  body: {
+    through: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+    timetableVersionId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/timetables/{timetableVersionId}/horizon";
+};
+
+export type ExtendTimetableHorizonErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ExtendTimetableHorizonError =
+  ExtendTimetableHorizonErrors[keyof ExtendTimetableHorizonErrors];
+
+export type ExtendTimetableHorizonResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aircraftId: string;
+    effectiveFrom: string;
+    flights: Array<{
+      [key: string]: unknown;
+    }>;
+    generatedThrough: string;
+    route: {
+      airlineId: string;
+      createdAt: string;
+      destination: {
+        countryCode: string;
+        hourlyMovementCeiling: number;
+        iataCode: string;
+        id: string;
+        longestRunwayFt: number;
+        outsourcedServiceEligible: boolean;
+        timezoneName: string;
+        [key: string]: unknown;
+      };
+      distanceNm: number;
+      id: string;
+      marketId: string;
+      origin: {
+        countryCode: string;
+        hourlyMovementCeiling: number;
+        iataCode: string;
+        id: string;
+        longestRunwayFt: number;
+        outsourcedServiceEligible: boolean;
+        timezoneName: string;
+        [key: string]: unknown;
+      };
+      routeNumber: number;
+      rulesetVersion: string;
+      status: "researched" | "active";
+    };
+    timetableVersionId: string;
+    validation: {
+      [key: string]: unknown;
+    };
+    version: number;
+    [key: string]: unknown;
+  };
+};
+
+export type ExtendTimetableHorizonResponse =
+  ExtendTimetableHorizonResponses[keyof ExtendTimetableHorizonResponses];
+
 export type ConfirmAirlineFoundingData = {
   body: {
     acceptFoundingLoan: boolean;

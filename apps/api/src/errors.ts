@@ -5,6 +5,7 @@ import {
   FoundingDomainError,
   FuelDomainError,
   MarketDomainError,
+  SchedulingDomainError,
 } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
@@ -101,6 +102,26 @@ export function registerErrorMapping(app: FastifyInstance): void {
       void reply
         .status(hiddenCodes.has(error.code) ? 403 : conflictCodes.has(error.code) ? 409 : 400)
         .send(envelope(request, error.code, error.message));
+      return;
+    }
+    if (error instanceof SchedulingDomainError) {
+      const hidden = new Set(["route_not_found", "aircraft_not_found", "timetable_not_found"]);
+      const conflict = new Set([
+        "idempotency_conflict",
+        "historical_flight_protected",
+        "invalid_rotation",
+      ]);
+      void reply.status(hidden.has(error.code) ? 403 : conflict.has(error.code) ? 409 : 400).send(
+        envelope(
+          request,
+          error.code,
+          error.message,
+          error.issues.map((issue) => ({
+            ...(issue.field ? { field: issue.field } : {}),
+            issue: `${issue.message} Suggested correction: ${issue.suggestedCorrection}`,
+          })),
+        ),
+      );
       return;
     }
     if (error.validation) {

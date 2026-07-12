@@ -10,6 +10,7 @@ import {
   KyselyFuelRepository,
   KyselyIdentityRepository,
   KyselyMarketRepository,
+  KyselySchedulingRepository,
   createDatabaseRuntime,
   createInfrastructureReadinessCheck,
   readDatabasePoolOptions,
@@ -19,6 +20,7 @@ import {
   FleetService,
   FuelService,
   MarketService,
+  SchedulingService,
 } from "@airline-manager/application";
 import type { FastifyInstance } from "fastify";
 import { createApiServer } from "./app.js";
@@ -121,6 +123,11 @@ export async function startApi(
       new KyselyIdentityRepository(databaseRuntime.database),
     ),
     marketService: new MarketService(
+      new KyselyMarketRepository(databaseRuntime.database),
+      new KyselyIdentityRepository(databaseRuntime.database),
+    ),
+    schedulingService: new SchedulingService(
+      new KyselySchedulingRepository(databaseRuntime.database),
       new KyselyMarketRepository(databaseRuntime.database),
       new KyselyIdentityRepository(databaseRuntime.database),
     ),

@@ -131,6 +131,29 @@ export type MarketRulesFixture = Readonly<{
   assumptions: Readonly<Record<string, unknown>>;
 }>;
 
+export type SchedulingRulesFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  effective_from: string;
+  block_time_formula_version: string;
+  operating_cost_formula_version: string;
+  turnaround_formula_version: string;
+  default_horizon_days: number;
+  maximum_horizon_days: number;
+  default_airport_rule: Readonly<{
+    outsourced_service_eligible: boolean;
+    hourly_movement_ceiling: number;
+    long_runway_threshold_ft: number;
+    long_runway_hourly_movement_ceiling: number;
+    congestion_fee_basis_points: number;
+    minimum_turnaround_adjustment_minutes: number;
+  }>;
+  airport_overrides: Readonly<
+    Record<string, Readonly<{ curfew_starts_local: string; curfew_ends_local: string }>>
+  >;
+  assumptions: Readonly<Record<string, unknown>>;
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -161,4 +184,8 @@ export function readFuelRulesFixture(): Promise<FuelRulesFixture> {
 
 export function readMarketRulesFixture(): Promise<MarketRulesFixture> {
   return readJson(new URL("../../data/market-rules-v1.json", import.meta.url));
+}
+
+export function readSchedulingRulesFixture(): Promise<SchedulingRulesFixture> {
+  return readJson(new URL("../../data/scheduling-rules-v1.json", import.meta.url));
 }

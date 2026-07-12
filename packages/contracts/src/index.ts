@@ -78,6 +78,23 @@ export type CommercialFlightOfferRequest = Readonly<{
   sourceReference: string;
 }>;
 export type BookingRefreshRequest = Readonly<{ checkpointAt: string }>;
+export type RouteCreateRequest = Readonly<{
+  originIataCode: string;
+  destinationIataCode: string;
+  aircraftId: string;
+}>;
+export type TimetableActivationRequest = Readonly<{
+  aircraftId: string;
+  effectiveFromLocalDate: string;
+  horizonDays?: number;
+  legs: readonly Readonly<{
+    dayOfWeek: number;
+    originIataCode: string;
+    destinationIataCode: string;
+    departureLocalTime: string;
+  }>[];
+}>;
+export type HorizonExtensionRequest = Readonly<{ through: string }>;
 
 const exactMinorSchema = { type: "string", pattern: "^[0-9]+$" } as const;
 const foundingSelectionProperties = {
@@ -1327,6 +1344,198 @@ export const sampleCommandResponseSchema = {
     commandId: { type: "string", format: "uuid" },
     transactionId: { type: "string", format: "uuid" },
     executedAt: { type: "string", format: "date-time" },
+  },
+} as const;
+
+const iataSchema = { type: "string", pattern: "^[A-Z]{3}$" } as const;
+const localDateSchema = { type: "string", format: "date" } as const;
+const localTimeSchema = { type: "string", pattern: "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$" } as const;
+
+export const routeResearchQuerySchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["origin", "destination", "aircraftId"],
+  properties: {
+    origin: iataSchema,
+    destination: iataSchema,
+    aircraftId: { type: "string", format: "uuid" },
+    at: { type: "string", format: "date-time" },
+  },
+} as const;
+
+export const routeCreateRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["originIataCode", "destinationIataCode", "aircraftId"],
+  properties: {
+    originIataCode: iataSchema,
+    destinationIataCode: iataSchema,
+    aircraftId: { type: "string", format: "uuid" },
+  },
+} as const;
+
+export const routeIdentifierParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "routeId"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    routeId: { type: "string", format: "uuid" },
+  },
+} as const;
+
+export const timetableIdentifierParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "timetableVersionId"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    timetableVersionId: { type: "string", format: "uuid" },
+  },
+} as const;
+
+export const timetableActivationRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["aircraftId", "effectiveFromLocalDate", "legs"],
+  properties: {
+    aircraftId: { type: "string", format: "uuid" },
+    effectiveFromLocalDate: localDateSchema,
+    horizonDays: { type: "integer", minimum: 7, maximum: 90 },
+    legs: {
+      type: "array",
+      minItems: 1,
+      maxItems: 28,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["dayOfWeek", "originIataCode", "destinationIataCode", "departureLocalTime"],
+        properties: {
+          dayOfWeek: { type: "integer", minimum: 0, maximum: 6 },
+          originIataCode: iataSchema,
+          destinationIataCode: iataSchema,
+          departureLocalTime: localTimeSchema,
+        },
+      },
+    },
+  },
+} as const;
+
+export const horizonExtensionRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["through"],
+  properties: { through: localDateSchema },
+} as const;
+
+const schedulingIssueSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["code", "message", "suggestedCorrection"],
+  properties: {
+    code: { type: "string" },
+    message: { type: "string" },
+    field: { type: "string" },
+    suggestedCorrection: { type: "string" },
+  },
+} as const;
+const airportSchedulingSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "id",
+    "iataCode",
+    "countryCode",
+    "timezoneName",
+    "longestRunwayFt",
+    "outsourcedServiceEligible",
+    "hourlyMovementCeiling",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    iataCode: iataSchema,
+    countryCode: { type: "string" },
+    timezoneName: { type: "string" },
+    longestRunwayFt: { type: "integer" },
+    outsourcedServiceEligible: { type: "boolean" },
+    hourlyMovementCeiling: { type: "integer" },
+  },
+} as const;
+export const routeResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "airlineId",
+    "marketId",
+    "routeNumber",
+    "origin",
+    "destination",
+    "distanceNm",
+    "status",
+    "rulesetVersion",
+    "createdAt",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    airlineId: { type: "string", format: "uuid" },
+    marketId: { type: "string", format: "uuid" },
+    routeNumber: { type: "integer" },
+    origin: airportSchedulingSchema,
+    destination: airportSchedulingSchema,
+    distanceNm: { type: "integer" },
+    status: { type: "string", enum: ["researched", "active"] },
+    rulesetVersion: { type: "string" },
+    createdAt: { type: "string", format: "date-time" },
+  },
+} as const;
+export const routesResponseSchema = { type: "array", items: routeResponseSchema } as const;
+export const routeResearchSchedulingResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["market", "forecast", "valid", "issues", "explanations"],
+  properties: {
+    market: marketResearchResponseSchema,
+    forecast: {
+      type: "object",
+      additionalProperties: true,
+      required: [
+        "distanceNm",
+        "plannedBlockMinutes",
+        "minimumTurnaroundMinutes",
+        "provisionalOperatingCostMinor",
+        "provisionalDailyDemand",
+        "outsourcedService",
+      ],
+      properties: {},
+    },
+    valid: { type: "boolean" },
+    issues: { type: "array", items: schedulingIssueSchema },
+    explanations: { type: "array", items: { type: "string" } },
+  },
+} as const;
+export const timetableActivationResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "route",
+    "timetableVersionId",
+    "version",
+    "effectiveFrom",
+    "generatedThrough",
+    "aircraftId",
+    "flights",
+    "validation",
+  ],
+  properties: {
+    route: routeResponseSchema,
+    timetableVersionId: { type: "string", format: "uuid" },
+    version: { type: "integer" },
+    effectiveFrom: localDateSchema,
+    generatedThrough: localDateSchema,
+    aircraftId: { type: "string", format: "uuid" },
+    flights: { type: "array", items: { type: "object", additionalProperties: true } },
+    validation: { type: "object", additionalProperties: true },
   },
 } as const;
 

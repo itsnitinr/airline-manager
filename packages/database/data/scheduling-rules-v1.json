@@ -1,0 +1,30 @@
+{
+  "version": "scheduling-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "effective_from": "2026-07-11T00:00:00.000Z",
+  "block_time_formula_version": "schedule-block-v1",
+  "operating_cost_formula_version": "schedule-cost-v1",
+  "turnaround_formula_version": "schedule-turnaround-v1",
+  "default_horizon_days": 56,
+  "maximum_horizon_days": 90,
+  "default_airport_rule": {
+    "outsourced_service_eligible": true,
+    "hourly_movement_ceiling": 12,
+    "long_runway_threshold_ft": 10000,
+    "long_runway_hourly_movement_ceiling": 18,
+    "congestion_fee_basis_points": 500,
+    "minimum_turnaround_adjustment_minutes": 0
+  },
+  "airport_overrides": {
+    "FRA": { "curfew_starts_local": "23:00", "curfew_ends_local": "05:00" },
+    "LHR": { "curfew_starts_local": "23:30", "curfew_ends_local": "06:00" },
+    "SYD": { "curfew_starts_local": "23:00", "curfew_ends_local": "06:00" }
+  },
+  "assumptions": {
+    "classification": "derived_and_balance",
+    "player_owned_slots": false,
+    "outsourced_service_without_station_investment": true,
+    "live_schedule_dependency": false,
+    "explanation": "Versioned slice-one scheduling balance rules provide explicit capacity, curfew, turnaround, horizon, and formula semantics without claiming live airport operating restrictions."
+  }
+}

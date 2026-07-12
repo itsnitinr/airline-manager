@@ -103,6 +103,15 @@ export interface AircraftLifecycleEvents {
   occurred_at: Timestamp;
 }
 
+export interface AircraftRotations {
+  activated_at: Timestamp;
+  aircraft_id: string;
+  id: Generated<string>;
+  initial_airport_id: string;
+  ruleset_version: string;
+  timetable_version_id: string;
+}
+
 export interface AirlineFuelInventories {
   airline_id: string;
   capacity_tier_id: string;
@@ -114,6 +123,20 @@ export interface AirlineFuelInventories {
   planning_reserved_kg: Generated<Int8>;
   updated_at: Generated<Timestamp>;
   version: Generated<Int8>;
+}
+
+export interface AirlineRoutes {
+  airline_id: string;
+  created_at: Timestamp;
+  destination_airport_id: string;
+  distance_nm: number;
+  forecast_snapshot: Json;
+  id: Generated<string>;
+  market_id: string;
+  origin_airport_id: string;
+  route_number: number;
+  ruleset_version: string;
+  status: Generated<string>;
 }
 
 export interface Airlines {
@@ -141,6 +164,17 @@ export interface AirlineStations {
   opened_at: Timestamp;
   service_model: string;
   station_role: string;
+}
+
+export interface AirportSchedulingRules {
+  airport_id: string;
+  congestion_fee_basis_points: Generated<number>;
+  curfew_ends_local: string | null;
+  curfew_starts_local: string | null;
+  hourly_movement_ceiling: number;
+  minimum_turnaround_adjustment_minutes: Generated<number>;
+  outsourced_service_eligible: boolean;
+  scheduling_ruleset_version_id: string;
 }
 
 export interface AuthAccount {
@@ -345,6 +379,31 @@ export interface Currencies {
   rounding_mode: Generated<string>;
 }
 
+export interface DatedFlights {
+  aircraft_id: string;
+  arrival_at: Timestamp;
+  arrival_local: string;
+  created_at: Timestamp;
+  departure_at: Timestamp;
+  departure_local: string;
+  destination_airport_id: string;
+  flight_leg_template_id: string;
+  flight_number: string;
+  forecast_snapshot: Json;
+  id: Generated<string>;
+  market_id: string;
+  minimum_turnaround_minutes: number;
+  origin_airport_id: string;
+  planned_block_minutes: number;
+  ready_at: Timestamp;
+  rotation_id: string;
+  route_id: string;
+  ruleset_version: string;
+  service_date: Timestamp;
+  status: Generated<string>;
+  timetable_version_id: string;
+}
+
 export interface ExchangeRateImports {
   effective_at: Timestamp;
   id: Generated<string>;
@@ -367,6 +426,20 @@ export interface ExchangeRateSources {
   id: string;
   interface_version: number;
   name: string;
+}
+
+export interface FlightLegTemplates {
+  day_of_week: number;
+  departure_local_time: string;
+  destination_airport_id: string;
+  destination_timezone: string;
+  id: Generated<string>;
+  minimum_turnaround_minutes: number;
+  origin_airport_id: string;
+  origin_timezone: string;
+  planned_block_minutes: number;
+  sequence: number;
+  timetable_version_id: string;
 }
 
 export interface FounderFinancingOffers {
@@ -902,6 +975,27 @@ export interface ResourceOwnerships {
   resource_type: string;
 }
 
+export interface RotationLegAssignments {
+  flight_leg_template_id: string;
+  rotation_id: string;
+  sequence: number;
+}
+
+export interface SchedulingRulesetVersions {
+  activated_at: Timestamp | null;
+  assumptions: Json;
+  block_time_formula_version: string;
+  default_horizon_days: number;
+  effective_from: Timestamp;
+  id: Generated<string>;
+  maximum_horizon_days: number;
+  operating_cost_formula_version: string;
+  status: string;
+  turnaround_formula_version: string;
+  version: string;
+  world_ruleset_id: string;
+}
+
 export interface SchemaMigrations {
   applied_at: Generated<Timestamp>;
   checksum: string;
@@ -919,6 +1013,19 @@ export interface SecurityAuditEvents {
   request_id: string | null;
   target_identifier: string;
   target_type: string;
+}
+
+export interface TimetableVersions {
+  activated_at: Timestamp;
+  effective_from: Timestamp;
+  effective_to: Timestamp | null;
+  generated_through: Timestamp;
+  id: Generated<string>;
+  input_hash: string;
+  route_id: string;
+  ruleset_version: string;
+  status: string;
+  version: number;
 }
 
 export interface TimezoneDatasetVersions {
@@ -962,9 +1069,12 @@ export interface DB {
   aircraft_cabin_configurations: AircraftCabinConfigurations;
   aircraft_lessors: AircraftLessors;
   aircraft_lifecycle_events: AircraftLifecycleEvents;
+  aircraft_rotations: AircraftRotations;
   airline_fuel_inventories: AirlineFuelInventories;
+  airline_routes: AirlineRoutes;
   airline_stations: AirlineStations;
   airlines: Airlines;
+  airport_scheduling_rules: AirportSchedulingRules;
   auth_account: AuthAccount;
   auth_session: AuthSession;
   auth_user: AuthUser;
@@ -982,9 +1092,11 @@ export interface DB {
   curated_aircraft_variants: CuratedAircraftVariants;
   curated_airports: CuratedAirports;
   currencies: Currencies;
+  dated_flights: DatedFlights;
   exchange_rate_imports: ExchangeRateImports;
   exchange_rate_sources: ExchangeRateSources;
   exchange_rates: ExchangeRates;
+  flight_leg_templates: FlightLegTemplates;
   founder_financing_offers: FounderFinancingOffers;
   founder_package_options: FounderPackageOptions;
   founder_package_versions: FounderPackageVersions;
@@ -1025,8 +1137,11 @@ export interface DB {
   reference_sources: ReferenceSources;
   reference_validation_results: ReferenceValidationResults;
   resource_ownerships: ResourceOwnerships;
+  rotation_leg_assignments: RotationLegAssignments;
+  scheduling_ruleset_versions: SchedulingRulesetVersions;
   schema_migrations: SchemaMigrations;
   security_audit_events: SecurityAuditEvents;
+  timetable_versions: TimetableVersions;
   timezone_dataset_versions: TimezoneDatasetVersions;
   timezone_definitions: TimezoneDefinitions;
   world_ruleset_acquisition_overrides: WorldRulesetAcquisitionOverrides;

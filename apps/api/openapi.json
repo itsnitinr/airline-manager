@@ -9635,6 +9635,2149 @@
         "tags": ["airlines"]
       }
     },
+    "/v1/airlines/{airlineId}/routes": {
+      "get": {
+        "operationId": "listDirectRoutes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "airlineId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "destination": {
+                        "additionalProperties": true,
+                        "properties": {
+                          "countryCode": {
+                            "type": "string"
+                          },
+                          "hourlyMovementCeiling": {
+                            "type": "integer"
+                          },
+                          "iataCode": {
+                            "pattern": "^[A-Z]{3}$",
+                            "type": "string"
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          "longestRunwayFt": {
+                            "type": "integer"
+                          },
+                          "outsourcedServiceEligible": {
+                            "type": "boolean"
+                          },
+                          "timezoneName": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "iataCode",
+                          "countryCode",
+                          "timezoneName",
+                          "longestRunwayFt",
+                          "outsourcedServiceEligible",
+                          "hourlyMovementCeiling"
+                        ],
+                        "type": "object"
+                      },
+                      "distanceNm": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "marketId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "origin": {
+                        "additionalProperties": true,
+                        "properties": {
+                          "countryCode": {
+                            "type": "string"
+                          },
+                          "hourlyMovementCeiling": {
+                            "type": "integer"
+                          },
+                          "iataCode": {
+                            "pattern": "^[A-Z]{3}$",
+                            "type": "string"
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          "longestRunwayFt": {
+                            "type": "integer"
+                          },
+                          "outsourcedServiceEligible": {
+                            "type": "boolean"
+                          },
+                          "timezoneName": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "iataCode",
+                          "countryCode",
+                          "timezoneName",
+                          "longestRunwayFt",
+                          "outsourcedServiceEligible",
+                          "hourlyMovementCeiling"
+                        ],
+                        "type": "object"
+                      },
+                      "routeNumber": {
+                        "type": "integer"
+                      },
+                      "rulesetVersion": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "enum": ["researched", "active"],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "airlineId",
+                      "marketId",
+                      "routeNumber",
+                      "origin",
+                      "destination",
+                      "distanceNm",
+                      "status",
+                      "rulesetVersion",
+                      "createdAt"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["scheduling"]
+      },
+      "post": {
+        "operationId": "createDirectRoute",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "aircraftId": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "destinationIataCode": {
+                    "pattern": "^[A-Z]{3}$",
+                    "type": "string"
+                  },
+                  "originIataCode": {
+                    "pattern": "^[A-Z]{3}$",
+                    "type": "string"
+                  }
+                },
+                "required": ["originIataCode", "destinationIataCode", "aircraftId"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "airlineId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "destination": {
+                      "additionalProperties": true,
+                      "properties": {
+                        "countryCode": {
+                          "type": "string"
+                        },
+                        "hourlyMovementCeiling": {
+                          "type": "integer"
+                        },
+                        "iataCode": {
+                          "pattern": "^[A-Z]{3}$",
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "longestRunwayFt": {
+                          "type": "integer"
+                        },
+                        "outsourcedServiceEligible": {
+                          "type": "boolean"
+                        },
+                        "timezoneName": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "iataCode",
+                        "countryCode",
+                        "timezoneName",
+                        "longestRunwayFt",
+                        "outsourcedServiceEligible",
+                        "hourlyMovementCeiling"
+                      ],
+                      "type": "object"
+                    },
+                    "distanceNm": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "marketId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "origin": {
+                      "additionalProperties": true,
+                      "properties": {
+                        "countryCode": {
+                          "type": "string"
+                        },
+                        "hourlyMovementCeiling": {
+                          "type": "integer"
+                        },
+                        "iataCode": {
+                          "pattern": "^[A-Z]{3}$",
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "longestRunwayFt": {
+                          "type": "integer"
+                        },
+                        "outsourcedServiceEligible": {
+                          "type": "boolean"
+                        },
+                        "timezoneName": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "iataCode",
+                        "countryCode",
+                        "timezoneName",
+                        "longestRunwayFt",
+                        "outsourcedServiceEligible",
+                        "hourlyMovementCeiling"
+                      ],
+                      "type": "object"
+                    },
+                    "routeNumber": {
+                      "type": "integer"
+                    },
+                    "rulesetVersion": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": ["researched", "active"],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "airlineId",
+                    "marketId",
+                    "routeNumber",
+                    "origin",
+                    "destination",
+                    "distanceNm",
+                    "status",
+                    "rulesetVersion",
+                    "createdAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["scheduling"]
+      }
+    },
+    "/v1/airlines/{airlineId}/routes/{routeId}/timetables": {
+      "post": {
+        "operationId": "activateWeeklyTimetable",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "routeId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "aircraftId": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "effectiveFromLocalDate": {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  "horizonDays": {
+                    "maximum": 90,
+                    "minimum": 7,
+                    "type": "integer"
+                  },
+                  "legs": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "dayOfWeek": {
+                          "maximum": 6,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "departureLocalTime": {
+                          "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$",
+                          "type": "string"
+                        },
+                        "destinationIataCode": {
+                          "pattern": "^[A-Z]{3}$",
+                          "type": "string"
+                        },
+                        "originIataCode": {
+                          "pattern": "^[A-Z]{3}$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "dayOfWeek",
+                        "originIataCode",
+                        "destinationIataCode",
+                        "departureLocalTime"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 28,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                },
+                "required": ["aircraftId", "effectiveFromLocalDate", "legs"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "aircraftId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "effectiveFrom": {
+                      "format": "date",
+                      "type": "string"
+                    },
+                    "flights": {
+                      "items": {
+                        "additionalProperties": true,
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "generatedThrough": {
+                      "format": "date",
+                      "type": "string"
+                    },
+                    "route": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "airlineId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "destination": {
+                          "additionalProperties": true,
+                          "properties": {
+                            "countryCode": {
+                              "type": "string"
+                            },
+                            "hourlyMovementCeiling": {
+                              "type": "integer"
+                            },
+                            "iataCode": {
+                              "pattern": "^[A-Z]{3}$",
+                              "type": "string"
+                            },
+                            "id": {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            "longestRunwayFt": {
+                              "type": "integer"
+                            },
+                            "outsourcedServiceEligible": {
+                              "type": "boolean"
+                            },
+                            "timezoneName": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "iataCode",
+                            "countryCode",
+                            "timezoneName",
+                            "longestRunwayFt",
+                            "outsourcedServiceEligible",
+                            "hourlyMovementCeiling"
+                          ],
+                          "type": "object"
+                        },
+                        "distanceNm": {
+                          "type": "integer"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "marketId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "origin": {
+                          "additionalProperties": true,
+                          "properties": {
+                            "countryCode": {
+                              "type": "string"
+                            },
+                            "hourlyMovementCeiling": {
+                              "type": "integer"
+                            },
+                            "iataCode": {
+                              "pattern": "^[A-Z]{3}$",
+                              "type": "string"
+                            },
+                            "id": {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            "longestRunwayFt": {
+                              "type": "integer"
+                            },
+                            "outsourcedServiceEligible": {
+                              "type": "boolean"
+                            },
+                            "timezoneName": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "iataCode",
+                            "countryCode",
+                            "timezoneName",
+                            "longestRunwayFt",
+                            "outsourcedServiceEligible",
+                            "hourlyMovementCeiling"
+                          ],
+                          "type": "object"
+                        },
+                        "routeNumber": {
+                          "type": "integer"
+                        },
+                        "rulesetVersion": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "enum": ["researched", "active"],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "airlineId",
+                        "marketId",
+                        "routeNumber",
+                        "origin",
+                        "destination",
+                        "distanceNm",
+                        "status",
+                        "rulesetVersion",
+                        "createdAt"
+                      ],
+                      "type": "object"
+                    },
+                    "timetableVersionId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "validation": {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    "version": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "route",
+                    "timetableVersionId",
+                    "version",
+                    "effectiveFrom",
+                    "generatedThrough",
+                    "aircraftId",
+                    "flights",
+                    "validation"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["scheduling"]
+      }
+    },
+    "/v1/airlines/{airlineId}/routes/research": {
+      "get": {
+        "operationId": "researchDirectRoute",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "origin",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "destination",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "aircraftId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "at",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "explanations": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "forecast": {
+                      "additionalProperties": true,
+                      "properties": {},
+                      "required": [
+                        "distanceNm",
+                        "plannedBlockMinutes",
+                        "minimumTurnaroundMinutes",
+                        "provisionalOperatingCostMinor",
+                        "provisionalDailyDemand",
+                        "outsourcedService"
+                      ],
+                      "type": "object"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "suggestedCorrection": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["code", "message", "suggestedCorrection"],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "market": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "competition": {
+                          "additionalProperties": true,
+                          "type": "object"
+                        },
+                        "explanation": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "forecast": {
+                          "additionalProperties": true,
+                          "type": "object"
+                        },
+                        "marketId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "recommendedPricing": {
+                          "additionalProperties": true,
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "marketId",
+                        "forecast",
+                        "competition",
+                        "recommendedPricing",
+                        "explanation"
+                      ],
+                      "type": "object"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["market", "forecast", "valid", "issues", "explanations"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["scheduling"]
+      }
+    },
+    "/v1/airlines/{airlineId}/timetables/{timetableVersionId}/horizon": {
+      "post": {
+        "operationId": "extendTimetableHorizon",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "airlineId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "timetableVersionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "through": {
+                    "format": "date",
+                    "type": "string"
+                  }
+                },
+                "required": ["through"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "aircraftId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "effectiveFrom": {
+                      "format": "date",
+                      "type": "string"
+                    },
+                    "flights": {
+                      "items": {
+                        "additionalProperties": true,
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "generatedThrough": {
+                      "format": "date",
+                      "type": "string"
+                    },
+                    "route": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "airlineId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "destination": {
+                          "additionalProperties": true,
+                          "properties": {
+                            "countryCode": {
+                              "type": "string"
+                            },
+                            "hourlyMovementCeiling": {
+                              "type": "integer"
+                            },
+                            "iataCode": {
+                              "pattern": "^[A-Z]{3}$",
+                              "type": "string"
+                            },
+                            "id": {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            "longestRunwayFt": {
+                              "type": "integer"
+                            },
+                            "outsourcedServiceEligible": {
+                              "type": "boolean"
+                            },
+                            "timezoneName": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "iataCode",
+                            "countryCode",
+                            "timezoneName",
+                            "longestRunwayFt",
+                            "outsourcedServiceEligible",
+                            "hourlyMovementCeiling"
+                          ],
+                          "type": "object"
+                        },
+                        "distanceNm": {
+                          "type": "integer"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "marketId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "origin": {
+                          "additionalProperties": true,
+                          "properties": {
+                            "countryCode": {
+                              "type": "string"
+                            },
+                            "hourlyMovementCeiling": {
+                              "type": "integer"
+                            },
+                            "iataCode": {
+                              "pattern": "^[A-Z]{3}$",
+                              "type": "string"
+                            },
+                            "id": {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            "longestRunwayFt": {
+                              "type": "integer"
+                            },
+                            "outsourcedServiceEligible": {
+                              "type": "boolean"
+                            },
+                            "timezoneName": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "iataCode",
+                            "countryCode",
+                            "timezoneName",
+                            "longestRunwayFt",
+                            "outsourcedServiceEligible",
+                            "hourlyMovementCeiling"
+                          ],
+                          "type": "object"
+                        },
+                        "routeNumber": {
+                          "type": "integer"
+                        },
+                        "rulesetVersion": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "enum": ["researched", "active"],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "airlineId",
+                        "marketId",
+                        "routeNumber",
+                        "origin",
+                        "destination",
+                        "distanceNm",
+                        "status",
+                        "rulesetVersion",
+                        "createdAt"
+                      ],
+                      "type": "object"
+                    },
+                    "timetableVersionId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "validation": {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    "version": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "route",
+                    "timetableVersionId",
+                    "version",
+                    "effectiveFrom",
+                    "generatedThrough",
+                    "aircraftId",
+                    "flights",
+                    "validation"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["scheduling"]
+      }
+    },
     "/v1/airlines/founding/confirm": {
       "post": {
         "operationId": "confirmAirlineFounding",
@@ -11140,6 +13283,10 @@
     {
       "description": "Direct passenger demand, aggregate competition, pricing, and bookings.",
       "name": "markets"
+    },
+    {
+      "description": "Direct routes, weekly timetables, rotations, and dated flights.",
+      "name": "scheduling"
     }
   ]
 }
