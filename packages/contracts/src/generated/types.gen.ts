@@ -158,6 +158,678 @@ export type GetAirlineCareerSummaryResponses = {
 export type GetAirlineCareerSummaryResponse =
   GetAirlineCareerSummaryResponses[keyof GetAirlineCareerSummaryResponses];
 
+export type RecordAircraftMaintenanceUtilizationData = {
+  body: {
+    blockMinutes: number;
+    completedAt: string;
+    completionKey: string;
+    cycles: number;
+    faultSeed: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/aircraft/{aircraftId}/maintenance/flight-completions";
+};
+
+export type RecordAircraftMaintenanceUtilizationErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type RecordAircraftMaintenanceUtilizationError =
+  RecordAircraftMaintenanceUtilizationErrors[keyof RecordAircraftMaintenanceUtilizationErrors];
+
+export type RecordAircraftMaintenanceUtilizationResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    accumulatedCycles: string;
+    accumulatedHoursMinutes: string;
+    aircraftId: string;
+    completionKey: string;
+    fault: {
+      [key: string]: unknown;
+    };
+    processedAt: string;
+    [key: string]: unknown;
+  };
+};
+
+export type RecordAircraftMaintenanceUtilizationResponse =
+  RecordAircraftMaintenanceUtilizationResponses[keyof RecordAircraftMaintenanceUtilizationResponses];
+
+export type GetAircraftMaintenanceForecastData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/aircraft/{aircraftId}/maintenance/forecast";
+};
+
+export type GetAircraftMaintenanceForecastErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetAircraftMaintenanceForecastError =
+  GetAircraftMaintenanceForecastErrors[keyof GetAircraftMaintenanceForecastErrors];
+
+export type GetAircraftMaintenanceForecastResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    activeFaults: Array<{
+      [key: string]: unknown;
+    }>;
+    aircraftId: string;
+    dispatchReady: boolean;
+    due: Array<{
+      [key: string]: unknown;
+    }>;
+    explanations: Array<string>;
+    generatedAt: string;
+    plannedWork: Array<{
+      aircraftId: string;
+      costMinor: string;
+      endsAt: string;
+      id: string;
+      source: "planned" | "repair";
+      startsAt: string;
+      status: "planned" | "completed";
+      [key: string]: unknown;
+    }>;
+    programVersion: string;
+    recoverySteps: Array<string>;
+    [key: string]: unknown;
+  };
+};
+
+export type GetAircraftMaintenanceForecastResponse =
+  GetAircraftMaintenanceForecastResponses[keyof GetAircraftMaintenanceForecastResponses];
+
+export type ListAircraftMaintenanceHistoryData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/aircraft/{aircraftId}/maintenance/history";
+};
+
+export type ListAircraftMaintenanceHistoryErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListAircraftMaintenanceHistoryError =
+  ListAircraftMaintenanceHistoryErrors[keyof ListAircraftMaintenanceHistoryErrors];
+
+export type ListAircraftMaintenanceHistoryResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    [key: string]: unknown;
+  }>;
+};
+
+export type ListAircraftMaintenanceHistoryResponse =
+  ListAircraftMaintenanceHistoryResponses[keyof ListAircraftMaintenanceHistoryResponses];
+
+export type GetAircraftMaintenanceProgramData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/aircraft/{aircraftId}/maintenance/program";
+};
+
+export type GetAircraftMaintenanceProgramErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetAircraftMaintenanceProgramError =
+  GetAircraftMaintenanceProgramErrors[keyof GetAircraftMaintenanceProgramErrors];
+
+export type GetAircraftMaintenanceProgramResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aircraftVariantCode: string;
+    aircraftVariantId: string;
+    id: string;
+    rules: Array<{
+      [key: string]: unknown;
+    }>;
+    version: string;
+    [key: string]: unknown;
+  };
+};
+
+export type GetAircraftMaintenanceProgramResponse =
+  GetAircraftMaintenanceProgramResponses[keyof GetAircraftMaintenanceProgramResponses];
+
+export type GetAircraftMaintenanceDispatchReadinessData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query: {
+    at: string;
+  };
+  url: "/v1/airlines/{airlineId}/aircraft/{aircraftId}/maintenance/readiness";
+};
+
+export type GetAircraftMaintenanceDispatchReadinessErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetAircraftMaintenanceDispatchReadinessError =
+  GetAircraftMaintenanceDispatchReadinessErrors[keyof GetAircraftMaintenanceDispatchReadinessErrors];
+
+export type GetAircraftMaintenanceDispatchReadinessResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    activeFaults: Array<{
+      [key: string]: unknown;
+    }>;
+    aircraftId: string;
+    dispatchReady: boolean;
+    due: Array<{
+      [key: string]: unknown;
+    }>;
+    explanations: Array<string>;
+    generatedAt: string;
+    plannedWork: Array<{
+      aircraftId: string;
+      costMinor: string;
+      endsAt: string;
+      id: string;
+      source: "planned" | "repair";
+      startsAt: string;
+      status: "planned" | "completed";
+      [key: string]: unknown;
+    }>;
+    programVersion: string;
+    recoverySteps: Array<string>;
+    [key: string]: unknown;
+  };
+};
+
+export type GetAircraftMaintenanceDispatchReadinessResponse =
+  GetAircraftMaintenanceDispatchReadinessResponses[keyof GetAircraftMaintenanceDispatchReadinessResponses];
+
+export type ScheduleAircraftMaintenanceWorkData = {
+  body: {
+    faultId?: string;
+    ruleCode?: string;
+    startsAt: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/aircraft/{aircraftId}/maintenance/windows";
+};
+
+export type ScheduleAircraftMaintenanceWorkErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ScheduleAircraftMaintenanceWorkError =
+  ScheduleAircraftMaintenanceWorkErrors[keyof ScheduleAircraftMaintenanceWorkErrors];
+
+export type ScheduleAircraftMaintenanceWorkResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    aircraftId: string;
+    costMinor: string;
+    endsAt: string;
+    id: string;
+    source: "planned" | "repair";
+    startsAt: string;
+    status: "planned" | "completed";
+    [key: string]: unknown;
+  };
+};
+
+export type ScheduleAircraftMaintenanceWorkResponse =
+  ScheduleAircraftMaintenanceWorkResponses[keyof ScheduleAircraftMaintenanceWorkResponses];
+
 export type CreateCommercialFlightOfferData = {
   body: {
     bookingOpensAt: string;
@@ -2597,6 +3269,114 @@ export type SetFuelReserveResponses = {
 };
 
 export type SetFuelReserveResponse = SetFuelReserveResponses[keyof SetFuelReserveResponses];
+
+export type CompleteAircraftMaintenanceWorkData = {
+  body?: never;
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+    workPackageId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/maintenance/work-packages/{workPackageId}/complete";
+};
+
+export type CompleteAircraftMaintenanceWorkErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type CompleteAircraftMaintenanceWorkError =
+  CompleteAircraftMaintenanceWorkErrors[keyof CompleteAircraftMaintenanceWorkErrors];
+
+export type CompleteAircraftMaintenanceWorkResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aircraftId: string;
+    costMinor: string;
+    endsAt: string;
+    id: string;
+    source: "planned" | "repair";
+    startsAt: string;
+    status: "planned" | "completed";
+    [key: string]: unknown;
+  };
+};
+
+export type CompleteAircraftMaintenanceWorkResponse =
+  CompleteAircraftMaintenanceWorkResponses[keyof CompleteAircraftMaintenanceWorkResponses];
 
 export type ListPassengerPricingStrategiesData = {
   body?: never;

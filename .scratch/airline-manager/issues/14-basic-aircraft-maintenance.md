@@ -1,7 +1,7 @@
 # Implement slice-one aircraft maintenance and condition
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 07, 09, 12, 13
 
 ## Goal
@@ -44,4 +44,6 @@ non-fatal faults for the starter fleet.
 
 ## Comments
 
-None yet.
+- Implemented immutable variant-specific maintenance-v1 programs; real-day UTC and exact-once utilization counters; bounded condition, reliability, deferral, and deterministic non-fatal fault rules; transactional work windows, qualified line-maintenance allocation, repair completion, append-only history/checkpoint intents, and balanced idempotent ledger reconciliation.
+- Added framework-independent maintenance and dispatch-readiness ports, authenticated REST workflows, checked-in PostgreSQL/Kysely/OpenAPI/client artifacts, and focused domain, concurrency, ownership, occupancy, fault-replay, history, and ledger integration coverage.
+- Validation passed: frozen install; format, lint, boundary, typecheck, unit, production build, database (87/87) and API (23/23) integration suites; blank/repeat and 0013-to-0014 migrations; Kysely/OpenAPI freshness; fresh Docker Compose build with healthy API/worker/PostgreSQL/Redis and web HTTP 200; staged diff/secret review.

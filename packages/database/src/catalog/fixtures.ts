@@ -190,6 +190,38 @@ export type WorkforceRulesFixture = Readonly<{
   assumptions: Readonly<Record<string, unknown>>;
 }>;
 
+export type MaintenanceRulesFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  effective_from: string;
+  utilization_formula_version: string;
+  condition_formula_version: string;
+  fault_formula_version: string;
+  calendar_semantics: "elapsed_utc_days";
+  variants: Readonly<
+    Record<
+      string,
+      readonly Readonly<{
+        code: string;
+        name: string;
+        work_kind: "line" | "package";
+        interval_hours_minutes?: string;
+        interval_cycles?: string;
+        interval_calendar_days?: number;
+        hard_limit: boolean;
+        maximum_deferral_hours_minutes: string;
+        maximum_deferral_cycles: string;
+        maximum_deferral_calendar_days: number;
+        duration_minutes: number;
+        workforce_capacity: number;
+        condition_restore_basis_points: number;
+        cost_minor: Readonly<Record<string, string>>;
+      }>[]
+    >
+  >;
+  assumptions: Readonly<Record<string, unknown>>;
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -228,4 +260,8 @@ export function readSchedulingRulesFixture(): Promise<SchedulingRulesFixture> {
 
 export function readWorkforceRulesFixture(): Promise<WorkforceRulesFixture> {
   return readJson(new URL("../../data/workforce-rules-v1.json", import.meta.url));
+}
+
+export function readMaintenanceRulesFixture(): Promise<MaintenanceRulesFixture> {
+  return readJson(new URL("../../data/maintenance-rules-v1.json", import.meta.url));
 }

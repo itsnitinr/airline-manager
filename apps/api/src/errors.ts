@@ -7,6 +7,7 @@ import {
   MarketDomainError,
   SchedulingDomainError,
   WorkforceDomainError,
+  MaintenanceDomainError,
 } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
@@ -141,6 +142,31 @@ export function registerErrorMapping(app: FastifyInstance): void {
             field: shortage.role,
             issue: `${shortage.baseIataCode} ${shortage.qualificationCode} ${shortage.windowStartsAt}-${shortage.windowEndsAt}: required ${shortage.requiredCapacity}, available ${shortage.availableCapacity}, shortfall ${shortage.shortfall}. ${shortage.correction}`,
           })),
+        ),
+      );
+      return;
+    }
+    if (error instanceof MaintenanceDomainError) {
+      const hidden = new Set([
+        "maintenance_not_found",
+        "aircraft_not_found",
+        "rule_not_found",
+        "fault_not_found",
+        "work_package_not_found",
+      ]);
+      const conflict = new Set([
+        "occupancy_conflict",
+        "workforce_shortage",
+        "dispatch_blocked",
+        "idempotency_conflict",
+        "work_not_due",
+      ]);
+      void reply.status(hidden.has(error.code) ? 403 : conflict.has(error.code) ? 409 : 400).send(
+        envelope(
+          request,
+          error.code,
+          error.message,
+          error.explanations.map((issue) => ({ issue })),
         ),
       );
       return;

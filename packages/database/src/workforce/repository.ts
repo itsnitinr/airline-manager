@@ -564,10 +564,15 @@ export class KyselyWorkforceRepository implements WorkforceRepository {
             );
           const recovery = recoveryEndsAt(flight, demand.role);
           const used = pool
-            ? await sql<{ used: string }>`SELECT COALESCE(sum(capacity), 0)::text AS used
-                FROM workforce_allocations WHERE workforce_pool_id = ${pool.id}::uuid
+            ? await sql<{ used: string }>`SELECT COALESCE(sum(capacity), 0)::text AS used FROM (
+                SELECT capacity FROM workforce_allocations WHERE workforce_pool_id = ${pool.id}::uuid
                   AND status = 'reserved' AND duty_starts_at < ${recovery}::timestamptz
-                  AND recovery_ends_at > ${flight.departureAt}::timestamptz`.execute(transaction)
+                  AND recovery_ends_at > ${flight.departureAt}::timestamptz
+                UNION ALL
+                SELECT capacity FROM maintenance_workforce_allocations WHERE workforce_pool_id = ${pool.id}::uuid
+                  AND status = 'reserved' AND duty_starts_at < ${recovery}::timestamptz
+                  AND duty_ends_at > ${flight.departureAt}::timestamptz
+              ) occupied`.execute(transaction)
             : undefined;
           const available = Math.max(
             0,

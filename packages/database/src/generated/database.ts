@@ -103,6 +103,27 @@ export interface AircraftLifecycleEvents {
   occurred_at: Timestamp;
 }
 
+export interface AircraftMaintenanceAssignments {
+  aircraft_id: string;
+  aircraft_variant_id: string;
+  assigned_at: Timestamp;
+  maintenance_program_version_id: string;
+  program_snapshot: Json;
+  starting_cycles: Int8;
+  starting_hours_minutes: Int8;
+}
+
+export interface AircraftMaintenanceDueCounters {
+  aircraft_id: string;
+  assessed_at: Timestamp;
+  baseline_cycles: Int8;
+  baseline_hours_minutes: Int8;
+  calendar_started_at: Timestamp;
+  due_state: string;
+  maintenance_rule_id: string;
+  version: Generated<Int8>;
+}
+
 export interface AircraftRotations {
   activated_at: Timestamp;
   aircraft_id: string;
@@ -426,6 +447,21 @@ export interface ExchangeRateSources {
   id: string;
   interface_version: number;
   name: string;
+}
+
+export interface FlightCompletionUtilizationInputs {
+  aircraft_id: string;
+  block_minutes: number;
+  completed_at: Timestamp;
+  completion_key: string;
+  cycles: number;
+  fault_seed: string;
+  id: Generated<string>;
+  input_hash: string;
+  material_input_snapshot: Json;
+  processed_at: Timestamp;
+  program_version: string;
+  result_snapshot: Json;
 }
 
 export interface FlightLegTemplates {
@@ -757,6 +793,119 @@ export interface LedgerProfitAndLossReport {
   reporting_amount_minor: Int8 | null;
   transaction_amount_minor: Int8 | null;
   transaction_currency: string | null;
+}
+
+export interface MaintenanceCheckpointIntents {
+  aircraft_id: string;
+  available_at: Timestamp;
+  intent_type: string;
+  updated_at: Timestamp;
+}
+
+export interface MaintenanceFaults {
+  aircraft_id: string;
+  delay_minutes: number;
+  deterministic_seed: string;
+  discovered_at: Timestamp;
+  flight_completion_utilization_input_id: string;
+  grounds_aircraft: boolean;
+  id: Generated<string>;
+  input_snapshot: Json;
+  outcome: string;
+  outcome_snapshot: Json;
+  repair_cost_minor: Int8;
+  repair_duration_minutes: number;
+  repair_workforce_capacity: number;
+  repaired_at: Timestamp | null;
+  severity: string;
+  status: string;
+}
+
+export interface MaintenanceHistory {
+  aircraft_id: string;
+  details: Json;
+  event_type: string;
+  id: Generated<string>;
+  journal_entry_id: string | null;
+  occurred_at: Timestamp;
+  sequence: Int8;
+}
+
+export interface MaintenanceProgramRules {
+  aircraft_variant_code: string;
+  aircraft_variant_id: string;
+  code: string;
+  condition_restore_basis_points: number;
+  cost_minor: Json;
+  duration_minutes: number;
+  hard_limit: boolean;
+  id: Generated<string>;
+  interval_calendar_days: number | null;
+  interval_cycles: Int8 | null;
+  interval_hours_minutes: Int8 | null;
+  maintenance_program_version_id: string;
+  material_snapshot: Json;
+  maximum_deferral_calendar_days: number;
+  maximum_deferral_cycles: Int8;
+  maximum_deferral_hours_minutes: Int8;
+  name: string;
+  work_kind: string;
+  workforce_capacity: number;
+}
+
+export interface MaintenanceProgramVersions {
+  activated_at: Timestamp | null;
+  assumptions: Json;
+  calendar_semantics: string;
+  condition_formula_version: string;
+  effective_from: Timestamp;
+  fault_formula_version: string;
+  id: Generated<string>;
+  status: string;
+  utilization_formula_version: string;
+  version: string;
+  world_ruleset_id: string;
+}
+
+export interface MaintenanceWindows {
+  aircraft_id: string;
+  airport_id: string;
+  created_at: Timestamp;
+  ends_at: Timestamp;
+  id: Generated<string>;
+  maintenance_work_package_id: string;
+  starts_at: Timestamp;
+  status: string;
+}
+
+export interface MaintenanceWorkforceAllocations {
+  allocated_at: Timestamp;
+  capacity: number;
+  duty_ends_at: Timestamp;
+  duty_starts_at: Timestamp;
+  id: Generated<string>;
+  maintenance_work_package_id: string;
+  released_at: Timestamp | null;
+  status: string;
+  workforce_pool_id: string;
+}
+
+export interface MaintenanceWorkPackages {
+  aircraft_id: string;
+  completed_at: Timestamp | null;
+  cost_minor: Int8;
+  created_at: Timestamp;
+  id: Generated<string>;
+  idempotency_key: string;
+  journal_entry_id: string | null;
+  maintenance_fault_id: string | null;
+  maintenance_rule_id: string | null;
+  program_version: string;
+  request_hash: string;
+  rule_snapshot: Json;
+  source: string;
+  status: string;
+  workforce_capacity: number;
 }
 
 export interface MarketCompetitionSnapshots {
@@ -1175,6 +1324,8 @@ export interface DB {
   aircraft_cabin_configurations: AircraftCabinConfigurations;
   aircraft_lessors: AircraftLessors;
   aircraft_lifecycle_events: AircraftLifecycleEvents;
+  aircraft_maintenance_assignments: AircraftMaintenanceAssignments;
+  aircraft_maintenance_due_counters: AircraftMaintenanceDueCounters;
   aircraft_rotations: AircraftRotations;
   airline_fuel_inventories: AirlineFuelInventories;
   airline_routes: AirlineRoutes;
@@ -1202,6 +1353,7 @@ export interface DB {
   exchange_rate_imports: ExchangeRateImports;
   exchange_rate_sources: ExchangeRateSources;
   exchange_rates: ExchangeRates;
+  flight_completion_utilization_inputs: FlightCompletionUtilizationInputs;
   flight_leg_templates: FlightLegTemplates;
   founder_financing_offers: FounderFinancingOffers;
   founder_package_options: FounderPackageOptions;
@@ -1226,6 +1378,14 @@ export interface DB {
   ledger_cash_report: LedgerCashReport;
   ledger_postings: LedgerPostings;
   ledger_profit_and_loss_report: LedgerProfitAndLossReport;
+  maintenance_checkpoint_intents: MaintenanceCheckpointIntents;
+  maintenance_faults: MaintenanceFaults;
+  maintenance_history: MaintenanceHistory;
+  maintenance_program_rules: MaintenanceProgramRules;
+  maintenance_program_versions: MaintenanceProgramVersions;
+  maintenance_windows: MaintenanceWindows;
+  maintenance_work_packages: MaintenanceWorkPackages;
+  maintenance_workforce_allocations: MaintenanceWorkforceAllocations;
   market_competition_snapshots: MarketCompetitionSnapshots;
   market_ruleset_versions: MarketRulesetVersions;
   operating_lease_payment_schedule: OperatingLeasePaymentSchedule;

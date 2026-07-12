@@ -9,6 +9,7 @@ import {
   type MarketService,
   type SchedulingService,
   type WorkforceService,
+  type MaintenanceService,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -27,6 +28,7 @@ import { registerFuelRoutes } from "./routes/fuel.js";
 import { registerMarketRoutes } from "./routes/markets.js";
 import { registerSchedulingRoutes } from "./routes/scheduling.js";
 import { registerWorkforceRoutes } from "./routes/workforce.js";
+import { registerMaintenanceRoutes } from "./routes/maintenance.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -45,6 +47,7 @@ export type ApiAppOptions = Readonly<{
   marketService?: MarketService;
   schedulingService?: SchedulingService;
   workforceService?: WorkforceService;
+  maintenanceService?: MaintenanceService;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -102,6 +105,11 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
           description: "Direct routes, weekly timetables, rotations, and dated flights.",
         },
         { name: "workforce", description: "Qualified aggregate staffing, readiness, and wages." },
+        {
+          name: "maintenance",
+          description:
+            "Aircraft maintenance programs, utilization, condition, faults, and dispatch readiness.",
+        },
       ],
     },
   });
@@ -142,6 +150,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
     registerMarketRoutes(routes, options.marketService);
     registerSchedulingRoutes(routes, options.schedulingService);
     registerWorkforceRoutes(routes, options.workforceService);
+    registerMaintenanceRoutes(routes, options.maintenanceService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,
       heartbeatMs: options.sseHeartbeatMs ?? 15_000,

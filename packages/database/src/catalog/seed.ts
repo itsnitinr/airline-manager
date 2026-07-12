@@ -12,6 +12,7 @@ import {
   readFuelRulesFixture,
   readFoundingBalanceFixture,
   readMarketRulesFixture,
+  readMaintenanceRulesFixture,
   readSchedulingRulesFixture,
   readWorkforceRulesFixture,
   readSourceFixture,
@@ -548,6 +549,45 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
   }
   await sql`UPDATE workforce_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
     WHERE id = ${workforceVersionId}::uuid AND status = 'draft'`.execute(database);
+
+  const maintenance = await readMaintenanceRulesFixture();
+  if (maintenance.world_ruleset_version !== worldRulesetVersion)
+    throw new Error("Maintenance rules fixture selects a different world ruleset.");
+  await sql`INSERT INTO maintenance_program_versions
+    (world_ruleset_id, version, status, effective_from, utilization_formula_version,
+     condition_formula_version, fault_formula_version, calendar_semantics, assumptions, activated_at)
+    VALUES (${rulesetId}::uuid, ${maintenance.version}, 'draft', ${maintenance.effective_from}::timestamptz,
+      ${maintenance.utilization_formula_version}, ${maintenance.condition_formula_version},
+      ${maintenance.fault_formula_version}, ${maintenance.calendar_semantics},
+      ${JSON.stringify(maintenance.assumptions)}::jsonb, NULL)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  const maintenanceVersion = await sql<{ id: string }>`SELECT id FROM maintenance_program_versions
+    WHERE version = ${maintenance.version}`.execute(database);
+  const maintenanceVersionId = maintenanceVersion.rows[0]?.id;
+  if (!maintenanceVersionId) throw new Error("Maintenance program version was not created.");
+  for (const [variantCode, rules] of Object.entries(maintenance.variants)) {
+    const variant = aircraftSnapshots.find(({ snapshot }) => snapshot.code === variantCode);
+    if (!variant) throw new Error(`Maintenance program variant ${variantCode} is not published.`);
+    for (const rule of rules) {
+      await sql`INSERT INTO maintenance_program_rules
+        (maintenance_program_version_id, aircraft_variant_id, aircraft_variant_code, code, name,
+         work_kind, interval_hours_minutes, interval_cycles, interval_calendar_days, hard_limit,
+         maximum_deferral_hours_minutes, maximum_deferral_cycles, maximum_deferral_calendar_days,
+         duration_minutes, workforce_capacity, cost_minor, condition_restore_basis_points, material_snapshot)
+        VALUES (${maintenanceVersionId}::uuid, ${variant.id}::uuid, ${variantCode}, ${rule.code},
+          ${rule.name}, ${rule.work_kind}, ${rule.interval_hours_minutes ?? null}::bigint,
+          ${rule.interval_cycles ?? null}::bigint, ${rule.interval_calendar_days ?? null}::integer,
+          ${rule.hard_limit}, ${rule.maximum_deferral_hours_minutes}::bigint,
+          ${rule.maximum_deferral_cycles}::bigint, ${rule.maximum_deferral_calendar_days},
+          ${rule.duration_minutes}, ${rule.workforce_capacity}, ${JSON.stringify(rule.cost_minor)}::jsonb,
+          ${rule.condition_restore_basis_points}, ${JSON.stringify(rule)}::jsonb)
+        ON CONFLICT (maintenance_program_version_id, aircraft_variant_id, code) DO NOTHING`.execute(
+        database,
+      );
+    }
+  }
+  await sql`UPDATE maintenance_program_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
+    WHERE id = ${maintenanceVersionId}::uuid AND status = 'draft'`.execute(database);
 
   return {
     releaseVersion,

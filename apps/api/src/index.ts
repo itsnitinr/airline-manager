@@ -12,6 +12,7 @@ import {
   KyselyMarketRepository,
   KyselySchedulingRepository,
   KyselyWorkforceRepository,
+  KyselyMaintenanceRepository,
   createDatabaseRuntime,
   createInfrastructureReadinessCheck,
   readDatabasePoolOptions,
@@ -23,6 +24,7 @@ import {
   MarketService,
   SchedulingService,
   WorkforceService,
+  MaintenanceService,
 } from "@airline-manager/application";
 import type { FastifyInstance } from "fastify";
 import { createApiServer } from "./app.js";
@@ -135,6 +137,10 @@ export async function startApi(
     ),
     workforceService: new WorkforceService(
       new KyselyWorkforceRepository(databaseRuntime.database),
+      new KyselyIdentityRepository(databaseRuntime.database),
+    ),
+    maintenanceService: new MaintenanceService(
+      new KyselyMaintenanceRepository(databaseRuntime.database),
       new KyselyIdentityRepository(databaseRuntime.database),
     ),
     ...(rateLimitMax === undefined ? {} : { rateLimitMax }),

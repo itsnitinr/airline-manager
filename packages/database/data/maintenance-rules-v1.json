@@ -1,0 +1,198 @@
+{
+  "version": "maintenance-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "effective_from": "2026-07-12T00:00:00.000Z",
+  "utilization_formula_version": "exact-flight-completion-v1",
+  "condition_formula_version": "aggregate-condition-v1",
+  "fault_formula_version": "bounded-non-fatal-fault-v1",
+  "calendar_semantics": "elapsed_utc_days",
+  "variants": {
+    "atr-72-600": [
+      {
+        "code": "atr_line_service",
+        "name": "ATR line utilization service",
+        "work_kind": "line",
+        "interval_hours_minutes": "18000",
+        "interval_cycles": "450",
+        "hard_limit": false,
+        "maximum_deferral_hours_minutes": "1800",
+        "maximum_deferral_cycles": "45",
+        "maximum_deferral_calendar_days": 2,
+        "duration_minutes": 180,
+        "workforce_capacity": 1,
+        "condition_restore_basis_points": 300,
+        "cost_minor": {
+          "CHF": "360000",
+          "EUR": "375000",
+          "GBP": "325000",
+          "JPY": "60000000",
+          "KWD": "1130000",
+          "USD": "400000"
+        }
+      },
+      {
+        "code": "atr_calendar_package",
+        "name": "ATR balanced calendar package",
+        "work_kind": "package",
+        "interval_calendar_days": 14,
+        "hard_limit": true,
+        "maximum_deferral_hours_minutes": "0",
+        "maximum_deferral_cycles": "0",
+        "maximum_deferral_calendar_days": 0,
+        "duration_minutes": 480,
+        "workforce_capacity": 2,
+        "condition_restore_basis_points": 700,
+        "cost_minor": {
+          "CHF": "900000",
+          "EUR": "940000",
+          "GBP": "815000",
+          "JPY": "150000000",
+          "KWD": "2830000",
+          "USD": "1000000"
+        }
+      }
+    ],
+    "embraer-e175": [
+      {
+        "code": "e175_line_service",
+        "name": "E175 line utilization service",
+        "work_kind": "line",
+        "interval_hours_minutes": "21000",
+        "interval_cycles": "400",
+        "hard_limit": false,
+        "maximum_deferral_hours_minutes": "2100",
+        "maximum_deferral_cycles": "40",
+        "maximum_deferral_calendar_days": 2,
+        "duration_minutes": 210,
+        "workforce_capacity": 1,
+        "condition_restore_basis_points": 300,
+        "cost_minor": {
+          "CHF": "450000",
+          "EUR": "470000",
+          "GBP": "405000",
+          "JPY": "75000000",
+          "KWD": "1410000",
+          "USD": "500000"
+        }
+      },
+      {
+        "code": "e175_calendar_package",
+        "name": "E175 balanced calendar package",
+        "work_kind": "package",
+        "interval_calendar_days": 16,
+        "hard_limit": true,
+        "maximum_deferral_hours_minutes": "0",
+        "maximum_deferral_cycles": "0",
+        "maximum_deferral_calendar_days": 0,
+        "duration_minutes": 540,
+        "workforce_capacity": 2,
+        "condition_restore_basis_points": 700,
+        "cost_minor": {
+          "CHF": "1080000",
+          "EUR": "1130000",
+          "GBP": "975000",
+          "JPY": "180000000",
+          "KWD": "3390000",
+          "USD": "1200000"
+        }
+      }
+    ],
+    "airbus-a320neo": [
+      {
+        "code": "a320neo_line_service",
+        "name": "A320neo line utilization service",
+        "work_kind": "line",
+        "interval_hours_minutes": "24000",
+        "interval_cycles": "500",
+        "hard_limit": false,
+        "maximum_deferral_hours_minutes": "2400",
+        "maximum_deferral_cycles": "50",
+        "maximum_deferral_calendar_days": 2,
+        "duration_minutes": 240,
+        "workforce_capacity": 2,
+        "condition_restore_basis_points": 300,
+        "cost_minor": {
+          "CHF": "630000",
+          "EUR": "660000",
+          "GBP": "570000",
+          "JPY": "105000000",
+          "KWD": "1980000",
+          "USD": "700000"
+        }
+      },
+      {
+        "code": "a320neo_calendar_package",
+        "name": "A320neo balanced calendar package",
+        "work_kind": "package",
+        "interval_calendar_days": 18,
+        "hard_limit": true,
+        "maximum_deferral_hours_minutes": "0",
+        "maximum_deferral_cycles": "0",
+        "maximum_deferral_calendar_days": 0,
+        "duration_minutes": 720,
+        "workforce_capacity": 3,
+        "condition_restore_basis_points": 800,
+        "cost_minor": {
+          "CHF": "1620000",
+          "EUR": "1690000",
+          "GBP": "1460000",
+          "JPY": "270000000",
+          "KWD": "5090000",
+          "USD": "1800000"
+        }
+      }
+    ],
+    "boeing-737-8": [
+      {
+        "code": "b738_line_service",
+        "name": "737-8 line utilization service",
+        "work_kind": "line",
+        "interval_hours_minutes": "24000",
+        "interval_cycles": "480",
+        "hard_limit": false,
+        "maximum_deferral_hours_minutes": "2400",
+        "maximum_deferral_cycles": "48",
+        "maximum_deferral_calendar_days": 2,
+        "duration_minutes": 240,
+        "workforce_capacity": 2,
+        "condition_restore_basis_points": 300,
+        "cost_minor": {
+          "CHF": "650000",
+          "EUR": "680000",
+          "GBP": "585000",
+          "JPY": "108000000",
+          "KWD": "2040000",
+          "USD": "720000"
+        }
+      },
+      {
+        "code": "b738_calendar_package",
+        "name": "737-8 balanced calendar package",
+        "work_kind": "package",
+        "interval_calendar_days": 18,
+        "hard_limit": true,
+        "maximum_deferral_hours_minutes": "0",
+        "maximum_deferral_cycles": "0",
+        "maximum_deferral_calendar_days": 0,
+        "duration_minutes": 720,
+        "workforce_capacity": 3,
+        "condition_restore_basis_points": 800,
+        "cost_minor": {
+          "CHF": "1660000",
+          "EUR": "1730000",
+          "GBP": "1500000",
+          "JPY": "277000000",
+          "KWD": "5220000",
+          "USD": "1850000"
+        }
+      }
+    ]
+  },
+  "assumptions": {
+    "classification": "balance",
+    "calendar_progression": "One elapsed UTC day advances one balanced real-day calendar threshold day.",
+    "certification_disclaimer": "Names and thresholds are slice-one balance rules and are not certified operator maintenance programs.",
+    "component_inventory": false,
+    "fatal_outcomes": false
+  }
+}

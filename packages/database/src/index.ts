@@ -39,6 +39,7 @@ export { KyselyFuelRepository } from "./fuel/repository.js";
 export { KyselyMarketRepository } from "./market/repository.js";
 export { KyselySchedulingRepository } from "./scheduling/repository.js";
 export { KyselyWorkforceRepository } from "./workforce/repository.js";
+export { KyselyMaintenanceRepository } from "./maintenance/repository.js";
 export {
   importOurAirports,
   type AirportImportInput,

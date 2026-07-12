@@ -102,6 +102,19 @@ export type WorkforceHireRequest = Readonly<{
 }>;
 export type WorkforceForecastRequest = Readonly<{ through: string }>;
 export type WorkforceWageAccrualRequest = Readonly<{ through: string }>;
+export type MaintenanceFlightCompletionRequest = Readonly<{
+  completionKey: string;
+  completedAt: string;
+  blockMinutes: number;
+  cycles: number;
+  faultSeed: string;
+}>;
+export type MaintenanceWindowRequest = Readonly<{
+  ruleCode?: string;
+  faultId?: string;
+  startsAt: string;
+}>;
+export type MaintenanceReadinessRequest = Readonly<{ at: string }>;
 
 const exactMinorSchema = { type: "string", pattern: "^[0-9]+$" } as const;
 const foundingSelectionProperties = {
@@ -1607,6 +1620,121 @@ export const workforceReadinessResponseSchema = {
   },
 } as const;
 export const workforceWageAccrualResponseSchema = workforcePoolsResponseSchema;
+
+export const maintenanceAircraftParamsSchema = aircraftIdentifierParamsSchema;
+export const maintenanceWorkPackageParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "workPackageId"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    workPackageId: { type: "string", format: "uuid" },
+  },
+} as const;
+export const maintenanceFlightCompletionRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["completionKey", "completedAt", "blockMinutes", "cycles", "faultSeed"],
+  properties: {
+    completionKey: { type: "string", minLength: 1, maxLength: 200 },
+    completedAt: { type: "string", format: "date-time" },
+    blockMinutes: { type: "integer", minimum: 1, maximum: 1440 },
+    cycles: { type: "integer", minimum: 1, maximum: 10 },
+    faultSeed: { type: "string", minLength: 1, maxLength: 200 },
+  },
+} as const;
+export const maintenanceWindowRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["startsAt"],
+  properties: {
+    ruleCode: { type: "string", pattern: "^[a-z0-9][a-z0-9_-]+$" },
+    faultId: { type: "string", format: "uuid" },
+    startsAt: { type: "string", format: "date-time" },
+  },
+} as const;
+export const maintenanceReadinessRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["at"],
+  properties: { at: { type: "string", format: "date-time" } },
+} as const;
+export const maintenanceProgramResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: ["id", "version", "aircraftVariantId", "aircraftVariantCode", "rules"],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    version: { type: "string" },
+    aircraftVariantId: { type: "string", format: "uuid" },
+    aircraftVariantCode: { type: "string" },
+    rules: { type: "array", items: { type: "object", additionalProperties: true } },
+  },
+} as const;
+export const maintenanceFlightCompletionResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "completionKey",
+    "aircraftId",
+    "accumulatedHoursMinutes",
+    "accumulatedCycles",
+    "fault",
+    "processedAt",
+  ],
+  properties: {
+    completionKey: { type: "string" },
+    aircraftId: { type: "string", format: "uuid" },
+    accumulatedHoursMinutes: exactMinorSchema,
+    accumulatedCycles: exactMinorSchema,
+    fault: { type: "object", additionalProperties: true },
+    processedAt: { type: "string", format: "date-time" },
+  },
+} as const;
+export const maintenanceWorkPackageResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: ["id", "aircraftId", "source", "status", "startsAt", "endsAt", "costMinor"],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    aircraftId: { type: "string", format: "uuid" },
+    source: { type: "string", enum: ["planned", "repair"] },
+    status: { type: "string", enum: ["planned", "completed"] },
+    startsAt: { type: "string", format: "date-time" },
+    endsAt: { type: "string", format: "date-time" },
+    costMinor: exactMinorSchema,
+  },
+} as const;
+export const maintenanceForecastResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "aircraftId",
+    "generatedAt",
+    "programVersion",
+    "dispatchReady",
+    "due",
+    "plannedWork",
+    "activeFaults",
+    "explanations",
+    "recoverySteps",
+  ],
+  properties: {
+    aircraftId: { type: "string", format: "uuid" },
+    generatedAt: { type: "string", format: "date-time" },
+    programVersion: { type: "string" },
+    dispatchReady: { type: "boolean" },
+    due: { type: "array", items: { type: "object", additionalProperties: true } },
+    plannedWork: { type: "array", items: maintenanceWorkPackageResponseSchema },
+    activeFaults: { type: "array", items: { type: "object", additionalProperties: true } },
+    explanations: { type: "array", items: { type: "string" } },
+    recoverySteps: { type: "array", items: { type: "string" } },
+  },
+} as const;
+export const maintenanceHistoryResponseSchema = {
+  type: "array",
+  items: { type: "object", additionalProperties: true },
+} as const;
 
 export function createHealthResponse(service: HealthResponse["service"]): HealthResponse {
   return { service, status: "ok" };
