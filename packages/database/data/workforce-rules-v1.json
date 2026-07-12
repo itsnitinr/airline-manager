@@ -1,0 +1,146 @@
+{
+  "version": "workforce-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "effective_from": "2026-07-11T00:00:00.000Z",
+  "fatigue_formula_version": "aggregate-duty-recovery-v1",
+  "demand_formula_version": "slice-one-workforce-demand-v1",
+  "wage_interval_hours": 24,
+  "roles": {
+    "pilot": {
+      "qualification_scope": "aircraft_variant",
+      "training_lead_hours": 48,
+      "hiring_cost_minor": {
+        "CHF": "120000",
+        "EUR": "125000",
+        "GBP": "110000",
+        "JPY": "20000000",
+        "KWD": "380000",
+        "USD": "135000"
+      },
+      "training_cost_minor": {
+        "CHF": "240000",
+        "EUR": "250000",
+        "GBP": "220000",
+        "JPY": "40000000",
+        "KWD": "760000",
+        "USD": "270000"
+      },
+      "wage_per_interval_minor": {
+        "CHF": "52000",
+        "EUR": "54000",
+        "GBP": "47000",
+        "JPY": "8600000",
+        "KWD": "164000",
+        "USD": "58000"
+      },
+      "flight_capacity_per_unit": 1,
+      "recovery_minutes_per_block_hour": 30,
+      "minimum_recovery_minutes": 60
+    },
+    "cabin_crew": {
+      "qualification_scope": "general",
+      "training_lead_hours": 24,
+      "hiring_cost_minor": {
+        "CHF": "40000",
+        "EUR": "42000",
+        "GBP": "36000",
+        "JPY": "6700000",
+        "KWD": "126000",
+        "USD": "45000"
+      },
+      "training_cost_minor": {
+        "CHF": "30000",
+        "EUR": "32000",
+        "GBP": "27000",
+        "JPY": "5100000",
+        "KWD": "96000",
+        "USD": "34000"
+      },
+      "wage_per_interval_minor": {
+        "CHF": "18000",
+        "EUR": "19000",
+        "GBP": "16000",
+        "JPY": "3000000",
+        "KWD": "57000",
+        "USD": "20000"
+      },
+      "flight_capacity_per_unit": 1,
+      "recovery_minutes_per_block_hour": 20,
+      "minimum_recovery_minutes": 45
+    },
+    "line_maintenance": {
+      "qualification_scope": "general",
+      "training_lead_hours": 36,
+      "hiring_cost_minor": {
+        "CHF": "65000",
+        "EUR": "68000",
+        "GBP": "59000",
+        "JPY": "10900000",
+        "KWD": "205000",
+        "USD": "73000"
+      },
+      "training_cost_minor": {
+        "CHF": "55000",
+        "EUR": "57000",
+        "GBP": "50000",
+        "JPY": "9100000",
+        "KWD": "172000",
+        "USD": "61000"
+      },
+      "wage_per_interval_minor": {
+        "CHF": "26000",
+        "EUR": "27000",
+        "GBP": "24000",
+        "JPY": "4300000",
+        "KWD": "82000",
+        "USD": "29000"
+      },
+      "flight_capacity_per_unit": 1,
+      "recovery_minutes_per_block_hour": 0,
+      "minimum_recovery_minutes": 30
+    },
+    "ground_handling": {
+      "qualification_scope": "general",
+      "training_lead_hours": 12,
+      "hiring_cost_minor": {
+        "CHF": "24000",
+        "EUR": "25000",
+        "GBP": "22000",
+        "JPY": "4000000",
+        "KWD": "76000",
+        "USD": "27000"
+      },
+      "training_cost_minor": {
+        "CHF": "12000",
+        "EUR": "13000",
+        "GBP": "11000",
+        "JPY": "2000000",
+        "KWD": "38000",
+        "USD": "14000"
+      },
+      "wage_per_interval_minor": {
+        "CHF": "14000",
+        "EUR": "15000",
+        "GBP": "13000",
+        "JPY": "2400000",
+        "KWD": "45000",
+        "USD": "16000"
+      },
+      "flight_capacity_per_unit": 1,
+      "recovery_minutes_per_block_hour": 0,
+      "minimum_recovery_minutes": 30
+    }
+  },
+  "starter_packages": {
+    "atr-72-600": { "pilot": 4, "cabin_crew": 4, "line_maintenance": 2, "ground_handling": 0 },
+    "embraer-e175": { "pilot": 4, "cabin_crew": 4, "line_maintenance": 2, "ground_handling": 0 },
+    "airbus-a320neo": { "pilot": 6, "cabin_crew": 8, "line_maintenance": 3, "ground_handling": 0 },
+    "boeing-737-8": { "pilot": 6, "cabin_crew": 8, "line_maintenance": 3, "ground_handling": 0 }
+  },
+  "assumptions": {
+    "classification": "balance",
+    "individual_rosters": false,
+    "outsourced_ground_handling": true,
+    "explanation": "Slice-one aggregated staffing, training, wage, and fatigue values are explicit balance rules rather than certified staffing minima."
+  }
+}

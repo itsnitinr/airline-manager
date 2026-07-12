@@ -3799,6 +3799,620 @@ export type ExtendTimetableHorizonResponses = {
 export type ExtendTimetableHorizonResponse =
   ExtendTimetableHorizonResponses[keyof ExtendTimetableHorizonResponses];
 
+export type AllocateFlightWorkforceData = {
+  body?: never;
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+    flightId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/workforce/flights/{flightId}/readiness";
+};
+
+export type AllocateFlightWorkforceErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type AllocateFlightWorkforceError =
+  AllocateFlightWorkforceErrors[keyof AllocateFlightWorkforceErrors];
+
+export type AllocateFlightWorkforceResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    allocations: Array<{
+      [key: string]: unknown;
+    }>;
+    flightId: string;
+    formulaVersions: {
+      [key: string]: unknown;
+    };
+    ready: boolean;
+    shortages: Array<{
+      [key: string]: unknown;
+    }>;
+    [key: string]: unknown;
+  };
+};
+
+export type AllocateFlightWorkforceResponse =
+  AllocateFlightWorkforceResponses[keyof AllocateFlightWorkforceResponses];
+
+export type ForecastWorkforceData = {
+  body: {
+    through: string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/workforce/forecast";
+};
+
+export type ForecastWorkforceErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ForecastWorkforceError = ForecastWorkforceErrors[keyof ForecastWorkforceErrors];
+
+export type ForecastWorkforceResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    explanations: Array<string>;
+    feasible: boolean;
+    generatedAt: string;
+    shortages: Array<{
+      [key: string]: unknown;
+    }>;
+    through: string;
+    [key: string]: unknown;
+  };
+};
+
+export type ForecastWorkforceResponse =
+  ForecastWorkforceResponses[keyof ForecastWorkforceResponses];
+
+export type HireWorkforceData = {
+  body: {
+    capacity: number;
+    qualificationAircraftVariantId?: string;
+    role: "pilot" | "cabin_crew" | "line_maintenance" | "ground_handling";
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/workforce/hiring";
+};
+
+export type HireWorkforceErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type HireWorkforceError = HireWorkforceErrors[keyof HireWorkforceErrors];
+
+export type HireWorkforceResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    [key: string]: unknown;
+  };
+};
+
+export type HireWorkforceResponse = HireWorkforceResponses[keyof HireWorkforceResponses];
+
+export type ListWorkforcePoolsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/workforce/pools";
+};
+
+export type ListWorkforcePoolsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListWorkforcePoolsError = ListWorkforcePoolsErrors[keyof ListWorkforcePoolsErrors];
+
+export type ListWorkforcePoolsResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    [key: string]: unknown;
+  }>;
+};
+
+export type ListWorkforcePoolsResponse =
+  ListWorkforcePoolsResponses[keyof ListWorkforcePoolsResponses];
+
+export type GetWorkforceRecommendationsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/workforce/recommendations";
+};
+
+export type GetWorkforceRecommendationsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetWorkforceRecommendationsError =
+  GetWorkforceRecommendationsErrors[keyof GetWorkforceRecommendationsErrors];
+
+export type GetWorkforceRecommendationsResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    [key: string]: unknown;
+  }>;
+};
+
+export type GetWorkforceRecommendationsResponse =
+  GetWorkforceRecommendationsResponses[keyof GetWorkforceRecommendationsResponses];
+
+export type AccrueWorkforceWagesData = {
+  body: {
+    through: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/workforce/wages/accrue";
+};
+
+export type AccrueWorkforceWagesErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type AccrueWorkforceWagesError =
+  AccrueWorkforceWagesErrors[keyof AccrueWorkforceWagesErrors];
+
+export type AccrueWorkforceWagesResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    [key: string]: unknown;
+  }>;
+};
+
+export type AccrueWorkforceWagesResponse =
+  AccrueWorkforceWagesResponses[keyof AccrueWorkforceWagesResponses];
+
 export type ConfirmAirlineFoundingData = {
   body: {
     acceptFoundingLoan: boolean;

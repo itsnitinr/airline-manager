@@ -1044,6 +1044,112 @@ export interface TimezoneDefinitions {
   name: string;
 }
 
+export interface WorkforceAllocations {
+  allocated_at: Timestamp;
+  capacity: number;
+  dated_flight_id: string;
+  duty_ends_at: Timestamp;
+  duty_starts_at: Timestamp;
+  id: Generated<string>;
+  qualification_code: string;
+  recovery_ends_at: Timestamp;
+  released_at: Timestamp | null;
+  role: string;
+  status: Generated<string>;
+  workforce_pool_id: string;
+}
+
+export interface WorkforceCheckpointIntents {
+  available_at: Timestamp;
+  intent_type: string;
+  updated_at: Timestamp;
+  workforce_pool_id: string;
+}
+
+export interface WorkforceHiringOrders {
+  activated_at: Timestamp | null;
+  airline_id: string;
+  available_at: Timestamp;
+  capacity: number;
+  hired_at: Timestamp;
+  hiring_cost_minor: Int8;
+  hiring_journal_entry_id: string;
+  id: Generated<string>;
+  idempotency_key: string;
+  next_wage_due_at: Timestamp;
+  request_hash: string;
+  status: Generated<string>;
+  training_cost_minor: Int8;
+  training_journal_entry_id: string;
+  wage_checkpoint_at: Timestamp;
+  workforce_pool_id: string;
+}
+
+export interface WorkforcePools {
+  active_capacity: Generated<number>;
+  airline_id: string;
+  base_airport_id: string;
+  catalog_release_id: string | null;
+  created_at: Timestamp;
+  id: Generated<string>;
+  next_wage_due_at: Timestamp;
+  qualification_aircraft_variant_id: string | null;
+  qualification_code: string;
+  reporting_currency: string;
+  role: string;
+  updated_at: Timestamp;
+  version: Generated<Int8>;
+  wage_checkpoint_at: Timestamp;
+  wage_per_interval_minor: Int8;
+  workforce_ruleset_version_id: string;
+}
+
+export interface WorkforceRoleRules {
+  flight_capacity_per_unit: number;
+  hiring_cost_minor: Json;
+  minimum_recovery_minutes: number;
+  qualification_scope: string;
+  recovery_minutes_per_block_hour: number;
+  role: string;
+  training_cost_minor: Json;
+  training_lead_hours: number;
+  wage_per_interval_minor: Json;
+  workforce_ruleset_version_id: string;
+}
+
+export interface WorkforceRulesetVersions {
+  activated_at: Timestamp | null;
+  assumptions: Json;
+  demand_formula_version: string;
+  effective_from: Timestamp;
+  fatigue_formula_version: string;
+  id: Generated<string>;
+  status: string;
+  version: string;
+  wage_interval_hours: number;
+  world_ruleset_id: string;
+}
+
+export interface WorkforceStarterPackages {
+  aircraft_variant_code: string;
+  aircraft_variant_id: string;
+  explanation: string;
+  package: Json;
+  workforce_ruleset_version_id: string;
+}
+
+export interface WorkforceWageAccruals {
+  accrued_at: Timestamp;
+  amount_minor: Int8;
+  capacity: number;
+  id: Generated<string>;
+  interval_ends_at: Timestamp;
+  interval_starts_at: Timestamp;
+  journal_entry_id: string;
+  workforce_hiring_order_id: string;
+  workforce_pool_id: string;
+}
+
 export interface WorldRulesetAcquisitionOverrides {
   aircraft_variant_id: string;
   channels: string[];
@@ -1144,6 +1250,14 @@ export interface DB {
   timetable_versions: TimetableVersions;
   timezone_dataset_versions: TimezoneDatasetVersions;
   timezone_definitions: TimezoneDefinitions;
+  workforce_allocations: WorkforceAllocations;
+  workforce_checkpoint_intents: WorkforceCheckpointIntents;
+  workforce_hiring_orders: WorkforceHiringOrders;
+  workforce_pools: WorkforcePools;
+  workforce_role_rules: WorkforceRoleRules;
+  workforce_ruleset_versions: WorkforceRulesetVersions;
+  workforce_starter_packages: WorkforceStarterPackages;
+  workforce_wage_accruals: WorkforceWageAccruals;
   world_ruleset_acquisition_overrides: WorldRulesetAcquisitionOverrides;
   world_rulesets: WorldRulesets;
 }

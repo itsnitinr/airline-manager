@@ -8,6 +8,7 @@ import {
   type FuelService,
   type MarketService,
   type SchedulingService,
+  type WorkforceService,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -25,6 +26,7 @@ import { registerAirlineRoutes } from "./routes/airlines.js";
 import { registerFuelRoutes } from "./routes/fuel.js";
 import { registerMarketRoutes } from "./routes/markets.js";
 import { registerSchedulingRoutes } from "./routes/scheduling.js";
+import { registerWorkforceRoutes } from "./routes/workforce.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -42,6 +44,7 @@ export type ApiAppOptions = Readonly<{
   fuelService?: FuelService;
   marketService?: MarketService;
   schedulingService?: SchedulingService;
+  workforceService?: WorkforceService;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -98,6 +101,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
           name: "scheduling",
           description: "Direct routes, weekly timetables, rotations, and dated flights.",
         },
+        { name: "workforce", description: "Qualified aggregate staffing, readiness, and wages." },
       ],
     },
   });
@@ -137,6 +141,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
     registerFuelRoutes(routes, options.fuelService);
     registerMarketRoutes(routes, options.marketService);
     registerSchedulingRoutes(routes, options.schedulingService);
+    registerWorkforceRoutes(routes, options.workforceService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,
       heartbeatMs: options.sseHeartbeatMs ?? 15_000,

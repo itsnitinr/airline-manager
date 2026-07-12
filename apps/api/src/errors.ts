@@ -6,6 +6,7 @@ import {
   FuelDomainError,
   MarketDomainError,
   SchedulingDomainError,
+  WorkforceDomainError,
 } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
@@ -119,6 +120,26 @@ export function registerErrorMapping(app: FastifyInstance): void {
           error.issues.map((issue) => ({
             ...(issue.field ? { field: issue.field } : {}),
             issue: `${issue.message} Suggested correction: ${issue.suggestedCorrection}`,
+          })),
+        ),
+      );
+      return;
+    }
+    if (error instanceof WorkforceDomainError) {
+      const hidden = new Set(["workforce_not_found", "flight_not_found"]);
+      const conflict = new Set([
+        "idempotency_conflict",
+        "workforce_shortage",
+        "wage_checkpoint_not_due",
+      ]);
+      void reply.status(hidden.has(error.code) ? 403 : conflict.has(error.code) ? 409 : 400).send(
+        envelope(
+          request,
+          error.code,
+          error.message,
+          error.shortages.map((shortage) => ({
+            field: shortage.role,
+            issue: `${shortage.baseIataCode} ${shortage.qualificationCode} ${shortage.windowStartsAt}-${shortage.windowEndsAt}: required ${shortage.requiredCapacity}, available ${shortage.availableCapacity}, shortfall ${shortage.shortfall}. ${shortage.correction}`,
           })),
         ),
       );

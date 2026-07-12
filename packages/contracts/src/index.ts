@@ -95,6 +95,13 @@ export type TimetableActivationRequest = Readonly<{
   }>[];
 }>;
 export type HorizonExtensionRequest = Readonly<{ through: string }>;
+export type WorkforceHireRequest = Readonly<{
+  role: "pilot" | "cabin_crew" | "line_maintenance" | "ground_handling";
+  capacity: number;
+  qualificationAircraftVariantId?: string;
+}>;
+export type WorkforceForecastRequest = Readonly<{ through: string }>;
+export type WorkforceWageAccrualRequest = Readonly<{ through: string }>;
 
 const exactMinorSchema = { type: "string", pattern: "^[0-9]+$" } as const;
 const foundingSelectionProperties = {
@@ -1538,6 +1545,68 @@ export const timetableActivationResponseSchema = {
     validation: { type: "object", additionalProperties: true },
   },
 } as const;
+
+const workforceRoleSchema = {
+  type: "string",
+  enum: ["pilot", "cabin_crew", "line_maintenance", "ground_handling"],
+} as const;
+export const workforceHireRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["role", "capacity"],
+  properties: {
+    role: workforceRoleSchema,
+    capacity: { type: "integer", minimum: 1, maximum: 1000 },
+    qualificationAircraftVariantId: { type: "string", format: "uuid" },
+  },
+} as const;
+export const workforceForecastRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["through"],
+  properties: { through: { type: "string", format: "date-time" } },
+} as const;
+export const workforceWageAccrualRequestSchema = workforceForecastRequestSchema;
+export const workforceFlightParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "flightId"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    flightId: { type: "string", format: "uuid" },
+  },
+} as const;
+export const workforcePoolsResponseSchema = {
+  type: "array",
+  items: { type: "object", additionalProperties: true },
+} as const;
+export const workforceRecommendationsResponseSchema = workforcePoolsResponseSchema;
+export const workforceHireResponseSchema = { type: "object", additionalProperties: true } as const;
+export const workforceForecastResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: ["generatedAt", "through", "feasible", "shortages", "explanations"],
+  properties: {
+    generatedAt: { type: "string", format: "date-time" },
+    through: { type: "string", format: "date-time" },
+    feasible: { type: "boolean" },
+    shortages: { type: "array", items: { type: "object", additionalProperties: true } },
+    explanations: { type: "array", items: { type: "string" } },
+  },
+} as const;
+export const workforceReadinessResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: ["flightId", "ready", "allocations", "shortages", "formulaVersions"],
+  properties: {
+    flightId: { type: "string", format: "uuid" },
+    ready: { type: "boolean" },
+    allocations: { type: "array", items: { type: "object", additionalProperties: true } },
+    shortages: { type: "array", items: { type: "object", additionalProperties: true } },
+    formulaVersions: { type: "object", additionalProperties: true },
+  },
+} as const;
+export const workforceWageAccrualResponseSchema = workforcePoolsResponseSchema;
 
 export function createHealthResponse(service: HealthResponse["service"]): HealthResponse {
   return { service, status: "ok" };

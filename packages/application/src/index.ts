@@ -68,3 +68,4 @@ export { DueAircraftDeliveryHandler, FleetService } from "./fleet.js";
 export { FuelConsumptionService, FuelService } from "./fuel.js";
 export { MarketService } from "./market.js";
 export { SchedulingService } from "./scheduling.js";
+export { WorkforceService } from "./workforce.js";

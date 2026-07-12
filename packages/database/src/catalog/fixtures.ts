@@ -154,6 +154,42 @@ export type SchedulingRulesFixture = Readonly<{
   assumptions: Readonly<Record<string, unknown>>;
 }>;
 
+export type WorkforceRulesFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  effective_from: string;
+  fatigue_formula_version: string;
+  demand_formula_version: string;
+  wage_interval_hours: number;
+  roles: Readonly<
+    Record<
+      "pilot" | "cabin_crew" | "line_maintenance" | "ground_handling",
+      Readonly<{
+        qualification_scope: "aircraft_variant" | "general";
+        training_lead_hours: number;
+        hiring_cost_minor: Readonly<Record<string, string>>;
+        training_cost_minor: Readonly<Record<string, string>>;
+        wage_per_interval_minor: Readonly<Record<string, string>>;
+        flight_capacity_per_unit: number;
+        recovery_minutes_per_block_hour: number;
+        minimum_recovery_minutes: number;
+      }>
+    >
+  >;
+  starter_packages: Readonly<
+    Record<
+      string,
+      Readonly<{
+        pilot: number;
+        cabin_crew: number;
+        line_maintenance: number;
+        ground_handling: number;
+      }>
+    >
+  >;
+  assumptions: Readonly<Record<string, unknown>>;
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -188,4 +224,8 @@ export function readMarketRulesFixture(): Promise<MarketRulesFixture> {
 
 export function readSchedulingRulesFixture(): Promise<SchedulingRulesFixture> {
   return readJson(new URL("../../data/scheduling-rules-v1.json", import.meta.url));
+}
+
+export function readWorkforceRulesFixture(): Promise<WorkforceRulesFixture> {
+  return readJson(new URL("../../data/workforce-rules-v1.json", import.meta.url));
 }

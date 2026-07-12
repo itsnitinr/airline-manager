@@ -1,7 +1,7 @@
 # Implement slice-one qualified workforce capacity
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 07, 08, 09, 12
 
 ## Goal
@@ -44,4 +44,19 @@ manual rosters.
 
 ## Comments
 
-None yet.
+- 2026-07-12: Implemented versioned aggregate workforce pools by airline, principal base, role, and
+  catalog-derived qualification; all four founder staffing packages; idempotent hiring with persisted
+  training lead times/checkpoint intents; cohort-exact recurring wages; and balanced, reconcilable
+  hiring/training/wage ledger journals. Slice-one demand covers type-rated pilots, cabin crew, line
+  maintenance, and non-outsourced ground handling without creating employee or roster entities.
+- Forecasts sweep active dated flights deterministically and return actionable base, role,
+  qualification, window, required/available/shortfall, and correction details. The stable ticket-17
+  readiness boundary locks dated flights and pools, atomically reserves duty plus fatigue-recovery
+  capacity, rejects incompatible type ratings and concurrent double allocation, and intentionally does
+  not invent a flight lifecycle or ticket-16 queue runtime.
+- Validation passed frozen install (including Compose builds), formatting, lint, eight boundary probes,
+  typecheck, 86 unit/property tests, full production build, 81 PostgreSQL integration tests, 21
+  authenticated API integration tests, blank/repeat and ticket-12-to-ticket-13 migrations, repeat
+  catalog seeding, generated Kysely/OpenAPI/client freshness, and a healthy fresh-volume five-service
+  Compose topology. PostgreSQL coverage includes training catch-up, concurrent allocations, idempotent
+  cohort accrual/posting, immutable rules, and exact workforce-to-ledger reconciliation.

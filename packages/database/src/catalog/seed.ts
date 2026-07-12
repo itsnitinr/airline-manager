@@ -13,6 +13,7 @@ import {
   readFoundingBalanceFixture,
   readMarketRulesFixture,
   readSchedulingRulesFixture,
+  readWorkforceRulesFixture,
   readSourceFixture,
 } from "./fixtures.js";
 import { importOurAirports } from "./import.js";
@@ -508,6 +509,45 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
   }
   await sql`UPDATE scheduling_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
     WHERE id = ${scheduleVersionId}::uuid AND status = 'draft'`.execute(database);
+
+  const workforce = await readWorkforceRulesFixture();
+  if (workforce.world_ruleset_version !== worldRulesetVersion)
+    throw new Error("Workforce rules fixture selects a different world ruleset.");
+  await sql`INSERT INTO workforce_ruleset_versions
+    (world_ruleset_id, version, status, effective_from, fatigue_formula_version,
+     demand_formula_version, wage_interval_hours, assumptions, activated_at)
+    VALUES (${rulesetId}::uuid, ${workforce.version}, 'draft', ${workforce.effective_from}::timestamptz,
+      ${workforce.fatigue_formula_version}, ${workforce.demand_formula_version},
+      ${workforce.wage_interval_hours}, ${JSON.stringify(workforce.assumptions)}::jsonb, NULL)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  const workforceVersion = await sql<{ id: string }>`SELECT id FROM workforce_ruleset_versions
+    WHERE version = ${workforce.version}`.execute(database);
+  const workforceVersionId = workforceVersion.rows[0]?.id;
+  if (!workforceVersionId) throw new Error("Workforce ruleset was not created.");
+  for (const [role, rule] of Object.entries(workforce.roles)) {
+    await sql`INSERT INTO workforce_role_rules
+      (workforce_ruleset_version_id, role, qualification_scope, training_lead_hours,
+       hiring_cost_minor, training_cost_minor, wage_per_interval_minor, flight_capacity_per_unit,
+       recovery_minutes_per_block_hour, minimum_recovery_minutes)
+      VALUES (${workforceVersionId}::uuid, ${role}, ${rule.qualification_scope},
+        ${rule.training_lead_hours}, ${JSON.stringify(rule.hiring_cost_minor)}::jsonb,
+        ${JSON.stringify(rule.training_cost_minor)}::jsonb,
+        ${JSON.stringify(rule.wage_per_interval_minor)}::jsonb, ${rule.flight_capacity_per_unit},
+        ${rule.recovery_minutes_per_block_hour}, ${rule.minimum_recovery_minutes})
+      ON CONFLICT (workforce_ruleset_version_id, role) DO NOTHING`.execute(database);
+  }
+  for (const [variantCode, staffing] of Object.entries(workforce.starter_packages)) {
+    const variant = aircraftSnapshots.find(({ snapshot }) => snapshot.code === variantCode);
+    if (!variant) throw new Error(`Workforce starter variant ${variantCode} is not published.`);
+    await sql`INSERT INTO workforce_starter_packages
+      (workforce_ruleset_version_id, aircraft_variant_id, aircraft_variant_code, package, explanation)
+      VALUES (${workforceVersionId}::uuid, ${variant.id}::uuid, ${variantCode},
+        ${JSON.stringify(staffing)}::jsonb,
+        'Minimum viable aggregate launch staffing for one founder aircraft; outsourced ground handling requires no in-house ground pool.')
+      ON CONFLICT (workforce_ruleset_version_id, aircraft_variant_id) DO NOTHING`.execute(database);
+  }
+  await sql`UPDATE workforce_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
+    WHERE id = ${workforceVersionId}::uuid AND status = 'draft'`.execute(database);
 
   return {
     releaseVersion,

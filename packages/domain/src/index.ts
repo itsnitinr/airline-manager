@@ -42,3 +42,4 @@ export * from "./airline.js";
 export * from "./fuel.js";
 export * from "./market.js";
 export * from "./scheduling.js";
+export * from "./workforce.js";
