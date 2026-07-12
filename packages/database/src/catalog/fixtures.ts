@@ -119,6 +119,18 @@ export type FuelRulesFixture = Readonly<{
   }>[];
 }>;
 
+export type MarketRulesFixture = Readonly<{
+  version: string;
+  world_ruleset_version: string;
+  demand_formula_version: string;
+  competition_formula_version: string;
+  pricing_formula_version: string;
+  world_seed: string;
+  reference_fare_per_nm_minor: Readonly<Record<string, string>>;
+  minimum_reference_fare_minor: Readonly<Record<string, string>>;
+  assumptions: Readonly<Record<string, unknown>>;
+}>;
+
 async function readJson<T>(url: URL): Promise<T> {
   return JSON.parse(await readFile(url, "utf8")) as T;
 }
@@ -145,4 +157,8 @@ export function readFounderPackageFixture(): Promise<FounderPackageFixture> {
 
 export function readFuelRulesFixture(): Promise<FuelRulesFixture> {
   return readJson(new URL("../../data/fuel-rules-v1.json", import.meta.url));
+}
+
+export function readMarketRulesFixture(): Promise<MarketRulesFixture> {
+  return readJson(new URL("../../data/market-rules-v1.json", import.meta.url));
 }

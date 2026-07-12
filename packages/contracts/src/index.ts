@@ -52,6 +52,32 @@ export type FuelQuotePurchaseRequest = Readonly<{ quoteId: string }>;
 export type FuelReserveRequest = Readonly<{ planningReservedKg: string }>;
 export type FuelForecastRequest = Readonly<{ projectedConsumptionKg: string }>;
 export type FuelCapacityUpgradeRequest = Readonly<{ tier: number }>;
+export type PricingStrategyRequest = Readonly<{
+  marketId: string;
+  effectiveFrom: string;
+  posture: "value" | "balanced" | "yield";
+  baseFareMinor: string;
+  minimumFareMinor: string;
+  maximumFareMinor: string;
+  loadFactorTargetBasisPoints: number;
+  revenueTargetMinor: string;
+}>;
+export type CommercialFlightOfferRequest = Readonly<{
+  offerId: string;
+  marketId: string;
+  economySellableCapacity: number;
+  bookingOpensAt: string;
+  departureAt: string;
+  scheduledArrivalAt: string;
+  durationMinutes: number;
+  scheduleQualityBasisPoints: number;
+  serviceQualityBasisPoints: number;
+  reputationBasisPoints: number;
+  sourceType: "external_dated_flight" | "ticket11_fixture";
+  sourceVersion: string;
+  sourceReference: string;
+}>;
+export type BookingRefreshRequest = Readonly<{ checkpointAt: string }>;
 
 const exactMinorSchema = { type: "string", pattern: "^[0-9]+$" } as const;
 const foundingSelectionProperties = {
@@ -895,6 +921,243 @@ const fleetAircraftSchema = {
 
 export const fleetListResponseSchema = { type: "array", items: fleetAircraftSchema } as const;
 export const fleetAircraftResponseSchema = fleetAircraftSchema;
+
+const marketIdentifierSchema = { type: "string", format: "uuid" } as const;
+const dateTimeSchema = { type: "string", format: "date-time" } as const;
+const basisPointsSchema = { type: "integer", minimum: 0, maximum: 10000 } as const;
+
+export const marketResearchQuerySchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["origin", "destination"],
+  properties: {
+    origin: { type: "string", pattern: "^[A-Z]{3}$" },
+    destination: { type: "string", pattern: "^[A-Z]{3}$" },
+    at: dateTimeSchema,
+  },
+} as const;
+
+export const marketResearchResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["marketId", "forecast", "competition", "recommendedPricing", "explanation"],
+  properties: {
+    marketId: marketIdentifierSchema,
+    forecast: { type: "object", additionalProperties: true },
+    competition: { type: "object", additionalProperties: true },
+    recommendedPricing: { type: "object", additionalProperties: true },
+    explanation: { type: "array", items: { type: "string" } },
+  },
+} as const;
+
+export const pricingStrategyRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "marketId",
+    "effectiveFrom",
+    "posture",
+    "baseFareMinor",
+    "minimumFareMinor",
+    "maximumFareMinor",
+    "loadFactorTargetBasisPoints",
+    "revenueTargetMinor",
+  ],
+  properties: {
+    marketId: marketIdentifierSchema,
+    effectiveFrom: dateTimeSchema,
+    posture: { type: "string", enum: ["value", "balanced", "yield"] },
+    baseFareMinor: exactMinorSchema,
+    minimumFareMinor: exactMinorSchema,
+    maximumFareMinor: exactMinorSchema,
+    loadFactorTargetBasisPoints: { type: "integer", minimum: 1000, maximum: 10000 },
+    revenueTargetMinor: exactMinorSchema,
+  },
+} as const;
+
+export const pricingStrategyResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "id",
+    "airlineId",
+    "marketId",
+    "version",
+    "effectiveFrom",
+    "effectiveTo",
+    "posture",
+    "currency",
+    "baseFareMinor",
+    "minimumFareMinor",
+    "maximumFareMinor",
+    "loadFactorTargetBasisPoints",
+    "revenueTargetMinor",
+    "formulaVersion",
+    "recommendation",
+  ],
+  properties: {
+    id: marketIdentifierSchema,
+    airlineId: marketIdentifierSchema,
+    marketId: marketIdentifierSchema,
+    version: { type: "integer", minimum: 1 },
+    effectiveFrom: dateTimeSchema,
+    effectiveTo: { anyOf: [dateTimeSchema, { type: "null" }] },
+    posture: pricingStrategyRequestSchema.properties.posture,
+    currency: foundingSelectionProperties.reportingCurrency,
+    baseFareMinor: exactMinorSchema,
+    minimumFareMinor: exactMinorSchema,
+    maximumFareMinor: exactMinorSchema,
+    loadFactorTargetBasisPoints:
+      pricingStrategyRequestSchema.properties.loadFactorTargetBasisPoints,
+    revenueTargetMinor: exactMinorSchema,
+    formulaVersion: { type: "string" },
+    recommendation: { type: "string" },
+  },
+} as const;
+
+export const pricingStrategiesResponseSchema = {
+  type: "array",
+  items: pricingStrategyResponseSchema,
+} as const;
+
+export const marketIdentifierParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "marketId"],
+  properties: { airlineId: marketIdentifierSchema, marketId: marketIdentifierSchema },
+} as const;
+
+export const commercialOfferIdentifierParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "offerId"],
+  properties: { airlineId: marketIdentifierSchema, offerId: marketIdentifierSchema },
+} as const;
+
+export const commercialFlightOfferRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "offerId",
+    "marketId",
+    "economySellableCapacity",
+    "bookingOpensAt",
+    "departureAt",
+    "scheduledArrivalAt",
+    "durationMinutes",
+    "scheduleQualityBasisPoints",
+    "serviceQualityBasisPoints",
+    "reputationBasisPoints",
+    "sourceType",
+    "sourceVersion",
+    "sourceReference",
+  ],
+  properties: {
+    offerId: marketIdentifierSchema,
+    marketId: marketIdentifierSchema,
+    economySellableCapacity: { type: "integer", minimum: 1, maximum: 1000 },
+    bookingOpensAt: dateTimeSchema,
+    departureAt: dateTimeSchema,
+    scheduledArrivalAt: dateTimeSchema,
+    durationMinutes: { type: "integer", minimum: 1, maximum: 1440 },
+    scheduleQualityBasisPoints: basisPointsSchema,
+    serviceQualityBasisPoints: basisPointsSchema,
+    reputationBasisPoints: basisPointsSchema,
+    sourceType: { type: "string", enum: ["external_dated_flight", "ticket11_fixture"] },
+    sourceVersion: { type: "string", minLength: 1, maxLength: 100 },
+    sourceReference: { type: "string", minLength: 1, maxLength: 200 },
+  },
+} as const;
+
+export const commercialFlightOfferResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    ...commercialFlightOfferRequestSchema.required,
+    "airlineId",
+    "bookedPassengers",
+    "realizedRevenueMinor",
+    "lastCheckpointAt",
+    "version",
+  ],
+  properties: {
+    ...commercialFlightOfferRequestSchema.properties,
+    airlineId: marketIdentifierSchema,
+    bookedPassengers: exactMinorSchema,
+    realizedRevenueMinor: exactMinorSchema,
+    lastCheckpointAt: dateTimeSchema,
+    version: exactMinorSchema,
+  },
+} as const;
+
+export const bookingRefreshRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["checkpointAt"],
+  properties: { checkpointAt: dateTimeSchema },
+} as const;
+
+export const bookingCheckpointResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "id",
+    "offerId",
+    "intervalStart",
+    "intervalEnd",
+    "pricingStrategyId",
+    "pricingStrategyVersion",
+    "passengersAdded",
+    "revenueAddedMinor",
+    "cumulativePassengers",
+    "cumulativeRevenueMinor",
+    "aggregates",
+    "materialInputSnapshot",
+  ],
+  properties: {
+    id: marketIdentifierSchema,
+    offerId: marketIdentifierSchema,
+    intervalStart: dateTimeSchema,
+    intervalEnd: dateTimeSchema,
+    pricingStrategyId: marketIdentifierSchema,
+    pricingStrategyVersion: { type: "integer", minimum: 1 },
+    passengersAdded: exactMinorSchema,
+    revenueAddedMinor: exactMinorSchema,
+    cumulativePassengers: exactMinorSchema,
+    cumulativeRevenueMinor: exactMinorSchema,
+    aggregates: { type: "array", items: { type: "object", additionalProperties: true } },
+    materialInputSnapshot: { type: "object", additionalProperties: true },
+  },
+} as const;
+
+export const commercialOfferAnalyticsResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "offer",
+    "bookingPacePassengersPerDay",
+    "loadFactorBasisPoints",
+    "yieldMinorPerPassenger",
+    "segmentMix",
+    "competition",
+    "aggregates",
+    "checkpoints",
+    "explanation",
+    "ledgerRevenuePosted",
+  ],
+  properties: {
+    offer: commercialFlightOfferResponseSchema,
+    bookingPacePassengersPerDay: exactMinorSchema,
+    loadFactorBasisPoints: exactMinorSchema,
+    yieldMinorPerPassenger: exactMinorSchema,
+    segmentMix: { type: "object", additionalProperties: exactMinorSchema },
+    competition: { type: "object", additionalProperties: true },
+    aggregates: { type: "array", items: { type: "object", additionalProperties: true } },
+    checkpoints: { type: "array", items: bookingCheckpointResponseSchema },
+    explanation: { type: "array", items: { type: "string" } },
+    ledgerRevenuePosted: { type: "boolean", const: false },
+  },
+} as const;
 export const deliveryStatusResponseSchema = {
   type: "object",
   additionalProperties: false,

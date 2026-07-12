@@ -1,6 +1,11 @@
 import type { ErrorEnvelope } from "@airline-manager/contracts";
 import { AuthorizationError } from "@airline-manager/application";
-import { FleetDomainError, FoundingDomainError, FuelDomainError } from "@airline-manager/domain";
+import {
+  FleetDomainError,
+  FoundingDomainError,
+  FuelDomainError,
+  MarketDomainError,
+} from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
 function envelope(
@@ -75,6 +80,23 @@ export function registerErrorMapping(app: FastifyInstance): void {
         "fuel_quote_not_found",
         "fuel_quote_wrong_airline",
         "fuel_movement_not_found",
+      ]);
+      void reply
+        .status(hiddenCodes.has(error.code) ? 403 : conflictCodes.has(error.code) ? 409 : 400)
+        .send(envelope(request, error.code, error.message));
+      return;
+    }
+    if (error instanceof MarketDomainError) {
+      const conflictCodes = new Set([
+        "idempotency_conflict",
+        "offer_already_exists",
+        "stale_booking_checkpoint",
+        "booking_window_closed",
+      ]);
+      const hiddenCodes = new Set([
+        "market_not_found",
+        "commercial_offer_not_found",
+        "pricing_strategy_not_found",
       ]);
       void reply
         .status(hiddenCodes.has(error.code) ? 403 : conflictCodes.has(error.code) ? 409 : 400)

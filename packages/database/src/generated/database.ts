@@ -189,6 +189,31 @@ export interface AuthVerification {
   value: string;
 }
 
+export interface BookingAggregateTotals {
+  booking_class: string;
+  offer_id: string;
+  passengers: number;
+  revenue_minor: Int8;
+  segment: string;
+}
+
+export interface BookingCheckpoints {
+  aggregates: Json;
+  created_at: Generated<Timestamp>;
+  cumulative_passengers: number;
+  cumulative_revenue_minor: Int8;
+  id: Generated<string>;
+  interval_end: Timestamp;
+  interval_start: Timestamp;
+  material_input_snapshot: Json;
+  offer_id: string;
+  passengers_added: number;
+  pricing_strategy_id: string;
+  pricing_strategy_version: number;
+  revenue_added_minor: Int8;
+  source_idempotency_key: string;
+}
+
 export interface Careers {
   catalog_release_id: string;
   ended_at: Timestamp | null;
@@ -246,6 +271,31 @@ export interface ChartOfAccountsTemplateVersions {
   status: Generated<string>;
   template_id: string;
   version: number;
+}
+
+export interface CommercialFlightOffers {
+  airline_id: string;
+  booked_passengers: Generated<number>;
+  booking_opens_at: Timestamp;
+  catalog_release_id: string;
+  created_at: Timestamp;
+  departure_at: Timestamp;
+  duration_minutes: number;
+  economy_sellable_capacity: number;
+  id: string;
+  last_checkpoint_at: Timestamp;
+  market_id: string;
+  market_ruleset_version_id: string;
+  realized_revenue_minor: Generated<Int8>;
+  reputation_basis_points: number;
+  schedule_quality_basis_points: number;
+  scheduled_arrival_at: Timestamp;
+  service_quality_basis_points: number;
+  source_reference: string;
+  source_type: string;
+  source_version: string;
+  version: Generated<Int8>;
+  world_ruleset_id: string;
 }
 
 export interface CuratedAircraftVariants {
@@ -636,6 +686,32 @@ export interface LedgerProfitAndLossReport {
   transaction_currency: string | null;
 }
 
+export interface MarketCompetitionSnapshots {
+  as_of: Timestamp;
+  bucket: string;
+  classification: string;
+  competition_formula_version: string;
+  id: Generated<string>;
+  market_id: string;
+  snapshot: Json;
+}
+
+export interface MarketRulesetVersions {
+  activated_at: Timestamp | null;
+  assumptions: Json;
+  competition_formula_version: string;
+  created_at: Generated<Timestamp>;
+  demand_formula_version: string;
+  id: Generated<string>;
+  minimum_reference_fare_minor: Json;
+  pricing_formula_version: string;
+  reference_fare_per_nm_minor: Json;
+  status: string;
+  version: string;
+  world_ruleset_id: string;
+  world_seed: string;
+}
+
 export interface OperatingLeasePaymentSchedule {
   amount_minor: Int8;
   due_at: Timestamp;
@@ -701,6 +777,28 @@ export interface OutboxEvents {
   published_at: Timestamp | null;
 }
 
+export interface PassengerMarketForecasts {
+  created_at: Generated<Timestamp>;
+  demand_formula_version: string;
+  forecast: Json;
+  generated_at: Timestamp;
+  id: Generated<string>;
+  input_snapshot: Json;
+  market_id: string;
+}
+
+export interface PassengerMarkets {
+  catalog_release_id: string;
+  created_at: Timestamp;
+  destination_airport_id: string;
+  game_world_id: string;
+  id: Generated<string>;
+  market_ruleset_version_id: string;
+  origin_airport_id: string;
+  stable_seed: string;
+  world_ruleset_id: string;
+}
+
 export interface PlayerAccountRoles {
   granted_at: Generated<Timestamp>;
   granted_by_player_account_id: string | null;
@@ -712,6 +810,25 @@ export interface PlayerAccounts {
   authentication_user_id: string;
   created_at: Generated<Timestamp>;
   id: Generated<string>;
+}
+
+export interface PricingStrategyVersions {
+  airline_id: string;
+  base_fare_minor: Int8;
+  created_at: Generated<Timestamp>;
+  currency: string;
+  effective_from: Timestamp;
+  effective_to: Timestamp | null;
+  id: Generated<string>;
+  load_factor_target_basis_points: number;
+  market_id: string;
+  maximum_fare_minor: Int8;
+  minimum_fare_minor: Int8;
+  posture: string;
+  pricing_formula_version: string;
+  recommendation: string;
+  revenue_target_minor: Int8;
+  version: number;
 }
 
 export interface RawReferenceImports {
@@ -852,6 +969,8 @@ export interface DB {
   auth_session: AuthSession;
   auth_user: AuthUser;
   auth_verification: AuthVerification;
+  booking_aggregate_totals: BookingAggregateTotals;
+  booking_checkpoints: BookingCheckpoints;
   careers: Careers;
   catalog_release_aircraft_variants: CatalogReleaseAircraftVariants;
   catalog_release_airports: CatalogReleaseAirports;
@@ -859,6 +978,7 @@ export interface DB {
   chart_of_accounts_template_accounts: ChartOfAccountsTemplateAccounts;
   chart_of_accounts_template_versions: ChartOfAccountsTemplateVersions;
   chart_of_accounts_templates: ChartOfAccountsTemplates;
+  commercial_flight_offers: CommercialFlightOffers;
   curated_aircraft_variants: CuratedAircraftVariants;
   curated_airports: CuratedAirports;
   currencies: Currencies;
@@ -888,12 +1008,17 @@ export interface DB {
   ledger_cash_report: LedgerCashReport;
   ledger_postings: LedgerPostings;
   ledger_profit_and_loss_report: LedgerProfitAndLossReport;
+  market_competition_snapshots: MarketCompetitionSnapshots;
+  market_ruleset_versions: MarketRulesetVersions;
   operating_lease_payment_schedule: OperatingLeasePaymentSchedule;
   operating_lease_terms: OperatingLeaseTerms;
   operating_leases: OperatingLeases;
   outbox_events: OutboxEvents;
+  passenger_market_forecasts: PassengerMarketForecasts;
+  passenger_markets: PassengerMarkets;
   player_account_roles: PlayerAccountRoles;
   player_accounts: PlayerAccounts;
+  pricing_strategy_versions: PricingStrategyVersions;
   raw_reference_imports: RawReferenceImports;
   raw_reference_records: RawReferenceRecords;
   reference_provenance: ReferenceProvenance;

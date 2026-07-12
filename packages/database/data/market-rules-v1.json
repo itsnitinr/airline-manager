@@ -1,0 +1,32 @@
+{
+  "version": "market-v1",
+  "world_ruleset_version": "contemporary-2026.07.11",
+  "demand_formula_version": "direct-segmented-demand-v1",
+  "competition_formula_version": "aggregate-market-pressure-v1",
+  "pricing_formula_version": "economy-booking-class-rm-v1",
+  "world_seed": "slice-one-offline-market-seed-v1",
+  "reference_fare_per_nm_minor": {
+    "CHF": "12",
+    "EUR": "11",
+    "GBP": "10",
+    "JPY": "1400",
+    "KWD": "35",
+    "USD": "12"
+  },
+  "minimum_reference_fare_minor": {
+    "CHF": "6000",
+    "EUR": "5500",
+    "GBP": "5000",
+    "JPY": "700000",
+    "KWD": "18000",
+    "USD": "6000"
+  },
+  "assumptions": {
+    "classification": "derived_and_balance",
+    "live_market_dependency": false,
+    "individual_passengers": false,
+    "fully_simulated_ai_airlines": false,
+    "uncertainty_basis_points": 1500,
+    "explanation": "Offline versioned balance formulas generate plausible direct economy demand and aggregate pressure without claiming live market precision."
+  }
+}

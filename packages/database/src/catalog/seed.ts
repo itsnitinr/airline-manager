@@ -11,6 +11,7 @@ import {
   readFounderPackageFixture,
   readFuelRulesFixture,
   readFoundingBalanceFixture,
+  readMarketRulesFixture,
   readSourceFixture,
 } from "./fixtures.js";
 import { importOurAirports } from "./import.js";
@@ -458,6 +459,23 @@ export async function seedSliceOneCatalog(database: Database): Promise<SeedCatal
   }
   await sql`UPDATE fuel_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
     WHERE id = ${fuelVersionId}::uuid AND status = 'draft'`.execute(database);
+
+  const market = await readMarketRulesFixture();
+  if (market.world_ruleset_version !== worldRulesetVersion) {
+    throw new Error("Market rules fixture selects a different world ruleset.");
+  }
+  await sql`INSERT INTO market_ruleset_versions
+    (world_ruleset_id, version, status, demand_formula_version, competition_formula_version,
+     pricing_formula_version, world_seed, reference_fare_per_nm_minor,
+     minimum_reference_fare_minor, assumptions, activated_at)
+    VALUES (${rulesetId}::uuid, ${market.version}, 'draft', ${market.demand_formula_version},
+      ${market.competition_formula_version}, ${market.pricing_formula_version},
+      ${market.world_seed}, ${JSON.stringify(market.reference_fare_per_nm_minor)}::jsonb,
+      ${JSON.stringify(market.minimum_reference_fare_minor)}::jsonb,
+      ${JSON.stringify(market.assumptions)}::jsonb, NULL)
+    ON CONFLICT (version) DO NOTHING`.execute(database);
+  await sql`UPDATE market_ruleset_versions SET status = 'active', activated_at = CURRENT_TIMESTAMP
+    WHERE version = ${market.version} AND status = 'draft'`.execute(database);
 
   return {
     releaseVersion,

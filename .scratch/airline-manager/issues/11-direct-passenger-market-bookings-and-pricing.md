@@ -1,7 +1,7 @@
 # Implement direct passenger demand, bookings, competition, and pricing
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 05, 07, 08
 
 ## Goal
@@ -50,4 +50,6 @@ individual passenger agents or fully simulated AI airlines.
 
 ## Comments
 
-None yet.
+- Implemented version-bound directed playable-airport markets, documented business/leisure/VFR sensitivities, deterministic derived/balance demand and aggregate competition, assisted/effective-dated economy booking-class pricing, and a framework-independent opaque commercial-flight-offer boundary for ticket 12 without route/timetable/rotation records.
+- Added serialized elapsed-time booking refresh with exact pricing-period splits, idempotent checkpoint retries, PostgreSQL capacity ceilings, exact minor-unit segment/class fare and revenue aggregates, immutable ticket-17 material-input snapshots, ownership checks, outbox events, and authenticated research/forecast/pricing/pace/load-factor/yield/mix/explanation APIs. No individual-passenger, full-AI-airline, or pre-settlement ledger revenue entity is created.
+- Validation passed: frozen install; formatting, lint, eight boundary probes, OpenAPI/client and Kysely freshness, type-check, unit/property tests, build, Compose validation; blank and repeat migrations through 0010; 70 PostgreSQL plus 17 authenticated API integration tests; diff/ignored-file/provenance review; and Gitleaks history scan with no leaks. Working-directory scan findings were limited to ignored Next.js-generated `.next` keys and were not staged.

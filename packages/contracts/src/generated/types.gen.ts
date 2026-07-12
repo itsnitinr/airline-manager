@@ -158,6 +158,411 @@ export type GetAirlineCareerSummaryResponses = {
 export type GetAirlineCareerSummaryResponse =
   GetAirlineCareerSummaryResponses[keyof GetAirlineCareerSummaryResponses];
 
+export type CreateCommercialFlightOfferData = {
+  body: {
+    bookingOpensAt: string;
+    departureAt: string;
+    durationMinutes: number;
+    economySellableCapacity: number;
+    marketId: string;
+    offerId: string;
+    reputationBasisPoints: number;
+    scheduledArrivalAt: string;
+    scheduleQualityBasisPoints: number;
+    serviceQualityBasisPoints: number;
+    sourceReference: string;
+    sourceType: "external_dated_flight" | "ticket11_fixture";
+    sourceVersion: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/commercial-flight-offers";
+};
+
+export type CreateCommercialFlightOfferErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type CreateCommercialFlightOfferError =
+  CreateCommercialFlightOfferErrors[keyof CreateCommercialFlightOfferErrors];
+
+export type CreateCommercialFlightOfferResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    airlineId: string;
+    bookedPassengers: string;
+    bookingOpensAt: string;
+    departureAt: string;
+    durationMinutes: number;
+    economySellableCapacity: number;
+    lastCheckpointAt: string;
+    marketId: string;
+    offerId: string;
+    realizedRevenueMinor: string;
+    reputationBasisPoints: number;
+    scheduledArrivalAt: string;
+    scheduleQualityBasisPoints: number;
+    serviceQualityBasisPoints: number;
+    sourceReference: string;
+    sourceType: "external_dated_flight" | "ticket11_fixture";
+    sourceVersion: string;
+    version: string;
+    [key: string]: unknown;
+  };
+};
+
+export type CreateCommercialFlightOfferResponse =
+  CreateCommercialFlightOfferResponses[keyof CreateCommercialFlightOfferResponses];
+
+export type GetCommercialFlightBookingAnalyticsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    offerId: string;
+  };
+  query?: {
+    at?: string;
+  };
+  url: "/v1/airlines/{airlineId}/commercial-flight-offers/{offerId}/bookings";
+};
+
+export type GetCommercialFlightBookingAnalyticsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetCommercialFlightBookingAnalyticsError =
+  GetCommercialFlightBookingAnalyticsErrors[keyof GetCommercialFlightBookingAnalyticsErrors];
+
+export type GetCommercialFlightBookingAnalyticsResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aggregates: Array<{
+      [key: string]: unknown;
+    }>;
+    bookingPacePassengersPerDay: string;
+    checkpoints: Array<{
+      aggregates: Array<{
+        [key: string]: unknown;
+      }>;
+      cumulativePassengers: string;
+      cumulativeRevenueMinor: string;
+      id: string;
+      intervalEnd: string;
+      intervalStart: string;
+      materialInputSnapshot: {
+        [key: string]: unknown;
+      };
+      offerId: string;
+      passengersAdded: string;
+      pricingStrategyId: string;
+      pricingStrategyVersion: number;
+      revenueAddedMinor: string;
+      [key: string]: unknown;
+    }>;
+    competition: {
+      [key: string]: unknown;
+    };
+    explanation: Array<string>;
+    ledgerRevenuePosted: false;
+    loadFactorBasisPoints: string;
+    offer: {
+      airlineId: string;
+      bookedPassengers: string;
+      bookingOpensAt: string;
+      departureAt: string;
+      durationMinutes: number;
+      economySellableCapacity: number;
+      lastCheckpointAt: string;
+      marketId: string;
+      offerId: string;
+      realizedRevenueMinor: string;
+      reputationBasisPoints: number;
+      scheduledArrivalAt: string;
+      scheduleQualityBasisPoints: number;
+      serviceQualityBasisPoints: number;
+      sourceReference: string;
+      sourceType: "external_dated_flight" | "ticket11_fixture";
+      sourceVersion: string;
+      version: string;
+      [key: string]: unknown;
+    };
+    segmentMix: {
+      [key: string]: string;
+    };
+    yieldMinorPerPassenger: string;
+    [key: string]: unknown;
+  };
+};
+
+export type GetCommercialFlightBookingAnalyticsResponse =
+  GetCommercialFlightBookingAnalyticsResponses[keyof GetCommercialFlightBookingAnalyticsResponses];
+
+export type RefreshCommercialFlightBookingsData = {
+  body: {
+    checkpointAt: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+    offerId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/commercial-flight-offers/{offerId}/bookings/refresh";
+};
+
+export type RefreshCommercialFlightBookingsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type RefreshCommercialFlightBookingsError =
+  RefreshCommercialFlightBookingsErrors[keyof RefreshCommercialFlightBookingsErrors];
+
+export type RefreshCommercialFlightBookingsResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aggregates: Array<{
+      [key: string]: unknown;
+    }>;
+    cumulativePassengers: string;
+    cumulativeRevenueMinor: string;
+    id: string;
+    intervalEnd: string;
+    intervalStart: string;
+    materialInputSnapshot: {
+      [key: string]: unknown;
+    };
+    offerId: string;
+    passengersAdded: string;
+    pricingStrategyId: string;
+    pricingStrategyVersion: number;
+    revenueAddedMinor: string;
+    [key: string]: unknown;
+  };
+};
+
+export type RefreshCommercialFlightBookingsResponse =
+  RefreshCommercialFlightBookingsResponses[keyof RefreshCommercialFlightBookingsResponses];
+
 export type ListFleetData = {
   body?: never;
   path: {
@@ -2192,6 +2597,465 @@ export type SetFuelReserveResponses = {
 };
 
 export type SetFuelReserveResponse = SetFuelReserveResponses[keyof SetFuelReserveResponses];
+
+export type ListPassengerPricingStrategiesData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    marketId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/markets/{marketId}/pricing-strategies";
+};
+
+export type ListPassengerPricingStrategiesErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListPassengerPricingStrategiesError =
+  ListPassengerPricingStrategiesErrors[keyof ListPassengerPricingStrategiesErrors];
+
+export type ListPassengerPricingStrategiesResponses = {
+  /**
+   * Default Response
+   */
+  200: Array<{
+    airlineId: string;
+    baseFareMinor: string;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    effectiveFrom: string;
+    effectiveTo: string | unknown;
+    formulaVersion: string;
+    id: string;
+    loadFactorTargetBasisPoints: number;
+    marketId: string;
+    maximumFareMinor: string;
+    minimumFareMinor: string;
+    posture: "value" | "balanced" | "yield";
+    recommendation: string;
+    revenueTargetMinor: string;
+    version: number;
+    [key: string]: unknown;
+  }>;
+};
+
+export type ListPassengerPricingStrategiesResponse =
+  ListPassengerPricingStrategiesResponses[keyof ListPassengerPricingStrategiesResponses];
+
+export type ForecastDirectPassengerDemandData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query: {
+    origin: string;
+    destination: string;
+    at?: string;
+  };
+  url: "/v1/airlines/{airlineId}/markets/forecast";
+};
+
+export type ForecastDirectPassengerDemandErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ForecastDirectPassengerDemandError =
+  ForecastDirectPassengerDemandErrors[keyof ForecastDirectPassengerDemandErrors];
+
+export type ForecastDirectPassengerDemandResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    competition: {
+      [key: string]: unknown;
+    };
+    explanation: Array<string>;
+    forecast: {
+      [key: string]: unknown;
+    };
+    marketId: string;
+    recommendedPricing: {
+      [key: string]: unknown;
+    };
+  };
+};
+
+export type ForecastDirectPassengerDemandResponse =
+  ForecastDirectPassengerDemandResponses[keyof ForecastDirectPassengerDemandResponses];
+
+export type CreatePassengerPricingStrategyData = {
+  body: {
+    baseFareMinor: string;
+    effectiveFrom: string;
+    loadFactorTargetBasisPoints: number;
+    marketId: string;
+    maximumFareMinor: string;
+    minimumFareMinor: string;
+    posture: "value" | "balanced" | "yield";
+    revenueTargetMinor: string;
+  };
+  headers: {
+    "idempotency-key": string;
+  };
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/markets/pricing-strategies";
+};
+
+export type CreatePassengerPricingStrategyErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type CreatePassengerPricingStrategyError =
+  CreatePassengerPricingStrategyErrors[keyof CreatePassengerPricingStrategyErrors];
+
+export type CreatePassengerPricingStrategyResponses = {
+  /**
+   * Default Response
+   */
+  201: {
+    airlineId: string;
+    baseFareMinor: string;
+    currency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    effectiveFrom: string;
+    effectiveTo: string | unknown;
+    formulaVersion: string;
+    id: string;
+    loadFactorTargetBasisPoints: number;
+    marketId: string;
+    maximumFareMinor: string;
+    minimumFareMinor: string;
+    posture: "value" | "balanced" | "yield";
+    recommendation: string;
+    revenueTargetMinor: string;
+    version: number;
+    [key: string]: unknown;
+  };
+};
+
+export type CreatePassengerPricingStrategyResponse =
+  CreatePassengerPricingStrategyResponses[keyof CreatePassengerPricingStrategyResponses];
+
+export type ResearchDirectPassengerMarketData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query: {
+    origin: string;
+    destination: string;
+    at?: string;
+  };
+  url: "/v1/airlines/{airlineId}/markets/research";
+};
+
+export type ResearchDirectPassengerMarketErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ResearchDirectPassengerMarketError =
+  ResearchDirectPassengerMarketErrors[keyof ResearchDirectPassengerMarketErrors];
+
+export type ResearchDirectPassengerMarketResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    competition: {
+      [key: string]: unknown;
+    };
+    explanation: Array<string>;
+    forecast: {
+      [key: string]: unknown;
+    };
+    marketId: string;
+    recommendedPricing: {
+      [key: string]: unknown;
+    };
+  };
+};
+
+export type ResearchDirectPassengerMarketResponse =
+  ResearchDirectPassengerMarketResponses[keyof ResearchDirectPassengerMarketResponses];
 
 export type GetAirlineNextStepGuidanceData = {
   body?: never;
