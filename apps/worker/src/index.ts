@@ -22,6 +22,7 @@ import {
   readDatabasePoolOptions,
   type DependencyReadiness,
 } from "@airline-manager/database";
+import { SimulationWorkerRuntime } from "./runtime.js";
 
 export type ReadinessCheck = () => Promise<DependencyReadiness>;
 
@@ -44,6 +45,18 @@ function writeJson(response: ServerResponse, statusCode: number, body: unknown):
 
 export function createWorkerHealthServer(
   checkReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true }),
+  runtimeStatus: () => Readonly<{
+    draining: boolean;
+    ready: boolean;
+    active: number;
+    lag: unknown;
+  }> = () => ({
+    draining: false,
+    ready: true,
+    active: 0,
+    lag: {},
+  }),
+  metrics: () => string = () => "",
 ): Server {
   return createServer((request, response) => {
     if (request.method === "GET" && request.url === "/health") {
@@ -54,7 +67,13 @@ export function createWorkerHealthServer(
       void checkReadiness()
         .then((dependencies) => {
           const readiness = createReadinessResponse("worker", dependencies);
-          writeJson(response, readiness.status === "ready" ? 200 : 503, readiness);
+          const runtime = runtimeStatus();
+          const ready = readiness.status === "ready" && runtime.ready && !runtime.draining;
+          writeJson(response, ready ? 200 : 503, {
+            ...readiness,
+            status: ready ? "ready" : "not_ready",
+            runtime,
+          });
         })
         .catch(() => {
           writeJson(
@@ -63,6 +82,11 @@ export function createWorkerHealthServer(
             createReadinessResponse("worker", { postgres: false, redis: false }),
           );
         });
+      return;
+    }
+    if (request.method === "GET" && request.url === "/metrics") {
+      response.writeHead(200, { "content-type": "text/plain; version=0.0.4" });
+      response.end(metrics());
       return;
     }
     writeJson(response, 404, { error: "not_found" });
@@ -77,29 +101,50 @@ export function startWorker(environment = process.env): Server {
     databaseRuntime,
     redisUrl: readRequiredString("REDIS_URL", environment),
   });
-  const server = createWorkerHealthServer(checkReadiness);
-  const heartbeat = setInterval(() => undefined, 60_000);
+  const concurrency = readOptionalInteger("WORKER_CONCURRENCY", environment);
+  const drainMilliseconds = readOptionalInteger("WORKER_DRAIN_MILLISECONDS", environment);
+  const pollMilliseconds = readOptionalInteger("WORKER_POLL_MILLISECONDS", environment);
+  const runtime = new SimulationWorkerRuntime({
+    databaseRuntime,
+    redisUrl: readRequiredString("REDIS_URL", environment),
+    ...(concurrency === undefined ? {} : { concurrency }),
+    ...(drainMilliseconds === undefined ? {} : { drainMilliseconds }),
+    ...(pollMilliseconds === undefined ? {} : { pollMilliseconds }),
+  });
+  const server = createWorkerHealthServer(
+    checkReadiness,
+    () => runtime.status(),
+    () => runtime.metrics.render(runtime.drain.draining, runtime.drain.active),
+  );
   server.listen(port, host, () => {
     process.stdout.write(`${JSON.stringify(workerHealth())}\n`);
     process.stdout.write(`Worker health server listening on ${host}:${port}\n`);
+    void runtime.start().catch((error: unknown) => {
+      process.stderr.write(
+        `${JSON.stringify({ level: "error", service: "worker", event: "startup_failed", message: error instanceof Error ? error.message : "unknown" })}\n`,
+      );
+      process.exitCode = 1;
+    });
   });
 
   let shuttingDown = false;
   const shutdown = (signal: NodeJS.Signals): void => {
     if (shuttingDown) return;
     shuttingDown = true;
-    clearInterval(heartbeat);
     process.stdout.write(`Worker received ${signal}; draining work\n`);
-    server.close((error) => {
-      if (error) {
-        process.stderr.write("Worker shutdown failed\n");
-        process.exitCode = 1;
-      }
-      void databaseRuntime.destroy().catch(() => {
-        process.stderr.write("Worker database shutdown failed\n");
+    void runtime
+      .shutdown()
+      .then(
+        () =>
+          new Promise<void>((resolve, reject) => {
+            server.close((error) => (error ? reject(error) : resolve()));
+          }),
+      )
+      .then(() => databaseRuntime.destroy())
+      .catch(() => {
+        process.stderr.write("Worker runtime shutdown failed\n");
         process.exitCode = 1;
       });
-    });
   };
   process.once("SIGTERM", shutdown);
   process.once("SIGINT", shutdown);

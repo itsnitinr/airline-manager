@@ -1,7 +1,7 @@
 # Implement outbox delivery, BullMQ workers, and reconciliation
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 03, 04
 
 ## Goal
@@ -46,4 +46,17 @@ authoritative and every simulation transition retry-safe.
 
 ## Comments
 
-None yet.
+- 2026-07-12: Implemented strict versioned safe-routing envelopes, deterministic BullMQ identity,
+  bounded retries/stalled recovery, PostgreSQL `SKIP LOCKED` outbox and milestone leases, failure and
+  retention state, redacted dead letters, attributed same-handler replay, and authoritative
+  reconciliation for generic plus existing aircraft-delivery, workforce, maintenance, and weather
+  intents. The worker now provides configurable concurrency, delayed delivery, correlated redacted
+  logs, lag/outcome metrics, dependency/drain readiness, and bounded signal-driven drain with lease
+  recovery; no ticket 17 flight transitions, ticket 18 notification delivery, or ticket 22 UI were
+  added.
+- Validation passed frozen install, formatting, lint, eight boundary probes, typecheck, 105 unit
+  tests, production build, OpenAPI/client and Kysely freshness, fresh blank/repeat and 0015-to-0016
+  migrations, 95 PostgreSQL plus 25 authenticated API integration tests, and 2 isolated real
+  Redis/BullMQ lifecycle suites covering retry, duplicate delivery, poison quarantine, replay audit,
+  and restoration of deliberately deleted delayed work. Fresh Compose images reached healthy
+  readiness; worker metrics were inspected and SIGTERM drain/restart completed within the bound.

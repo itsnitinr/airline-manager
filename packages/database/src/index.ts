@@ -42,6 +42,12 @@ export { KyselyWorkforceRepository } from "./workforce/repository.js";
 export { KyselyMaintenanceRepository } from "./maintenance/repository.js";
 export { KyselyWeatherRepository } from "./weather/repository.js";
 export {
+  KyselyRuntimeRepository,
+  runtimeIdentity,
+  type ClaimedOutbox,
+  type MilestoneRegistration,
+} from "./runtime/repository.js";
+export {
   importOurAirports,
   type AirportImportInput,
   type AirportImportResult,

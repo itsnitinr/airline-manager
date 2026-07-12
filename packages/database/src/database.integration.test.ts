@@ -104,10 +104,7 @@ describe("foundation schema constraints and indexes", () => {
     const indexes = await sql<{ indexname: string }>`SELECT indexname FROM pg_indexes
       WHERE schemaname = 'public' AND tablename = 'outbox_events'`.execute(runtime.database);
     expect(indexes.rows.map(({ indexname }) => indexname)).toEqual(
-      expect.arrayContaining([
-        "outbox_events_available_unpublished_idx",
-        "outbox_events_aggregate_idx",
-      ]),
+      expect.arrayContaining(["outbox_events_claim_idx", "outbox_events_aggregate_idx"]),
     );
   });
 

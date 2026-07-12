@@ -1012,15 +1012,26 @@ export interface OutboxEvents {
   aggregate_version: Int8;
   attempt_count: Generated<number>;
   available_at: Generated<Timestamp>;
+  causation_id: Generated<string>;
+  command_id: Generated<string>;
+  correlation_id: Generated<string>;
   event_type: string;
+  failed_at: Timestamp | null;
+  failure_count: Generated<number>;
+  handler_kind: Generated<string>;
+  handler_version: Generated<number>;
   id: Generated<string>;
   last_error: string | null;
+  lease_expires_at: Timestamp | null;
+  lease_owner: string | null;
+  next_attempt_at: Generated<Timestamp>;
   /**
    * UTC instant stored as timestamptz; clients must not use timestamp without time zone.
    */
   occurred_at: Generated<Timestamp>;
   payload: Json;
   published_at: Timestamp | null;
+  retained_until: Timestamp | null;
 }
 
 export interface PassengerMarketForecasts {
@@ -1188,6 +1199,28 @@ export interface SecurityAuditEvents {
   target_type: string;
 }
 
+export interface SimulationMilestones {
+  applied_at: Timestamp | null;
+  attempt_count: Generated<number>;
+  causation_id: Generated<string>;
+  command_id: Generated<string>;
+  correlation_id: Generated<string>;
+  created_at: Generated<Timestamp>;
+  entity_id: string;
+  entity_type: string;
+  expected_version: Int8;
+  handler_kind: string;
+  handler_version: number;
+  id: Generated<string>;
+  last_attempt_at: Timestamp | null;
+  lease_expires_at: Timestamp | null;
+  lease_owner: string | null;
+  routing: Generated<Json>;
+  state: Generated<string>;
+  target_time: Timestamp;
+  updated_at: Generated<Timestamp>;
+}
+
 export interface TimetableVersions {
   activated_at: Timestamp;
   effective_from: Timestamp;
@@ -1266,6 +1299,34 @@ export interface WeatherSnapshotIntents {
   scope: string;
   scope_id: string;
   updated_at: Timestamp;
+}
+
+export interface WorkerDeadLetters {
+  classification: string;
+  command_id: string | null;
+  diagnostic: Json;
+  entity_id: string | null;
+  entity_type: string | null;
+  envelope: Json | null;
+  envelope_version: number | null;
+  expires_at: Timestamp;
+  failed_at: Generated<Timestamp>;
+  handler_kind: string | null;
+  handler_version: number | null;
+  id: Generated<string>;
+  job_id: string;
+  queue_name: string;
+  replayed_at: Timestamp | null;
+}
+
+export interface WorkerReplayAudits {
+  actor_identifier: string;
+  created_at: Generated<Timestamp>;
+  dead_letter_id: string;
+  id: Generated<string>;
+  reason: string;
+  replay_job_id: string;
+  request_id: string;
 }
 
 export interface WorkforceAllocations {
@@ -1484,6 +1545,7 @@ export interface DB {
   scheduling_ruleset_versions: SchedulingRulesetVersions;
   schema_migrations: SchemaMigrations;
   security_audit_events: SecurityAuditEvents;
+  simulation_milestones: SimulationMilestones;
   timetable_versions: TimetableVersions;
   timezone_dataset_versions: TimezoneDatasetVersions;
   timezone_definitions: TimezoneDefinitions;
@@ -1491,6 +1553,8 @@ export interface DB {
   weather_realized_snapshots: WeatherRealizedSnapshots;
   weather_ruleset_versions: WeatherRulesetVersions;
   weather_snapshot_intents: WeatherSnapshotIntents;
+  worker_dead_letters: WorkerDeadLetters;
+  worker_replay_audits: WorkerReplayAudits;
   workforce_allocations: WorkforceAllocations;
   workforce_checkpoint_intents: WorkforceCheckpointIntents;
   workforce_hiring_orders: WorkforceHiringOrders;

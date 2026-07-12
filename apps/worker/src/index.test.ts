@@ -40,6 +40,7 @@ describe("worker entry point", () => {
       service: "worker",
       status: "not_ready",
       dependencies: { postgres: "down", redis: "up" },
+      runtime: { draining: false, ready: true, active: 0, lag: {} },
     });
   });
 

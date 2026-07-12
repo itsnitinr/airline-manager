@@ -8,6 +8,7 @@ injectWorkspacePackages: true
 
 allowBuilds:
   esbuild: true
+  msgpackr-extract: false
   sharp: true
   unrs-resolver: true
 
