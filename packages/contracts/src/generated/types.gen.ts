@@ -5961,6 +5961,34 @@ export type SubscribeToEventsErrors = {
   /**
    * Default Response
    */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
   500: {
     error: {
       code: string;
@@ -5978,13 +6006,408 @@ export type SubscribeToEventsError = SubscribeToEventsErrors[keyof SubscribeToEv
 
 export type SubscribeToEventsResponses = {
   /**
-   * Recoverable Server-Sent Events stream.
+   * Authorized resumable advisory notification stream.
    */
   200: string;
 };
 
 export type SubscribeToEventsResponse =
   SubscribeToEventsResponses[keyof SubscribeToEventsResponses];
+
+export type GetNotificationPreferencesData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/notification-preferences";
+};
+
+export type GetNotificationPreferencesErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetNotificationPreferencesError =
+  GetNotificationPreferencesErrors[keyof GetNotificationPreferencesErrors];
+
+export type GetNotificationPreferencesResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    browserEnabled: boolean;
+    minimumBrowserSeverity: "info" | "warning" | "critical";
+    quietHours:
+      | unknown
+      | {
+          end: string;
+          start: string;
+          timeZone: string;
+        };
+  };
+};
+
+export type GetNotificationPreferencesResponse =
+  GetNotificationPreferencesResponses[keyof GetNotificationPreferencesResponses];
+
+export type UpdateNotificationPreferencesData = {
+  body: {
+    browserEnabled: boolean;
+    minimumBrowserSeverity: "info" | "warning" | "critical";
+    quietHours:
+      | unknown
+      | {
+          end: string;
+          start: string;
+          timeZone: string;
+        };
+  };
+  path?: never;
+  query?: never;
+  url: "/v1/notification-preferences";
+};
+
+export type UpdateNotificationPreferencesErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type UpdateNotificationPreferencesError =
+  UpdateNotificationPreferencesErrors[keyof UpdateNotificationPreferencesErrors];
+
+export type UpdateNotificationPreferencesResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    browserEnabled: boolean;
+    minimumBrowserSeverity: "info" | "warning" | "critical";
+    quietHours:
+      | unknown
+      | {
+          end: string;
+          start: string;
+          timeZone: string;
+        };
+  };
+};
+
+export type UpdateNotificationPreferencesResponse =
+  UpdateNotificationPreferencesResponses[keyof UpdateNotificationPreferencesResponses];
+
+export type ListNotificationsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    cursor?: string;
+    limit?: number;
+  };
+  url: "/v1/notifications";
+};
+
+export type ListNotificationsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListNotificationsError = ListNotificationsErrors[keyof ListNotificationsErrors];
+
+export type ListNotificationsResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    items: Array<{
+      body: string;
+      createdAt: string;
+      eventId: string;
+      eventType: string;
+      id: string;
+      occurredAt: string;
+      readAt: unknown | string;
+      recoveryAction:
+        | unknown
+        | {
+            label: string;
+            path: string;
+            resourceId: string;
+            resourceType: string;
+          };
+      resourceId: string;
+      resourceType: string;
+      severity: "info" | "warning" | "critical";
+      title: string;
+    }>;
+    nextCursor: unknown | string;
+  };
+};
+
+export type ListNotificationsResponse =
+  ListNotificationsResponses[keyof ListNotificationsResponses];
+
+export type SetNotificationReadStateData = {
+  body: {
+    read: boolean;
+  };
+  path: {
+    notificationId: string;
+  };
+  query?: never;
+  url: "/v1/notifications/{notificationId}/read";
+};
+
+export type SetNotificationReadStateErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type SetNotificationReadStateError =
+  SetNotificationReadStateErrors[keyof SetNotificationReadStateErrors];
+
+export type SetNotificationReadStateResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    body: string;
+    createdAt: string;
+    eventId: string;
+    eventType: string;
+    id: string;
+    occurredAt: string;
+    readAt: unknown | string;
+    recoveryAction:
+      | unknown
+      | {
+          label: string;
+          path: string;
+          resourceId: string;
+          resourceType: string;
+        };
+    resourceId: string;
+    resourceType: string;
+    severity: "info" | "warning" | "critical";
+    title: string;
+  };
+};
+
+export type SetNotificationReadStateResponse =
+  SetNotificationReadStateResponses[keyof SetNotificationReadStateResponses];
 
 export type ExecuteSampleCommandData = {
   body: {

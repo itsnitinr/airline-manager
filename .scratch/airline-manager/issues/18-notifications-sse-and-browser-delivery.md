@@ -1,7 +1,7 @@
 # Implement persisted notifications, SSE, and browser delivery
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 04, 16, 17
 
 ## Goal
@@ -43,4 +43,16 @@ reconnection without making delivery a simulation dependency.
 
 ## Comments
 
-None yet.
+- 2026-07-13: Added persisted, owner-scoped notification intents, player notifications, stable
+  deduplication/event cursors, severity/read/recovery metadata, preferences, quiet hours, and account,
+  aircraft, fuel, maintenance, workforce, finance, and complete flight-lifecycle projections from the
+  transactional outbox. The worker now creates notifications idempotently; authenticated SSE replays
+  backlog by cursor or `Last-Event-ID`, polls for new persisted events, heartbeats, and filters per
+  player; minimal browser plumbing requests permission only after opt-in and applies severity and
+  quiet-hour policy without affecting authoritative simulation state.
+- Validation passed frozen install, formatting, lint, eight boundary probes, typecheck, 116 unit
+  tests, production build, blank/repeat and 0017-to-0018 migrations, Kysely and OpenAPI/client
+  freshness, 100 PostgreSQL plus 27 API integration tests, 3 real Redis/BullMQ suites, concurrent
+  exact-once replay and ownership-isolation coverage, authenticated SSE backlog/resume/reconnect/
+  heartbeat/leakage coverage, browser permission/preference/quiet-hour coverage, and a fresh-volume
+  healthy five-service Compose rebuild with API and worker readiness.

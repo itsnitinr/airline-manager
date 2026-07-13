@@ -1,5 +1,5 @@
 import { Writable } from "node:stream";
-import type { ApplicationServices } from "@airline-manager/application";
+import { NotificationService, type ApplicationServices } from "@airline-manager/application";
 import type { FastifyInstance } from "fastify";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createApiServer, createOpenApiDocument, readGoogleProvider } from "./index.js";
@@ -168,14 +168,39 @@ describe("Fastify API shell", () => {
 
   it("provides a cursor-aware SSE shell and authorization hook", async () => {
     const authorize = vi.fn(async () => undefined);
+    const notificationService = new NotificationService({
+      consumeOutbox: async () => "noop",
+      list: async () => [],
+      markRead: async () => {
+        throw new Error("unused");
+      },
+      preferences: async () => ({
+        browserEnabled: false,
+        minimumBrowserSeverity: "warning",
+        quietHours: null,
+      }),
+      savePreferences: async (_player, preferences) => preferences,
+    });
+    const authorization = {
+      authenticated: true,
+      playerAccountId: "11111111-1111-4111-8111-111111111111",
+      emailVerified: true,
+      roles: ["player" as const],
+    };
     const app = track(
-      createApiServer({ logger: false, sseAuthorization: authorize, sseHeartbeatMs: 50 }),
+      createApiServer({
+        logger: false,
+        sseAuthorization: authorize,
+        sseHeartbeatMs: 50,
+        notificationService,
+        authorizationResolver: async () => authorization,
+      }),
     );
     await app.listen({ host: "127.0.0.1", port: 0 });
     const address = app.server.address();
     if (!address || typeof address === "string") throw new Error("Expected a TCP address.");
     const controller = new AbortController();
-    const response = await fetch(`http://127.0.0.1:${address.port}/v1/events?cursor=event-42`, {
+    const response = await fetch(`http://127.0.0.1:${address.port}/v1/events?cursor=42`, {
       signal: controller.signal,
     });
     const reader = response.body?.getReader();
@@ -185,11 +210,11 @@ describe("Fastify API shell", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/event-stream");
-    expect(new TextDecoder().decode(firstChunk?.value)).toContain("id: event-42");
+    expect(new TextDecoder().decode(firstChunk?.value)).toContain('"cursor":"42"');
     expect(new TextDecoder().decode(heartbeatChunk?.value)).toContain(": heartbeat");
     expect(authorize).toHaveBeenCalledWith({
-      authorization: { authenticated: false, emailVerified: false, roles: [] },
-      cursor: "event-42",
+      authorization,
+      cursor: "42",
     });
     expect(formatSseConnectedEvent(undefined)).toContain("retry: 5000");
   });

@@ -12,6 +12,7 @@ import {
   type MaintenanceService,
   type WeatherService,
   type FlightOperationsService,
+  type NotificationService,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -33,6 +34,7 @@ import { registerWorkforceRoutes } from "./routes/workforce.js";
 import { registerMaintenanceRoutes } from "./routes/maintenance.js";
 import { registerWeatherRoutes } from "./routes/weather.js";
 import { registerFlightOperationsRoutes } from "./routes/operations.js";
+import { registerNotificationRoutes } from "./routes/notifications.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -54,6 +56,7 @@ export type ApiAppOptions = Readonly<{
   maintenanceService?: MaintenanceService;
   weatherService?: WeatherService;
   flightOperationsService?: FlightOperationsService;
+  notificationService?: NotificationService;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -125,6 +128,10 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
           description:
             "Authoritative flight status, timeline, recovery, and settlement explanations.",
         },
+        {
+          name: "notifications",
+          description: "Persisted in-game notification center and preferences.",
+        },
       ],
     },
   });
@@ -168,8 +175,10 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
     registerMaintenanceRoutes(routes, options.maintenanceService);
     registerWeatherRoutes(routes, options.weatherService);
     registerFlightOperationsRoutes(routes, options.flightOperationsService);
+    registerNotificationRoutes(routes, options.notificationService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,
+      ...(options.notificationService ? { notifications: options.notificationService } : {}),
       heartbeatMs: options.sseHeartbeatMs ?? 15_000,
       reconnectMs: options.sseReconnectMs ?? 5_000,
     });

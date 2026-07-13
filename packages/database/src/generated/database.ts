@@ -1036,6 +1036,33 @@ export interface MarketRulesetVersions {
   world_seed: string;
 }
 
+export interface NotificationIntents {
+  body: string;
+  causation_id: string;
+  correlation_id: string;
+  created_at: Generated<Timestamp>;
+  event_type: string;
+  id: Generated<string>;
+  occurred_at: Timestamp;
+  player_account_id: string;
+  recovery_action: Json | null;
+  resource_id: string;
+  resource_type: string;
+  severity: string;
+  source_outbox_event_id: string;
+  title: string;
+}
+
+export interface NotificationPreferences {
+  browser_enabled: Generated<boolean>;
+  minimum_browser_severity: Generated<string>;
+  player_account_id: string;
+  quiet_hours_end: string | null;
+  quiet_hours_start: string | null;
+  quiet_hours_time_zone: string | null;
+  updated_at: Generated<Timestamp>;
+}
+
 export interface OperatingLeasePaymentSchedule {
   amount_minor: Int8;
   due_at: Timestamp;
@@ -1145,6 +1172,18 @@ export interface PlayerAccounts {
   authentication_user_id: string;
   created_at: Generated<Timestamp>;
   id: Generated<string>;
+}
+
+export interface PlayerNotifications {
+  created_at: Generated<Timestamp>;
+  /**
+   * Stable resumable SSE cursor. Sequence gaps are expected and reveal no foreign event contents.
+   */
+  event_sequence: Generated<Int8>;
+  id: Generated<string>;
+  intent_id: string;
+  player_account_id: string;
+  read_at: Timestamp | null;
 }
 
 export interface PricingStrategyVersions {
@@ -1624,6 +1663,8 @@ export interface DB {
   maintenance_workforce_allocations: MaintenanceWorkforceAllocations;
   market_competition_snapshots: MarketCompetitionSnapshots;
   market_ruleset_versions: MarketRulesetVersions;
+  notification_intents: NotificationIntents;
+  notification_preferences: NotificationPreferences;
   operating_lease_payment_schedule: OperatingLeasePaymentSchedule;
   operating_lease_terms: OperatingLeaseTerms;
   operating_leases: OperatingLeases;
@@ -1632,6 +1673,7 @@ export interface DB {
   passenger_markets: PassengerMarkets;
   player_account_roles: PlayerAccountRoles;
   player_accounts: PlayerAccounts;
+  player_notifications: PlayerNotifications;
   pricing_strategy_versions: PricingStrategyVersions;
   raw_reference_imports: RawReferenceImports;
   raw_reference_records: RawReferenceRecords;

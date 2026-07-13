@@ -518,6 +518,22 @@ export class KyselyMaintenanceRepository implements MaintenanceRepository {
             'maintenance.utilization_recorded.v1',
             ${JSON.stringify({ aircraftId: input.aircraftId, completionKey: input.completionKey })}::jsonb,
             ${now.toISOString()}::timestamptz)`.execute(transaction);
+        if (due.some((assessment) => assessment.state !== "not_due")) {
+          await sql`INSERT INTO outbox_events
+            (aggregate_type, aggregate_id, aggregate_version, event_type, payload, available_at)
+            VALUES ('aircraft', ${input.aircraftId}::uuid, ${(BigInt(context.aircraft_version) + 1n).toString()}::bigint,
+              'maintenance.due.v1',
+              ${JSON.stringify({ aircraftId: input.aircraftId, due: due.filter((assessment) => assessment.state !== "not_due") })}::jsonb,
+              ${now.toISOString()}::timestamptz)`.execute(transaction);
+        }
+        if (faultId) {
+          await sql`INSERT INTO outbox_events
+            (aggregate_type, aggregate_id, aggregate_version, event_type, payload, available_at)
+            VALUES ('aircraft', ${input.aircraftId}::uuid, ${(BigInt(context.aircraft_version) + 1n).toString()}::bigint,
+              'maintenance.fault_discovered.v1',
+              ${JSON.stringify({ aircraftId: input.aircraftId, faultId, severity: fault.severity, groundsAircraft: fault.groundsAircraft })}::jsonb,
+              ${now.toISOString()}::timestamptz)`.execute(transaction);
+        }
         return result;
       },
       { isolationLevel: "serializable", maximumAttempts: 5 },

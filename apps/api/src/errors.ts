@@ -10,6 +10,7 @@ import {
   MaintenanceDomainError,
   WeatherDomainError,
   FlightLifecycleError,
+  NotificationDomainError,
 } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
@@ -191,6 +192,10 @@ export function registerErrorMapping(app: FastifyInstance): void {
           error.recoverySteps.map((issue) => ({ issue })),
         ),
       );
+      return;
+    }
+    if (error instanceof NotificationDomainError) {
+      void reply.status(403).send(envelope(request, error.code, error.message));
       return;
     }
     if (error.validation) {

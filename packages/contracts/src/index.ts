@@ -1843,6 +1843,104 @@ export const flightSettlementResponseSchema = {
   },
 } as const;
 
+export type NotificationPreferencesRequest = Readonly<{
+  browserEnabled: boolean;
+  minimumBrowserSeverity: "info" | "warning" | "critical";
+  quietHours: Readonly<{ start: string; end: string; timeZone: string }> | null;
+}>;
+export type NotificationReadRequest = Readonly<{ read: boolean }>;
+const notificationSeveritySchema = {
+  type: "string",
+  enum: ["info", "warning", "critical"],
+} as const;
+const quietHoursSchema = {
+  anyOf: [
+    { type: "null" },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["start", "end", "timeZone"],
+      properties: {
+        start: { type: "string", pattern: "^([01][0-9]|2[0-3]):[0-5][0-9]$" },
+        end: { type: "string", pattern: "^([01][0-9]|2[0-3]):[0-5][0-9]$" },
+        timeZone: { type: "string", minLength: 1, maxLength: 100 },
+      },
+    },
+  ],
+} as const;
+export const notificationPreferencesSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["browserEnabled", "minimumBrowserSeverity", "quietHours"],
+  properties: {
+    browserEnabled: { type: "boolean" },
+    minimumBrowserSeverity: notificationSeveritySchema,
+    quietHours: quietHoursSchema,
+  },
+} as const;
+export const notificationReadRequestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["read"],
+  properties: { read: { type: "boolean" } },
+} as const;
+export const playerNotificationSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "eventId",
+    "eventType",
+    "severity",
+    "title",
+    "body",
+    "resourceType",
+    "resourceId",
+    "recoveryAction",
+    "occurredAt",
+    "createdAt",
+    "readAt",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    eventId: exactMinorSchema,
+    eventType: { type: "string" },
+    severity: notificationSeveritySchema,
+    title: { type: "string" },
+    body: { type: "string" },
+    resourceType: { type: "string" },
+    resourceId: { type: "string", format: "uuid" },
+    recoveryAction: {
+      anyOf: [
+        { type: "null" },
+        {
+          type: "object",
+          additionalProperties: false,
+          required: ["label", "resourceType", "resourceId", "path"],
+          properties: {
+            label: { type: "string" },
+            resourceType: { type: "string" },
+            resourceId: { type: "string", format: "uuid" },
+            path: { type: "string" },
+          },
+        },
+      ],
+    },
+    occurredAt: { type: "string", format: "date-time" },
+    createdAt: { type: "string", format: "date-time" },
+    readAt: { anyOf: [{ type: "null" }, { type: "string", format: "date-time" }] },
+  },
+} as const;
+export const notificationListResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["items", "nextCursor"],
+  properties: {
+    items: { type: "array", items: playerNotificationSchema },
+    nextCursor: { anyOf: [{ type: "null" }, exactMinorSchema] },
+  },
+} as const;
+
 export function createHealthResponse(service: HealthResponse["service"]): HealthResponse {
   return { service, status: "ok" };
 }

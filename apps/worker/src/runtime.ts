@@ -3,6 +3,7 @@ import {
   DrainCoordinator,
   DueAircraftDeliveryHandler,
   FlightMilestoneHandler,
+  NotificationOutboxHandler,
   VersionedHandlerRegistry,
   authorizeReplay,
   classifyJobError,
@@ -16,6 +17,7 @@ import {
 import {
   KyselyFleetRepository,
   KyselyFlightOperationsRepository,
+  KyselyNotificationRepository,
   KyselyRuntimeRepository,
   runtimeIdentity,
   type DatabaseRuntime,
@@ -115,10 +117,10 @@ export class SimulationWorkerRuntime {
     this.repository = new KyselyRuntimeRepository(input.databaseRuntime.database);
     const connection = connectionFromUrl(input.redisUrl);
     this.queue = new Queue<JobEnvelopeV1>(QUEUE_NAME, { connection });
-    this.registry.register("outbox.event", 1, async () => ({
-      kind: "noop",
-      detail: "transport publication",
-    }));
+    const notificationHandler = new NotificationOutboxHandler(
+      new KyselyNotificationRepository(input.databaseRuntime.database),
+    );
+    this.registry.register("outbox.event", 1, (envelope) => notificationHandler.handle(envelope));
     const delivery = new DueAircraftDeliveryHandler(
       new KyselyFleetRepository(input.databaseRuntime.database),
       { now: this.#now },

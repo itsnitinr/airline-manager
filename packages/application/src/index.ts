@@ -72,4 +72,5 @@ export { WorkforceService } from "./workforce.js";
 export { MaintenanceService } from "./maintenance.js";
 export { WeatherService } from "./weather.js";
 export { FlightMilestoneHandler, FlightOperationsService } from "./operations.js";
+export { NotificationOutboxHandler, NotificationService } from "./notifications.js";
 export * from "./runtime.js";

@@ -42,6 +42,7 @@ export { KyselyWorkforceRepository } from "./workforce/repository.js";
 export { KyselyMaintenanceRepository } from "./maintenance/repository.js";
 export { KyselyWeatherRepository } from "./weather/repository.js";
 export { KyselyFlightOperationsRepository } from "./operations/repository.js";
+export { KyselyNotificationRepository } from "./notifications/repository.js";
 export {
   KyselyRuntimeRepository,
   runtimeIdentity,
