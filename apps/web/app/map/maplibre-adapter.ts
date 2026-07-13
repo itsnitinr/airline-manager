@@ -207,6 +207,13 @@ export function createMapLibreAdapter(): AirportMapAdapter {
       let airportLayerReady = false;
       let destroyed = false;
       let fallbackStarted = usingFallback;
+      let fallbackTimer: number | undefined;
+
+      const clearFallbackTimer = () => {
+        if (fallbackTimer === undefined) return;
+        window.clearTimeout(fallbackTimer);
+        fallbackTimer = undefined;
+      };
 
       const map = new maplibregl.Map({
         container,
@@ -249,6 +256,7 @@ export function createMapLibreAdapter(): AirportMapAdapter {
             options.onSelect,
           );
           airportLayerReady = true;
+          if (!usingFallback) clearFallbackTimer();
           options.onReady(usingFallback ? "fallback" : "external");
         } catch {
           options.onError();
@@ -257,6 +265,7 @@ export function createMapLibreAdapter(): AirportMapAdapter {
 
       const beginFallback = () => {
         if (destroyed || fallbackStarted) return;
+        clearFallbackTimer();
         fallbackStarted = true;
         usingFallback = true;
         airportLayerReady = false;
@@ -268,16 +277,17 @@ export function createMapLibreAdapter(): AirportMapAdapter {
         }
       };
 
-      map.on("style.load", activateAirportLayer);
-      map.on("error", () => {
-        if (destroyed) return;
-        if (options.styleUrl && !airportLayerReady) beginFallback();
-        else options.onFallback();
-      });
-
-      const fallbackTimer = options.styleUrl
+      fallbackTimer = options.styleUrl
         ? window.setTimeout(beginFallback, fallbackTimeoutMilliseconds)
         : undefined;
+
+      map.on("style.load", activateAirportLayer);
+      map.on("error", () => {
+        if (destroyed || usingFallback || airportLayerReady) return;
+        // MapLibre also emits non-fatal source and tile errors after a style is usable.
+        // Only replace the style while initial external-style readiness is unresolved.
+        if (options.styleUrl) beginFallback();
+      });
 
       return {
         update(nextAirports, nextSelectedAirportId) {
@@ -300,7 +310,7 @@ export function createMapLibreAdapter(): AirportMapAdapter {
         },
         destroy() {
           destroyed = true;
-          if (fallbackTimer !== undefined) window.clearTimeout(fallbackTimer);
+          clearFallbackTimer();
           map.remove();
         },
       };

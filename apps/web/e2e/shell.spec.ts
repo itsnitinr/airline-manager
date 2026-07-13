@@ -8,6 +8,41 @@ const viewports = [
   { name: "desktop", width: 1600, height: 1000 },
 ] as const;
 
+const stableMapStyle = {
+  version: 8,
+  sources: {
+    boundaries: {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [-80, 35],
+                [0, 55],
+                [100, 20],
+              ],
+            },
+          },
+        ],
+      },
+    },
+  },
+  layers: [
+    { id: "background", type: "background", paint: { "background-color": "#06131b" } },
+    {
+      id: "country-boundaries",
+      type: "line",
+      source: "boundaries",
+      paint: { "line-color": "#3b5966", "line-width": 2 },
+    },
+  ],
+} as const;
+
 for (const viewport of viewports) {
   test(`keeps the network map full bleed at ${viewport.width}x${viewport.height}`, async ({
     page,
@@ -37,6 +72,20 @@ for (const viewport of viewports) {
     });
   });
 }
+
+test("keeps a loaded external map style beyond the fallback deadline", async ({ page }) => {
+  await page.route("**/__map-style-failure__.json", (route) =>
+    route.fulfill({ contentType: "application/json", json: stableMapStyle }),
+  );
+  await page.goto("/app/test-harness");
+  const frame = page.locator('[data-map-status="ready"]');
+  await expect(frame).toBeVisible();
+
+  await page.waitForTimeout(6_500);
+
+  await expect(frame).toBeVisible();
+  await expect(page.getByText(/Base map unavailable/)).toHaveCount(0);
+});
 
 test("opens and closes the mobile context sheet with keyboard-safe controls", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
