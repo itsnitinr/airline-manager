@@ -78,11 +78,44 @@ export function noTileDarkStyle(): StyleSpecification {
   };
 }
 
+export function applyOperationsMapPalette(map: MapLibreMap): void {
+  for (const layer of map.getStyle().layers ?? []) {
+    const id = layer.id.toLowerCase();
+    try {
+      if (layer.type === "background") {
+        map.setPaintProperty(layer.id, "background-color", "#06131b");
+      } else if (layer.type === "fill") {
+        const color = id.includes("water")
+          ? "#071720"
+          : id.includes("park") || id.includes("vegetation")
+            ? "#122820"
+            : id.includes("building")
+              ? "#172a32"
+              : "#10242d";
+        map.setPaintProperty(layer.id, "fill-color", color);
+        map.setPaintProperty(layer.id, "fill-opacity", 0.94);
+      } else if (layer.type === "line") {
+        const color = id.includes("boundary") || id.includes("coast") ? "#3b5966" : "#263f4b";
+        map.setPaintProperty(layer.id, "line-color", color);
+        map.setPaintProperty(layer.id, "line-opacity", id.includes("road") ? 0.46 : 0.72);
+      } else if (layer.type === "symbol") {
+        map.setPaintProperty(layer.id, "text-color", "#8298a2");
+        map.setPaintProperty(layer.id, "text-halo-color", "#07151d");
+        map.setPaintProperty(layer.id, "text-halo-width", 1.2);
+        map.setPaintProperty(layer.id, "icon-opacity", 0.7);
+      }
+    } catch {
+      // Provider styles may reject properties that are not valid for a specialized layer.
+    }
+  }
+}
+
 function addAirportLayers(
   map: MapLibreMap,
   airports: readonly AirportMapAirport[],
   selectedAirportId: string | undefined,
-  interactive: boolean,
+  selectable: boolean,
+  cameraPadding: MapAdapterMountOptions["cameraPadding"],
   onSelect: (airportId: string) => void,
 ): void {
   if (map.getSource(airportSourceId)) return;
@@ -115,7 +148,7 @@ function addAirportLayers(
     },
   });
 
-  if (interactive) {
+  if (selectable) {
     map.addLayer({
       id: airportHitLayerId,
       type: "circle",
@@ -142,7 +175,7 @@ function addAirportLayers(
       (value, coordinate) => value.extend(coordinate),
       new maplibregl.LngLatBounds(coordinates[0], coordinates[0]),
     );
-    map.fitBounds(bounds, { padding: 28, duration: 0, maxZoom: 4.5 });
+    map.fitBounds(bounds, { padding: cameraPadding ?? 28, duration: 0, maxZoom: 4.5 });
   }
 }
 
@@ -165,7 +198,7 @@ export function createMapLibreAdapter(): AirportMapAdapter {
     mount(container: HTMLElement, options: MapAdapterMountOptions): AirportMapAdapterInstance {
       if (!webGlSupported()) {
         options.onUnavailable();
-        return { update() {}, destroy() {} };
+        return { update() {}, resize() {}, destroy() {} };
       }
 
       let airports = options.airports;
@@ -197,13 +230,24 @@ export function createMapLibreAdapter(): AirportMapAdapter {
           ],
         },
       });
+      if (options.interactive) {
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+      }
       map.getCanvas().tabIndex = options.interactive ? 0 : -1;
       map.getCanvas().setAttribute("aria-label", `${options.label} canvas`);
 
       const activateAirportLayer = () => {
         if (destroyed || airportLayerReady) return;
         try {
-          addAirportLayers(map, airports, selectedAirportId, options.interactive, options.onSelect);
+          applyOperationsMapPalette(map);
+          addAirportLayers(
+            map,
+            airports,
+            selectedAirportId,
+            options.selectable,
+            options.cameraPadding,
+            options.onSelect,
+          );
           airportLayerReady = true;
           options.onReady(usingFallback ? "fallback" : "external");
         } catch {
@@ -249,7 +293,10 @@ export function createMapLibreAdapter(): AirportMapAdapter {
           if (latitude === null || longitude === null) return;
           const camera = { center: [longitude, latitude] as [number, number], zoom: map.getZoom() };
           if (options.reducedMotion) map.jumpTo(camera);
-          else map.easeTo({ ...camera, duration: 320, essential: false });
+          else map.easeTo({ ...camera, duration: 200, essential: false });
+        },
+        resize() {
+          map.resize();
         },
         destroy() {
           destroyed = true;

@@ -81,6 +81,9 @@ async function foundAirline(page: Page, suffix: string) {
   await airport.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByText("Selected base")).toBeVisible();
+  if (process.env.VISUAL_QA === "1")
+    await page.screenshot({ path: "test-results/visual-qa/principal-base-selection-mobile.png" });
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.getByRole("button", { name: /Continue/ }).click();
   await page.getByText("US Dollar").click();
   await page.getByRole("button", { name: /Continue/ }).click();
@@ -90,23 +93,28 @@ async function foundAirline(page: Page, suffix: string) {
   await expect(page.getByText("Pre-aircraft runway")).toBeVisible();
   await page.getByRole("button", { name: "Confirm airline" }).click();
   await expect(page.getByRole("heading", { name: "Select the first aircraft" })).toBeVisible();
+  if (process.env.VISUAL_QA === "1")
+    await page.screenshot({
+      path: "test-results/visual-qa/founder-aircraft-comparison-mobile.png",
+    });
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.getByRole("button", { name: "Preview schedule" }).click();
   await expect(page.getByText("Acceptance schedule")).toBeVisible();
   await page.getByRole("button", { name: "Accept founder lease" }).click();
   await expect(page).toHaveURL(/\/app/);
   await expect(
-    page.getByRole("heading", { name: new RegExp(`Meridian Coast ${suffix}`) }),
+    page.getByRole("heading", { level: 1, name: `Meridian Coast ${suffix}`, exact: true }),
   ).toBeVisible();
   if (process.env.VISUAL_QA === "1") {
     for (const viewport of [
       { name: "mobile", width: 390, height: 844 },
+      { name: "tablet", width: 768, height: 1024 },
       { name: "laptop", width: 1280, height: 800 },
       { name: "desktop", width: 1600, height: 1000 },
     ]) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.screenshot({
         path: `test-results/visual-qa/app-${viewport.name}.png`,
-        fullPage: true,
       });
     }
     await page.setViewportSize({ width: 390, height: 844 });
@@ -135,6 +143,7 @@ test.describe.serial("player onboarding", () => {
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page.getByText("Sign-in failed")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveValue(email);
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     if (process.env.VISUAL_QA === "1")
       await page.screenshot({
         path: "test-results/visual-qa/sign-in-error-mobile.png",

@@ -5,16 +5,30 @@
   color: var(--text-primary, #e4edf3);
 }
 
+.shell {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.shell .canvasFrame,
+.shell .loadingState,
+.shell .emptyState {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
 .canvasFrame {
   position: relative;
   min-height: 20rem;
   overflow: hidden;
   border: 1px solid var(--border-subtle, #233847);
   border-radius: var(--radius-panel, 0.75rem);
-  background:
-    linear-gradient(rgb(62 93 111 / 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(62 93 111 / 0.08) 1px, transparent 1px), #07111b;
-  background-size: 3rem 3rem;
+  background: #07111b;
 }
 
 .canvas {
@@ -101,6 +115,18 @@
   line-height: 1.4;
 }
 
+.shell .attribution {
+  position: absolute;
+  z-index: 2;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  max-width: 18rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 4px;
+  color: #9eb0b9;
+  background: rgb(5 13 19 / 0.88);
+}
+
 .attribution a {
   color: var(--text-secondary, #afbec8);
 }
@@ -121,9 +147,44 @@
   outline: none;
 }
 
+.canvasFrame :global(.maplibregl-canvas:focus-visible) {
+  outline: 3px solid var(--focus-ring, #65c5e7);
+  outline-offset: -5px;
+}
+
 .canvasFrame :global(.maplibregl-ctrl-attrib) {
   color: #263b47;
   background: rgb(228 237 243 / 0.88);
+}
+
+.shell .canvasFrame :global(.maplibregl-ctrl-top-right) {
+  top: 5.75rem;
+  right: 24rem;
+}
+
+.shell .canvasFrame :global(.maplibregl-ctrl-bottom-right) {
+  right: 24rem;
+  bottom: 5.75rem;
+}
+
+.shell .mapStatus {
+  inset: auto auto 5.75rem 7.5rem;
+}
+
+@media (max-width: 56.25rem) {
+  .shell .canvasFrame :global(.maplibregl-ctrl-top-right) {
+    top: 5.5rem;
+    right: 1rem;
+  }
+
+  .shell .canvasFrame :global(.maplibregl-ctrl-bottom-right) {
+    right: 1rem;
+    bottom: 6rem;
+  }
+
+  .shell .mapStatus {
+    inset: auto 1rem 6rem 1rem;
+  }
 }
 
 @media (max-width: 47.99rem) {
@@ -139,6 +200,41 @@
 
   .selectionControl p {
     grid-column: 1;
+  }
+
+  .shell .canvasFrame,
+  .shell .loadingState,
+  .shell .emptyState {
+    min-height: 100%;
+  }
+
+  .shell .attribution {
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: calc(5.25rem + env(safe-area-inset-bottom));
+    max-width: 13rem;
+  }
+
+  .shell .canvasFrame :global(.maplibregl-ctrl-bottom-right) {
+    bottom: calc(8.25rem + env(safe-area-inset-bottom));
+  }
+
+  .shell .mapStatus {
+    inset: auto 0.75rem calc(10.5rem + env(safe-area-inset-bottom)) 0.75rem;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .shell .attribution {
+    background: #071119;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .shell .attribution,
+  .mapStatus {
+    background: Canvas;
+    color: CanvasText;
+    border: 1px solid CanvasText;
   }
 }
 

@@ -2,7 +2,7 @@
 
 import { Bell, SignOut } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserNotificationController, browserNotificationApi } from "../browser-notifications";
 import { authApi } from "../lib/client-api";
 import { Button } from "./ui";
@@ -31,12 +31,22 @@ export function SignOutButton() {
   );
 }
 
-export function BrowserNotificationButton() {
-  const [permission, setPermission] = useState<NotificationPermission | "unsupported">(() =>
-    typeof window === "undefined" || !("Notification" in window)
-      ? "unsupported"
-      : window.Notification.permission,
+export function BrowserNotificationButton({
+  statusId = "browser-notification-status",
+}: {
+  statusId?: string;
+}) {
+  const [permission, setPermission] = useState<NotificationPermission | "unsupported">(
+    "unsupported",
   );
+  useEffect(() => {
+    const synchronize = window.setTimeout(
+      () =>
+        setPermission("Notification" in window ? window.Notification.permission : "unsupported"),
+      0,
+    );
+    return () => window.clearTimeout(synchronize);
+  }, []);
   return (
     <Button
       className="button-quiet"
@@ -47,7 +57,7 @@ export function BrowserNotificationButton() {
             NotificationPermission | "unsupported",
         )
       }
-      aria-describedby="browser-notification-status"
+      aria-describedby={statusId}
     >
       <Bell aria-hidden />
       {permission === "granted"
@@ -57,7 +67,7 @@ export function BrowserNotificationButton() {
           : permission === "unsupported"
             ? "Alerts unavailable"
             : "Enable browser alerts"}
-      <span className="sr-only" id="browser-notification-status">
+      <span className="sr-only" id={statusId}>
         Persisted in-game notifications remain available regardless of this browser setting.
       </span>
     </Button>

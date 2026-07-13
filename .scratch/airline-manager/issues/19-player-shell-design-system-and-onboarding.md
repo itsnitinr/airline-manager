@@ -78,3 +78,11 @@ creation through airline and founder-aircraft selection.
   mobile and keyboard onboarding, password reset, session recovery, axe checks,
   and external-map-style fallback. Production visual QA covered 390x844,
   1280x800, and 1600x1000 layouts plus a representative sign-in error state.
+- 2026-07-13 post-resolution visual refinement: replaced the document-style
+  active-airline layout with a full-viewport operations map, inset navigation and
+  status chrome, a collapsible network inspector, and responsive desktop tray and
+  mobile sheet. Preserved the contained onboarding map, deferred MapLibre island,
+  real catalog geography, auth/founding behavior, and the ticket 20 boundary.
+  Focused component and Playwright coverage now verifies full-bleed geometry,
+  panel keyboard behavior, responsive and reduced-transparency states, axe
+  accessibility, degraded map handling, and all four required viewport sizes.

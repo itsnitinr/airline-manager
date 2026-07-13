@@ -26,18 +26,26 @@ export function AirportMap({
   interactive = true,
   label = "Airport network map",
   styleUrl: configuredStyleUrl,
+  presentation = "contained",
 }: AirportMapProps) {
   const canSelect = interactive && onSelect !== undefined;
   const styleUrl =
     configuredStyleUrl ?? (process.env.NEXT_PUBLIC_MAP_STYLE_URL?.trim() || undefined);
 
   return (
-    <section className={styles.mapModule} aria-label={label} data-testid="airport-map">
+    <section
+      className={`${styles.mapModule} ${presentation === "shell" ? styles.shell : ""}`}
+      aria-label={label}
+      data-presentation={presentation}
+      data-testid="airport-map"
+    >
       <DeferredAirportMapCanvas
         airports={airports}
         {...(selectedAirportId === undefined ? {} : { selectedAirportId })}
-        interactive={canSelect}
+        interactive={interactive}
+        selectable={canSelect}
         label={label}
+        presentation={presentation}
         {...(onSelect === undefined ? {} : { onSelect })}
         {...(styleUrl === undefined ? {} : { styleUrl })}
       />

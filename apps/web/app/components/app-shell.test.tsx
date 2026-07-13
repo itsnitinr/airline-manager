@@ -1,9 +1,26 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { AppShell } from "./app-shell";
 
 vi.mock("../map/airport-map", () => ({
-  AirportMap: ({ label }: { label: string }) => <div aria-label={label}>map</div>,
+  AirportMap: ({
+    label,
+    presentation,
+    interactive,
+  }: {
+    label: string;
+    presentation: string;
+    interactive: boolean;
+  }) => (
+    <div
+      aria-label={label}
+      data-interactive={interactive}
+      data-presentation={presentation}
+      data-testid="map-props"
+    >
+      map
+    </div>
+  ),
 }));
 vi.mock("./session-actions", () => ({
   BrowserNotificationButton: () => <button>Enable browser alerts</button>,
@@ -92,6 +109,16 @@ describe("responsive shell boundaries", () => {
     );
     expect(screen.getByText("Founder aircraft delivered")).toBeTruthy();
     expect(screen.getAllByText("Unavailable").length).toBeGreaterThan(1);
+    expect(screen.getByTestId("map-props")).toHaveAttribute("data-presentation", "shell");
+    expect(screen.getByTestId("map-props")).toHaveAttribute("data-interactive", "true");
+    const navigationRail = screen.getByRole("complementary", {
+      name: "Airline navigation rail",
+    });
+    expect(within(navigationRail).getByText("NA")).toHaveStyle({ color: "#071118" });
+    expect(navigationRail).toBeTruthy();
+    expect(screen.getByRole("banner", { name: "Operational status" })).toBeTruthy();
+    expect(screen.getByRole("complementary", { name: "Network inspector" })).toBeTruthy();
+    expect(screen.getByRole("region", { name: "Current network context" })).toBeTruthy();
     expect(screen.getByRole("navigation", { name: "Mobile monitoring" })).toBeTruthy();
   });
 });

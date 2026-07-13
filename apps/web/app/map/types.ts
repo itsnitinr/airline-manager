@@ -13,6 +13,7 @@ export type AirportMapProps = Readonly<{
   interactive?: boolean;
   label?: string;
   styleUrl?: string;
+  presentation?: "contained" | "shell";
 }>;
 
 export type AirportMapRenderStatus = "loading" | "ready" | "degraded" | "unavailable" | "error";
@@ -21,8 +22,10 @@ export type MapAdapterMountOptions = Readonly<{
   airports: readonly AirportMapAirport[];
   selectedAirportId?: string;
   interactive: boolean;
+  selectable: boolean;
   label: string;
   reducedMotion: boolean;
+  cameraPadding?: Readonly<{ top: number; right: number; bottom: number; left: number }>;
   styleUrl?: string;
   onSelect(airportId: string): void;
   onReady(mode: "external" | "fallback"): void;
@@ -33,6 +36,7 @@ export type MapAdapterMountOptions = Readonly<{
 
 export interface AirportMapAdapterInstance {
   update(airports: readonly AirportMapAirport[], selectedAirportId?: string): void;
+  resize(): void;
   destroy(): void;
 }
 

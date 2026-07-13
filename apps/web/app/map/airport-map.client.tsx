@@ -9,7 +9,9 @@ type AirportMapCanvasProps = Readonly<{
   airports: readonly AirportMapAirport[];
   selectedAirportId?: string;
   interactive: boolean;
+  selectable: boolean;
   label: string;
+  presentation: "contained" | "shell";
   onSelect?(airportId: string): void;
   styleUrl?: string;
 }>;
@@ -18,15 +20,17 @@ const statusCopy: Readonly<Record<AirportMapRenderStatus, string>> = {
   loading: "Loading published airport coordinates.",
   ready: "Published airport layer ready.",
   degraded: "Base map unavailable. Published airport points remain available.",
-  unavailable: "Interactive map unavailable. Use the airport list to continue.",
-  error: "Map could not start. Use the airport list or retry this page.",
+  unavailable: "Interactive map unavailable. Published airport data remains available.",
+  error: "Map could not start. Retry this page to restore the geographic view.",
 };
 
 export function AirportMapCanvas({
   airports,
   selectedAirportId,
   interactive,
+  selectable,
   label,
+  presentation,
   onSelect,
   styleUrl,
 }: AirportMapCanvasProps) {
@@ -57,8 +61,10 @@ export function AirportMapCanvas({
           ? {}
           : { selectedAirportId: selectedAirportIdRef.current }),
         interactive,
+        selectable,
         label,
         reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+        ...(presentation === "shell" ? { cameraPadding: shellCameraPadding() } : {}),
         ...(styleUrl === undefined ? {} : { styleUrl }),
         onSelect: (airportId) => onSelectRef.current?.(airportId),
         onReady: (mode) => {
@@ -79,7 +85,13 @@ export function AirportMapCanvas({
       instanceRef.current?.destroy();
       instanceRef.current = null;
     };
-  }, [hasAirports, interactive, label, styleUrl]);
+  }, [hasAirports, interactive, label, presentation, selectable, styleUrl]);
+
+  useEffect(() => {
+    const resize = () => instanceRef.current?.resize();
+    window.addEventListener("resize", resize, { passive: true });
+    return () => window.removeEventListener("resize", resize);
+  }, []);
 
   useEffect(() => {
     airportsRef.current = airports;
@@ -109,4 +121,10 @@ export function AirportMapCanvas({
       </span>
     </div>
   );
+}
+
+function shellCameraPadding() {
+  if (window.innerWidth <= 640) return { top: 96, right: 24, bottom: 172, left: 24 };
+  if (window.innerWidth <= 900) return { top: 104, right: 32, bottom: 120, left: 32 };
+  return { top: 112, right: 400, bottom: 116, left: 124 };
 }
