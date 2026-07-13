@@ -361,6 +361,128 @@ export const airlineSummaryResponseSchema = {
   },
 } as const;
 
+export const currentPlayerCareerResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["career"],
+  properties: { career: { ...airlineSummaryResponseSchema, nullable: true } },
+} as const;
+
+const fieldProvenanceSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["fieldName", "classification", "effectiveFrom", "explanation"],
+  properties: {
+    fieldName: { type: "string" },
+    classification: { type: "string", enum: ["sourced", "derived", "balance"] },
+    sourceId: { type: "string" },
+    sourceLocator: { type: "string", format: "uri" },
+    effectiveFrom: { type: "string", format: "date" },
+    formulaVersion: { type: "string" },
+    rulesetVersion: { type: "string" },
+    explanation: { type: "string" },
+  },
+} as const;
+
+const catalogAirportSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "ident",
+    "iataCode",
+    "icaoCode",
+    "name",
+    "municipality",
+    "countryCode",
+    "regionCode",
+    "worldRegion",
+    "latitudeDeg",
+    "longitudeDeg",
+    "timezoneName",
+    "longestRunwayFt",
+    "provenance",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    ident: { type: "string" },
+    iataCode: { type: "string", pattern: "^[A-Z]{3}$" },
+    icaoCode: { type: "string", pattern: "^[A-Z0-9]{4}$" },
+    name: { type: "string" },
+    municipality: { type: "string" },
+    countryCode: { type: "string", pattern: "^[A-Z]{2}$" },
+    regionCode: { type: "string" },
+    worldRegion: { type: "string" },
+    latitudeDeg: { type: "string", pattern: "^-?[0-9]+(?:\\.[0-9]+)?$" },
+    longitudeDeg: { type: "string", pattern: "^-?[0-9]+(?:\\.[0-9]+)?$" },
+    elevationFt: {
+      anyOf: [{ type: "integer" }, { type: "string", pattern: "^-?[0-9]+$" }],
+    },
+    timezoneName: { type: "string" },
+    longestRunwayFt: { type: "integer", minimum: 1 },
+    provenance: { type: "array", items: fieldProvenanceSchema },
+  },
+} as const;
+
+const catalogAircraftVariantSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "code",
+    "manufacturer",
+    "model",
+    "certificationReference",
+    "category",
+    "typicalSeats",
+    "maximumSeats",
+    "rangeNm",
+    "maximumTakeoffWeightKg",
+    "minimumRunwayFt",
+    "productionStatus",
+    "acquisitionChannels",
+    "provenance",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    code: { type: "string" },
+    manufacturer: { type: "string" },
+    model: { type: "string" },
+    certificationReference: { type: "string" },
+    category: { type: "string", enum: ["turboprop", "regional_jet", "narrow_body"] },
+    typicalSeats: { type: "integer", minimum: 1 },
+    maximumSeats: { type: "integer", minimum: 1 },
+    rangeNm: { type: "integer", minimum: 1 },
+    maximumTakeoffWeightKg: { type: "integer", minimum: 1 },
+    minimumRunwayFt: { type: "integer", minimum: 1 },
+    productionStatus: { type: "string", enum: ["in_production", "discontinued"] },
+    acquisitionChannels: {
+      type: "array",
+      items: { type: "string", enum: ["factory_new", "operating_lease", "used_purchase"] },
+    },
+    provenance: { type: "array", items: fieldProvenanceSchema },
+  },
+} as const;
+
+export const currentCatalogResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["releaseVersion", "worldRulesetVersion", "airports", "aircraftVariants"],
+  properties: {
+    releaseVersion: { type: "string" },
+    worldRulesetVersion: { type: "string" },
+    airports: { type: "array", items: catalogAirportSchema },
+    aircraftVariants: { type: "array", items: catalogAircraftVariantSchema },
+  },
+} as const;
+
+export const publicConfigResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["googleSignInAvailable"],
+  properties: { googleSignInAvailable: { type: "boolean" } },
+} as const;
+
 export const aircraftIdentifierParamsSchema = {
   type: "object",
   additionalProperties: false,

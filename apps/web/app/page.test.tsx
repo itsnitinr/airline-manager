@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
-import HomePage from "./page";
+import { safeReturnPath } from "./lib/api";
 
-describe("HomePage", () => {
-  it("provides the application shell", () => {
-    expect(HomePage().type).toBe("main");
+describe("navigation safety", () => {
+  it("preserves local return paths and rejects protocol-relative redirects", () => {
+    expect(safeReturnPath("/onboarding")).toBe("/onboarding");
+    expect(safeReturnPath("//outside.example", "/app")).toBe("/app");
   });
 });

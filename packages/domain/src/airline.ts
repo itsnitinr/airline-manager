@@ -307,4 +307,5 @@ export interface AirlineFoundingRepository {
     now: Date,
   ): Promise<FoundingConfirmation>;
   summary(playerAccountId: string, airlineId: string): Promise<AirlineSummary>;
+  currentSummary(playerAccountId: string): Promise<AirlineSummary | null>;
 }

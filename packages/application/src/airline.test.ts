@@ -32,6 +32,7 @@ describe("airline founding application service", () => {
       preview: vi.fn(),
       confirm: vi.fn(),
       summary: vi.fn(),
+      currentSummary: vi.fn(),
     } satisfies AirlineFoundingRepository;
     const service = new AirlineFoundingService(repository, { ownsResource: vi.fn() });
     expect(() =>
@@ -50,7 +51,7 @@ describe("airline founding application service", () => {
     const confirm = vi.fn<AirlineFoundingRepository["confirm"]>();
     confirm.mockResolvedValue({} as FoundingConfirmation);
     const service = new AirlineFoundingService(
-      { preview, confirm, summary: vi.fn() },
+      { preview, confirm, summary: vi.fn(), currentSummary: vi.fn() },
       { ownsResource: vi.fn() },
       { now: () => now },
     );
@@ -70,7 +71,7 @@ describe("airline founding application service", () => {
     const ownsResource = vi.fn(async () => false);
     const summary = vi.fn<AirlineFoundingRepository["summary"]>();
     const service = new AirlineFoundingService(
-      { preview: vi.fn(), confirm: vi.fn(), summary },
+      { preview: vi.fn(), confirm: vi.fn(), summary, currentSummary: vi.fn() },
       { ownsResource },
     );
     await expect(
@@ -78,5 +79,18 @@ describe("airline founding application service", () => {
     ).rejects.toMatchObject({ code: "forbidden" });
     expect(ownsResource).toHaveBeenCalledWith("player-account", "airline", "foreign-airline");
     expect(summary).not.toHaveBeenCalled();
+  });
+
+  it("queries the verified player's current career without a client-supplied airline id", async () => {
+    const currentSummary = vi.fn<AirlineFoundingRepository["currentSummary"]>();
+    currentSummary.mockResolvedValue(null);
+    const service = new AirlineFoundingService(
+      { preview: vi.fn(), confirm: vi.fn(), summary: vi.fn(), currentSummary },
+      { ownsResource: vi.fn() },
+    );
+    await expect(
+      service.currentSummary({ requestId: "request", authorization }),
+    ).resolves.toBeNull();
+    expect(currentSummary).toHaveBeenCalledWith("player-account");
   });
 });

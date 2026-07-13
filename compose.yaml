@@ -36,6 +36,14 @@ services:
     stop_grace_period: 30s
     restart: unless-stopped
 
+  mailpit:
+    image: axllent/mailpit:v1.30.0
+    expose:
+      - "1025"
+    ports:
+      - "127.0.0.1:${MAILPIT_WEB_PORT:-8025}:8025"
+    restart: unless-stopped
+
   migrate:
     build:
       context: .
@@ -47,6 +55,23 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    init: true
+    restart: "no"
+
+  catalog-seed:
+    build:
+      context: .
+      dockerfile: packages/database/Dockerfile.migrate
+    command: ["node", "dist/cli/catalog-seed.js"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-airline_manager}:${POSTGRES_PASSWORD:-airline_manager_local_only}@postgres:5432/${POSTGRES_DB:-airline_manager}
+      DATABASE_APPLICATION_NAME: airline-manager-catalog-seed
+      DATABASE_POOL_MAX: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     init: true
     restart: "no"
 
@@ -67,6 +92,12 @@ services:
       AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
       GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:-}
+      AUTH_EMAIL_SMTP_HOST: mailpit
+      AUTH_EMAIL_SMTP_PORT: 1025
+      AUTH_EMAIL_SMTP_SECURE: "false"
+      AUTH_EMAIL_FROM: ${AUTH_EMAIL_FROM:-Airline Manager <no-reply@airline-manager.test>}
+      AUTH_EMAIL_SMTP_USERNAME: ${AUTH_EMAIL_SMTP_USERNAME:-}
+      AUTH_EMAIL_SMTP_PASSWORD: ${AUTH_EMAIL_SMTP_PASSWORD:-}
     ports:
       - "127.0.0.1:${API_PORT:-3001}:3001"
     depends_on:
@@ -74,7 +105,11 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+      catalog-seed:
+        condition: service_completed_successfully
       redis:
+        condition: service_healthy
+      mailpit:
         condition: service_healthy
     init: true
     stop_grace_period: 30s
@@ -101,6 +136,8 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+      catalog-seed:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     init: true
@@ -113,6 +150,9 @@ services:
       dockerfile: apps/web/Dockerfile.dev
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+      API_INTERNAL_URL: http://api:3001
+      NEXT_PUBLIC_MAP_STYLE_URL: ${NEXT_PUBLIC_MAP_STYLE_URL:-}
+      MAP_TEST_HARNESS: enabled
     ports:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
     depends_on:

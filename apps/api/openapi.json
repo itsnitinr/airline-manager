@@ -18157,6 +18157,373 @@
         "tags": ["airlines"]
       }
     },
+    "/v1/catalog/current": {
+      "get": {
+        "operationId": "getPublishedCatalog",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "aircraftVariants": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "acquisitionChannels": {
+                            "items": {
+                              "enum": ["factory_new", "operating_lease", "used_purchase"],
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "category": {
+                            "enum": ["turboprop", "regional_jet", "narrow_body"],
+                            "type": "string"
+                          },
+                          "certificationReference": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          "manufacturer": {
+                            "type": "string"
+                          },
+                          "maximumSeats": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "maximumTakeoffWeightKg": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "minimumRunwayFt": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "model": {
+                            "type": "string"
+                          },
+                          "productionStatus": {
+                            "enum": ["in_production", "discontinued"],
+                            "type": "string"
+                          },
+                          "provenance": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "classification": {
+                                  "enum": ["sourced", "derived", "balance"],
+                                  "type": "string"
+                                },
+                                "effectiveFrom": {
+                                  "format": "date",
+                                  "type": "string"
+                                },
+                                "explanation": {
+                                  "type": "string"
+                                },
+                                "fieldName": {
+                                  "type": "string"
+                                },
+                                "formulaVersion": {
+                                  "type": "string"
+                                },
+                                "rulesetVersion": {
+                                  "type": "string"
+                                },
+                                "sourceId": {
+                                  "type": "string"
+                                },
+                                "sourceLocator": {
+                                  "format": "uri",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "fieldName",
+                                "classification",
+                                "effectiveFrom",
+                                "explanation"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "rangeNm": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "typicalSeats": {
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "manufacturer",
+                          "model",
+                          "certificationReference",
+                          "category",
+                          "typicalSeats",
+                          "maximumSeats",
+                          "rangeNm",
+                          "maximumTakeoffWeightKg",
+                          "minimumRunwayFt",
+                          "productionStatus",
+                          "acquisitionChannels",
+                          "provenance"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "airports": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "countryCode": {
+                            "pattern": "^[A-Z]{2}$",
+                            "type": "string"
+                          },
+                          "elevationFt": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "pattern": "^-?[0-9]+$",
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "iataCode": {
+                            "pattern": "^[A-Z]{3}$",
+                            "type": "string"
+                          },
+                          "icaoCode": {
+                            "pattern": "^[A-Z0-9]{4}$",
+                            "type": "string"
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          "ident": {
+                            "type": "string"
+                          },
+                          "latitudeDeg": {
+                            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$",
+                            "type": "string"
+                          },
+                          "longestRunwayFt": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "longitudeDeg": {
+                            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$",
+                            "type": "string"
+                          },
+                          "municipality": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "provenance": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "classification": {
+                                  "enum": ["sourced", "derived", "balance"],
+                                  "type": "string"
+                                },
+                                "effectiveFrom": {
+                                  "format": "date",
+                                  "type": "string"
+                                },
+                                "explanation": {
+                                  "type": "string"
+                                },
+                                "fieldName": {
+                                  "type": "string"
+                                },
+                                "formulaVersion": {
+                                  "type": "string"
+                                },
+                                "rulesetVersion": {
+                                  "type": "string"
+                                },
+                                "sourceId": {
+                                  "type": "string"
+                                },
+                                "sourceLocator": {
+                                  "format": "uri",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "fieldName",
+                                "classification",
+                                "effectiveFrom",
+                                "explanation"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "regionCode": {
+                            "type": "string"
+                          },
+                          "timezoneName": {
+                            "type": "string"
+                          },
+                          "worldRegion": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "ident",
+                          "iataCode",
+                          "icaoCode",
+                          "name",
+                          "municipality",
+                          "countryCode",
+                          "regionCode",
+                          "worldRegion",
+                          "latitudeDeg",
+                          "longitudeDeg",
+                          "timezoneName",
+                          "longestRunwayFt",
+                          "provenance"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "releaseVersion": {
+                      "type": "string"
+                    },
+                    "worldRulesetVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "releaseVersion",
+                    "worldRulesetVersion",
+                    "airports",
+                    "aircraftVariants"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["catalog"]
+      }
+    },
     "/v1/events": {
       "get": {
         "operationId": "subscribeToEvents",
@@ -19565,6 +19932,324 @@
         "tags": ["notifications"]
       }
     },
+    "/v1/player/career": {
+      "get": {
+        "operationId": "getCurrentPlayerCareer",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "career": {
+                      "additionalProperties": false,
+                      "nullable": true,
+                      "properties": {
+                        "airlineId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "airlineStatus": {
+                          "enum": ["active", "insolvent", "closed"],
+                          "type": "string"
+                        },
+                        "brand": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "logoMark": {
+                              "pattern": "^[A-Z0-9]{1,3}$",
+                              "type": "string"
+                            },
+                            "primaryColor": {
+                              "pattern": "^#[0-9A-F]{6}$",
+                              "type": "string"
+                            },
+                            "secondaryColor": {
+                              "pattern": "^#[0-9A-F]{6}$",
+                              "type": "string"
+                            }
+                          },
+                          "required": ["primaryColor", "secondaryColor", "logoMark"],
+                          "type": "object"
+                        },
+                        "careerId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "careerStatus": {
+                          "enum": ["active", "insolvent", "closed"],
+                          "type": "string"
+                        },
+                        "cashMinor": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "catalogReleaseVersion": {
+                          "type": "string"
+                        },
+                        "equityMinor": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "foundingBalanceVersion": {
+                          "type": "string"
+                        },
+                        "homeJurisdiction": {
+                          "type": "string"
+                        },
+                        "loanLiabilityMinor": {
+                          "pattern": "^[0-9]+$",
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "nextStep": {
+                          "enum": ["select_founder_aircraft"],
+                          "type": "string"
+                        },
+                        "nextStepGuidance": {
+                          "type": "string"
+                        },
+                        "normalizedAirlineName": {
+                          "type": "string"
+                        },
+                        "principalBase": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "airportId": {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            "countryCode": {
+                              "type": "string"
+                            },
+                            "iataCode": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "stationServiceModel": {
+                              "enum": ["outsourced"],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "airportId",
+                            "iataCode",
+                            "name",
+                            "countryCode",
+                            "stationServiceModel"
+                          ],
+                          "type": "object"
+                        },
+                        "reportingCurrency": {
+                          "enum": ["CHF", "EUR", "GBP", "JPY", "KWD", "USD"],
+                          "type": "string"
+                        },
+                        "worldRulesetVersion": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "careerId",
+                        "airlineId",
+                        "name",
+                        "normalizedAirlineName",
+                        "brand",
+                        "careerStatus",
+                        "airlineStatus",
+                        "homeJurisdiction",
+                        "reportingCurrency",
+                        "catalogReleaseVersion",
+                        "worldRulesetVersion",
+                        "foundingBalanceVersion",
+                        "principalBase",
+                        "cashMinor",
+                        "equityMinor",
+                        "loanLiabilityMinor",
+                        "nextStep",
+                        "nextStepGuidance"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["career"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "issue": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["issue"],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["airlines"]
+      }
+    },
+    "/v1/public/config": {
+      "get": {
+        "operationId": "getPublicConfig",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "googleSignInAvailable": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["googleSignInAvailable"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["system"]
+      }
+    },
     "/v1/system/commands/sample": {
       "post": {
         "operationId": "executeSampleCommand",
@@ -19791,6 +20476,10 @@
     {
       "description": "Recoverable advisory event stream.",
       "name": "events"
+    },
+    {
+      "description": "Published playable reference data.",
+      "name": "catalog"
     },
     {
       "description": "Authenticated airline career commands and queries.",

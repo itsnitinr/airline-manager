@@ -97,6 +97,7 @@ describe("PostgreSQL airline founding", () => {
   it("atomically creates the career, airline, outsourced station, ownership, financing, ledger, and outbox", async () => {
     const playerId = await createPlayer();
     const repository = new KyselyAirlineFoundingRepository(runtime.database);
+    await expect(repository.currentSummary(playerId)).resolves.toBeNull();
     const selection = foundingSelection();
     const preview = await repository.preview(playerId, selection, now);
     expect(preview).toMatchObject({
@@ -150,6 +151,7 @@ describe("PostgreSQL airline founding", () => {
       worldRulesetVersion: "contemporary-2026.07.11",
       foundingBalanceVersion: "founding-v1",
     });
+    await expect(repository.currentSummary(playerId)).resolves.toEqual(summary);
     const reports = await new KyselyLedgerRepository(runtime.database).reports(
       founded.ledgerBookId,
     );

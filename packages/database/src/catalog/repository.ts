@@ -9,6 +9,7 @@ import type {
 import type { Database } from "../database.js";
 
 type RulesetRow = Readonly<{ id: string; release_id: string; release_version: string }>;
+type CurrentRulesetRow = Readonly<{ version: string }>;
 
 function defaultChannels(
   status: CatalogAircraftVariant["productionStatus"],
@@ -36,6 +37,19 @@ export class KyselyCatalogRepository implements CatalogRepository {
       JOIN catalog_releases r ON r.id = w.catalog_release_id AND r.status = 'published'
       WHERE w.version = ${version} AND w.status = 'active'`.execute(this.database);
     return result.rows[0];
+  }
+
+  public async findCurrentPublishedCatalog(): Promise<PublishedCatalog | undefined> {
+    const result = await sql<CurrentRulesetRow>`SELECT w.version
+      FROM world_rulesets w
+      JOIN catalog_releases r ON r.id = w.catalog_release_id AND r.status = 'published'
+      WHERE w.status = 'active'
+        AND w.effective_from <= CURRENT_TIMESTAMP
+        AND (w.effective_to IS NULL OR w.effective_to > CURRENT_TIMESTAMP)
+      ORDER BY w.effective_from DESC, w.activated_at DESC, w.version DESC
+      LIMIT 1`.execute(this.database);
+    const current = result.rows[0];
+    return current ? this.findPublishedCatalogByWorldRuleset(current.version) : undefined;
   }
 
   public async findPublishedCatalogByWorldRuleset(

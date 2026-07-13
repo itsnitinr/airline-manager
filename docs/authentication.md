@@ -32,10 +32,18 @@ Google configuration fails startup. No provider credential belongs in an example
 repository file.
 
 Authentication email uses the provider-neutral `AuthenticationEmailDelivery` interface. The local
-and test composition captures verification and recovery links deterministically in process memory;
-it never logs them or calls a live provider. A production composition must inject an implementation
-backed by its deployment's transactional email provider. This interface is authentication-only and
-does not select or implement gameplay email notifications.
+Compose topology delivers verification and recovery messages over SMTP to Mailpit. Open
+`http://localhost:8025` to inspect the inbox and follow those links; Mailpit's SMTP port `1025` is
+available only inside the Compose network. For an API process running directly on the host, point
+the `.env.example` `localhost:1025` settings at a separately running local SMTP capture service.
+
+`SmtpAuthenticationEmailDelivery` accepts `AUTH_EMAIL_SMTP_HOST`, `AUTH_EMAIL_SMTP_PORT`,
+`AUTH_EMAIL_SMTP_SECURE`, `AUTH_EMAIL_FROM`, and optional paired `AUTH_EMAIL_SMTP_USERNAME` /
+`AUTH_EMAIL_SMTP_PASSWORD` values from the API composition. Production deployments must provide
+their own SMTP endpoint, credentials, and verified sender identity at runtime. The deterministic
+process-local capture remains available for focused tests. Neither implementation logs action URLs
+or tokens. This interface is authentication-only and does not select or implement gameplay email
+notifications.
 
 ## Security behavior
 

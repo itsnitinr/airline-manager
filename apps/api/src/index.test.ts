@@ -241,6 +241,9 @@ describe("Fastify API shell", () => {
         "/v1/airlines/{airlineId}/next-step": {
           get: { operationId: "getAirlineNextStepGuidance" },
         },
+        "/v1/player/career": { get: { operationId: "getCurrentPlayerCareer" } },
+        "/v1/catalog/current": { get: { operationId: "getPublishedCatalog" } },
+        "/v1/public/config": { get: { operationId: "getPublicConfig" } },
       },
     });
   });

@@ -1,4 +1,7 @@
 import type {
+  AcceptFounderLeaseData,
+  AcceptFounderLeaseError,
+  AcceptFounderLeaseResponse,
   ClientOptions,
   ConfirmAirlineFoundingData,
   ConfirmAirlineFoundingError,
@@ -7,12 +10,23 @@ import type {
   ExecuteSampleCommandError,
   ExecuteSampleCommandResponse,
   GetHealthResponse,
+  GetAircraftDeliveryStatusData,
+  GetAircraftDeliveryStatusError,
+  GetAircraftDeliveryStatusResponse,
   GetAirlineCareerSummaryData,
   GetAirlineCareerSummaryError,
   GetAirlineCareerSummaryResponse,
   GetAirlineNextStepGuidanceData,
   GetAirlineNextStepGuidanceError,
   GetAirlineNextStepGuidanceResponse,
+  GetCurrentPlayerCareerError,
+  GetCurrentPlayerCareerResponse,
+  GetFleetAircraftData,
+  GetFleetAircraftError,
+  GetFleetAircraftResponse,
+  GetPublishedCatalogError,
+  GetPublishedCatalogResponse,
+  GetPublicConfigResponse,
   GetReadinessError,
   GetReadinessResponse,
   GetFuelCapacityOffersData,
@@ -33,6 +47,12 @@ import type {
   ListFuelMovementsData,
   ListFuelMovementsError,
   ListFuelMovementsResponse,
+  ListFleetData,
+  ListFleetError,
+  ListFleetResponse,
+  ListFounderPackageData,
+  ListFounderPackageError,
+  ListFounderPackageResponse,
   GetFuelPricesData,
   GetFuelPricesError,
   GetFuelPricesResponse,
@@ -54,6 +74,9 @@ import type {
   PreviewAirlineFoundingData,
   PreviewAirlineFoundingError,
   PreviewAirlineFoundingResponse,
+  PreviewFounderLeaseData,
+  PreviewFounderLeaseError,
+  PreviewFounderLeaseResponse,
   SubscribeToEventsData,
 } from "./generated/index.js";
 
@@ -72,6 +95,9 @@ export class ApiClientError<TError> extends Error {
 export type AirlineManagerApiClient = Readonly<{
   getHealth: () => Promise<GetHealthResponse>;
   getReadiness: () => Promise<GetReadinessResponse | GetReadinessError>;
+  getPublicConfig: () => Promise<GetPublicConfigResponse>;
+  getPublishedCatalog: () => Promise<GetPublishedCatalogResponse>;
+  getCurrentPlayerCareer: () => Promise<GetCurrentPlayerCareerResponse>;
   executeSampleCommand: (
     input: Pick<ExecuteSampleCommandData, "body" | "headers">,
   ) => Promise<ExecuteSampleCommandResponse>;
@@ -87,6 +113,22 @@ export type AirlineManagerApiClient = Readonly<{
   getAirlineNextStepGuidance: (
     input: Pick<GetAirlineNextStepGuidanceData, "path">,
   ) => Promise<GetAirlineNextStepGuidanceResponse>;
+  listFounderPackage: (
+    input: Pick<ListFounderPackageData, "path">,
+  ) => Promise<ListFounderPackageResponse>;
+  previewFounderLease: (
+    input: Pick<PreviewFounderLeaseData, "path" | "body">,
+  ) => Promise<PreviewFounderLeaseResponse>;
+  acceptFounderLease: (
+    input: Pick<AcceptFounderLeaseData, "path" | "body" | "headers">,
+  ) => Promise<AcceptFounderLeaseResponse>;
+  listFleet: (input: Pick<ListFleetData, "path">) => Promise<ListFleetResponse>;
+  getFleetAircraft: (
+    input: Pick<GetFleetAircraftData, "path">,
+  ) => Promise<GetFleetAircraftResponse>;
+  getAircraftDeliveryStatus: (
+    input: Pick<GetAircraftDeliveryStatusData, "path">,
+  ) => Promise<GetAircraftDeliveryStatusResponse>;
   getFuelPrices: (
     input: Pick<GetFuelPricesData, "path" | "query">,
   ) => Promise<GetFuelPricesResponse>;
@@ -145,6 +187,13 @@ export function createApiClient(
     getHealth: () => readJson<GetHealthResponse, never>("/health"),
     getReadiness: () =>
       readJson<GetReadinessResponse | GetReadinessError, never>("/ready", undefined, [200, 503]),
+    getPublicConfig: () => readJson<GetPublicConfigResponse, never>("/v1/public/config"),
+    getPublishedCatalog: () =>
+      readJson<GetPublishedCatalogResponse, GetPublishedCatalogError>("/v1/catalog/current"),
+    getCurrentPlayerCareer: () =>
+      readJson<GetCurrentPlayerCareerResponse, GetCurrentPlayerCareerError>("/v1/player/career", {
+        credentials: "include",
+      }),
     executeSampleCommand: (input) =>
       readJson<ExecuteSampleCommandResponse, ExecuteSampleCommandError>(
         "/v1/system/commands/sample",
@@ -189,6 +238,50 @@ export function createApiClient(
     getAirlineNextStepGuidance: (input) =>
       readJson<GetAirlineNextStepGuidanceResponse, GetAirlineNextStepGuidanceError>(
         `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/next-step`,
+        { credentials: "include" },
+      ),
+    listFounderPackage: (input) =>
+      readJson<ListFounderPackageResponse, ListFounderPackageError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/founder-package`,
+        { credentials: "include" },
+      ),
+    previewFounderLease: (input) =>
+      readJson<PreviewFounderLeaseResponse, PreviewFounderLeaseError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/founder-package/preview`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(input.body),
+        },
+      ),
+    acceptFounderLease: (input) =>
+      readJson<AcceptFounderLeaseResponse, AcceptFounderLeaseError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/founder-lease/accept`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+            "idempotency-key": input.headers["idempotency-key"],
+          },
+          body: JSON.stringify(input.body),
+        },
+        [201],
+      ),
+    listFleet: (input) =>
+      readJson<ListFleetResponse, ListFleetError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fleet`,
+        { credentials: "include" },
+      ),
+    getFleetAircraft: (input) =>
+      readJson<GetFleetAircraftResponse, GetFleetAircraftError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fleet/${encodeURIComponent(input.path.aircraftId)}`,
+        { credentials: "include" },
+      ),
+    getAircraftDeliveryStatus: (input) =>
+      readJson<GetAircraftDeliveryStatusResponse, GetAircraftDeliveryStatusError>(
+        `/v1/airlines/${encodeURIComponent(input.path.airlineId)}/fleet/${encodeURIComponent(input.path.aircraftId)}/delivery-status`,
         { credentials: "include" },
       ),
     getFuelPrices: (input) => {

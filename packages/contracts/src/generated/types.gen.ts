@@ -5931,6 +5931,110 @@ export type PreviewAirlineFoundingResponses = {
 export type PreviewAirlineFoundingResponse =
   PreviewAirlineFoundingResponses[keyof PreviewAirlineFoundingResponses];
 
+export type GetPublishedCatalogData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/catalog/current";
+};
+
+export type GetPublishedCatalogErrors = {
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  503: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetPublishedCatalogError = GetPublishedCatalogErrors[keyof GetPublishedCatalogErrors];
+
+export type GetPublishedCatalogResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aircraftVariants: Array<{
+      acquisitionChannels: Array<"factory_new" | "operating_lease" | "used_purchase">;
+      category: "turboprop" | "regional_jet" | "narrow_body";
+      certificationReference: string;
+      code: string;
+      id: string;
+      manufacturer: string;
+      maximumSeats: number;
+      maximumTakeoffWeightKg: number;
+      minimumRunwayFt: number;
+      model: string;
+      productionStatus: "in_production" | "discontinued";
+      provenance: Array<{
+        classification: "sourced" | "derived" | "balance";
+        effectiveFrom: string;
+        explanation: string;
+        fieldName: string;
+        formulaVersion?: string;
+        rulesetVersion?: string;
+        sourceId?: string;
+        sourceLocator?: string;
+      }>;
+      rangeNm: number;
+      typicalSeats: number;
+    }>;
+    airports: Array<{
+      countryCode: string;
+      elevationFt?: number | string;
+      iataCode: string;
+      icaoCode: string;
+      id: string;
+      ident: string;
+      latitudeDeg: string;
+      longestRunwayFt: number;
+      longitudeDeg: string;
+      municipality: string;
+      name: string;
+      provenance: Array<{
+        classification: "sourced" | "derived" | "balance";
+        effectiveFrom: string;
+        explanation: string;
+        fieldName: string;
+        formulaVersion?: string;
+        rulesetVersion?: string;
+        sourceId?: string;
+        sourceLocator?: string;
+      }>;
+      regionCode: string;
+      timezoneName: string;
+      worldRegion: string;
+    }>;
+    releaseVersion: string;
+    worldRulesetVersion: string;
+  };
+};
+
+export type GetPublishedCatalogResponse =
+  GetPublishedCatalogResponses[keyof GetPublishedCatalogResponses];
+
 export type SubscribeToEventsData = {
   body?: never;
   headers?: {
@@ -6408,6 +6512,120 @@ export type SetNotificationReadStateResponses = {
 
 export type SetNotificationReadStateResponse =
   SetNotificationReadStateResponses[keyof SetNotificationReadStateResponses];
+
+export type GetCurrentPlayerCareerData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/player/career";
+};
+
+export type GetCurrentPlayerCareerErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetCurrentPlayerCareerError =
+  GetCurrentPlayerCareerErrors[keyof GetCurrentPlayerCareerErrors];
+
+export type GetCurrentPlayerCareerResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    career: {
+      airlineId: string;
+      airlineStatus: "active" | "insolvent" | "closed";
+      brand: {
+        logoMark: string;
+        primaryColor: string;
+        secondaryColor: string;
+      };
+      careerId: string;
+      careerStatus: "active" | "insolvent" | "closed";
+      cashMinor: string;
+      catalogReleaseVersion: string;
+      equityMinor: string;
+      foundingBalanceVersion: string;
+      homeJurisdiction: string;
+      loanLiabilityMinor: string;
+      name: string;
+      nextStep: "select_founder_aircraft";
+      nextStepGuidance: string;
+      normalizedAirlineName: string;
+      principalBase: {
+        airportId: string;
+        countryCode: string;
+        iataCode: string;
+        name: string;
+        stationServiceModel: "outsourced";
+      };
+      reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      worldRulesetVersion: string;
+    } | null;
+  };
+};
+
+export type GetCurrentPlayerCareerResponse =
+  GetCurrentPlayerCareerResponses[keyof GetCurrentPlayerCareerResponses];
+
+export type GetPublicConfigData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/public/config";
+};
+
+export type GetPublicConfigResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    googleSignInAvailable: boolean;
+  };
+};
+
+export type GetPublicConfigResponse = GetPublicConfigResponses[keyof GetPublicConfigResponses];
 
 export type ExecuteSampleCommandData = {
   body: {

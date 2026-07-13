@@ -6,6 +6,7 @@ import {
 } from "@airline-manager/config";
 import {
   KyselyAirlineFoundingRepository,
+  KyselyCatalogRepository,
   KyselyFleetRepository,
   KyselyFuelRepository,
   KyselyIdentityRepository,
@@ -22,6 +23,7 @@ import {
 } from "@airline-manager/database";
 import {
   AirlineFoundingService,
+  GetCurrentPublishedCatalogHandler,
   FleetService,
   FuelService,
   MarketService,
@@ -36,10 +38,11 @@ import type { FastifyInstance } from "fastify";
 import { createApiServer } from "./app.js";
 import { createAuthenticationAdapter } from "./auth/better-auth.js";
 import { createAuthorizationResolver } from "./auth/authorization.js";
+import type { AuthenticationEmailDelivery } from "./auth/email.js";
 import {
-  CapturingAuthenticationEmailDelivery,
-  type AuthenticationEmailDelivery,
-} from "./auth/email.js";
+  SmtpAuthenticationEmailDelivery,
+  readSmtpAuthenticationEmailOptions,
+} from "./auth/smtp-email.js";
 
 export { createApiServer } from "./app.js";
 export { createOpenApiDocument } from "./openapi.js";
@@ -100,7 +103,8 @@ export async function startApi(
   const corsOrigins = readCorsOrigins(environment);
   const authBaseUrl = readOptionalString("BETTER_AUTH_URL", environment) ?? "http://localhost:3001";
   const emailDelivery =
-    dependencies.authenticationEmailDelivery ?? new CapturingAuthenticationEmailDelivery();
+    dependencies.authenticationEmailDelivery ??
+    new SmtpAuthenticationEmailDelivery(readSmtpAuthenticationEmailOptions(environment));
   const google = readGoogleProvider(environment);
   const authenticationAdapter = createAuthenticationAdapter({
     database: databaseRuntime.database,
@@ -120,6 +124,10 @@ export async function startApi(
       authenticationAdapter,
       databaseRuntime.database,
     ),
+    currentCatalog: new GetCurrentPublishedCatalogHandler(
+      new KyselyCatalogRepository(databaseRuntime.database),
+    ),
+    googleSignInAvailable: google !== undefined,
     airlineFoundingService: new AirlineFoundingService(
       new KyselyAirlineFoundingRepository(databaseRuntime.database),
       new KyselyIdentityRepository(databaseRuntime.database),

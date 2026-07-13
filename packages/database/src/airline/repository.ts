@@ -689,4 +689,18 @@ export class KyselyAirlineFoundingRepository implements AirlineFoundingRepositor
         "Choose one founder-aircraft lease package next. No aircraft or lease has been created or accepted yet.",
     };
   }
+
+  public async currentSummary(playerAccountId: string): Promise<AirlineSummary | null> {
+    const result = await sql<{ airline_id: string }>`SELECT a.id AS airline_id
+      FROM careers c
+      JOIN airlines a ON a.career_id = c.id
+      JOIN resource_ownerships o ON o.resource_type = 'airline' AND o.resource_id = a.id
+        AND o.player_account_id = ${playerAccountId}::uuid
+      WHERE c.player_account_id = ${playerAccountId}::uuid
+        AND c.status = 'active' AND a.status = 'active'
+      ORDER BY c.founded_at DESC, c.id DESC
+      LIMIT 1`.execute(this.database);
+    const current = result.rows[0];
+    return current ? this.summary(playerAccountId, current.airline_id) : null;
+  }
 }

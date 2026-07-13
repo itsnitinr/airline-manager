@@ -179,6 +179,15 @@ describe("published catalog and world rules", () => {
     ).toBe(true);
   });
 
+  it("selects the current effective active world catalog without a client-supplied version", async () => {
+    const catalog = await repository.findCurrentPublishedCatalog();
+    expect(catalog).toMatchObject({
+      releaseVersion: "slice-one-2026.07.11",
+      worldRulesetVersion: "contemporary-2026.07.11",
+    });
+    expect(catalog?.airports).toHaveLength(250);
+  });
+
   it("applies production defaults and a data-driven ruleset acquisition override", async () => {
     const variants = await repository.listAircraftVariants("contemporary-2026.07.11");
     expect(variants.find(({ code }) => code === "airbus-a320neo")?.acquisitionChannels).toEqual([

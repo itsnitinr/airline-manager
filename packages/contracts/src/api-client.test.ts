@@ -70,4 +70,56 @@ describe("OpenAPI-typed web client", () => {
       }),
     );
   });
+
+  it("exposes public discovery and authenticated founder fleet operations", async () => {
+    const fetchImplementation = vi.fn<typeof fetch>(async (input) => {
+      const url = String(input);
+      return new Response(JSON.stringify({}), {
+        status: url.endsWith("/founder-lease/accept") ? 201 : 200,
+        headers: { "content-type": "application/json" },
+      });
+    });
+    const client = createApiClient({ baseUrl: "https://api.example", fetch: fetchImplementation });
+
+    await client.getPublicConfig();
+    await client.getPublishedCatalog();
+    await client.getCurrentPlayerCareer();
+    await client.listFounderPackage({ path: { airlineId: "airline/id" } });
+    await client.previewFounderLease({
+      path: { airlineId: "airline/id" },
+      body: { optionCode: "founder-atr-72-600" },
+    });
+    await client.acceptFounderLease({
+      path: { airlineId: "airline/id" },
+      body: { optionCode: "founder-atr-72-600" },
+      headers: { "idempotency-key": "founder-lease-key" },
+    });
+    await client.listFleet({ path: { airlineId: "airline/id" } });
+    await client.getFleetAircraft({
+      path: { airlineId: "airline/id", aircraftId: "aircraft/id" },
+    });
+    await client.getAircraftDeliveryStatus({
+      path: { airlineId: "airline/id", aircraftId: "aircraft/id" },
+    });
+
+    expect(fetchImplementation).toHaveBeenCalledWith(
+      "https://api.example/v1/public/config",
+      undefined,
+    );
+    expect(fetchImplementation).toHaveBeenCalledWith("https://api.example/v1/player/career", {
+      credentials: "include",
+    });
+    expect(fetchImplementation).toHaveBeenCalledWith(
+      "https://api.example/v1/airlines/airline%2Fid/founder-lease/accept",
+      expect.objectContaining({
+        method: "POST",
+        credentials: "include",
+        headers: expect.objectContaining({ "idempotency-key": "founder-lease-key" }),
+      }),
+    );
+    expect(fetchImplementation).toHaveBeenCalledWith(
+      "https://api.example/v1/airlines/airline%2Fid/fleet/aircraft%2Fid/delivery-status",
+      { credentials: "include" },
+    );
+  });
 });

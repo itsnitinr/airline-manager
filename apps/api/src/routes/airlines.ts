@@ -4,6 +4,7 @@ import {
   aircraftIdentifierParamsSchema,
   airlineIdentifierParamsSchema,
   airlineSummaryResponseSchema,
+  currentPlayerCareerResponseSchema,
   deliveryStatusResponseSchema,
   errorEnvelopeSchema,
   fleetAircraftResponseSchema,
@@ -119,6 +120,28 @@ export function registerAirlineRoutes(
         requestId: request.id,
         authorization: request.authorizationContext,
       }),
+  );
+
+  app.get(
+    "/v1/player/career",
+    {
+      schema: {
+        operationId: "getCurrentPlayerCareer",
+        tags: ["airlines"],
+        response: {
+          200: currentPlayerCareerResponseSchema,
+          401: errorEnvelopeSchema,
+          403: errorEnvelopeSchema,
+          500: errorEnvelopeSchema,
+        },
+      },
+    },
+    async (request) => ({
+      career: await required().currentSummary({
+        requestId: request.id,
+        authorization: request.authorizationContext,
+      }),
+    }),
   );
 
   app.get<{ Params: AirlineParams }>(

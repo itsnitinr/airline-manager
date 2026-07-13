@@ -83,10 +83,13 @@ pnpm infra:up
 ```
 
 The web app is available at `http://localhost:3000`, API liveness at `http://localhost:3001/health`,
-API readiness at `http://localhost:3001/ready`, and worker readiness at
-`http://localhost:3002/ready`. Liveness only proves that a process can respond. Readiness opens real
-connections to both PostgreSQL and Redis and returns HTTP 503 if either required dependency is
-unavailable. Compose waits for healthy data services before starting the applications.
+API readiness at `http://localhost:3001/ready`, worker readiness at `http://localhost:3002/ready`,
+and the local authentication-email inbox at `http://localhost:8025`. Registration verification and
+password-recovery messages are captured by Mailpit; its SMTP port is internal to Compose. Liveness
+only proves that a process can respond. Readiness opens real connections to both PostgreSQL and
+Redis and returns HTTP 503 if either required dependency is unavailable. Compose waits for healthy
+data services, applies migrations, and idempotently publishes the checked slice-one catalog before
+starting the applications. This makes airline founding usable from a fresh local volume.
 
 PostgreSQL and Redis use the named `postgres-data` and `redis-data` volumes. A normal stop preserves
 them and sends SIGTERM, allowing the API to drain HTTP connections, the worker to stop accepting
@@ -98,9 +101,8 @@ pnpm infra:down
 ```
 
 Use `pnpm infra:reset` to delete all local database and Redis state. `pnpm infra:reseed` performs
-the same destructive reset and starts fresh services. There is intentionally no gameplay seed or
-schema yet; later persistence tickets will extend that command rather than introducing migrations
-here.
+the same destructive reset, applies the schema, publishes the checked catalog and balance data, then
+starts fresh services.
 
 To verify dependency failure and recovery manually, stop one service, observe HTTP 503 from both
 readiness endpoints, restart it, and wait for HTTP 200:

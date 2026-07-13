@@ -1,0 +1,154 @@
+.mapModule {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  color: var(--text-primary, #e4edf3);
+}
+
+.canvasFrame {
+  position: relative;
+  min-height: 20rem;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle, #233847);
+  border-radius: var(--radius-panel, 0.75rem);
+  background:
+    linear-gradient(rgb(62 93 111 / 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(62 93 111 / 0.08) 1px, transparent 1px), #07111b;
+  background-size: 3rem 3rem;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.mapStatus,
+.loadingState,
+.emptyState {
+  color: var(--text-secondary, #afbec8);
+  background: rgb(7 17 27 / 0.9);
+}
+
+.mapStatus {
+  position: absolute;
+  inset: auto 0.75rem 0.75rem;
+  max-width: 32rem;
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border-subtle, #294352);
+  border-radius: var(--radius-control, 0.5rem);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.loadingState,
+.emptyState {
+  display: grid;
+  min-height: 20rem;
+  place-content: center;
+  gap: 0.4rem;
+  padding: 2rem;
+  border: 1px solid var(--border-subtle, #233847);
+  border-radius: var(--radius-panel, 0.75rem);
+  text-align: center;
+}
+
+.emptyState strong {
+  color: var(--text-primary, #e4edf3);
+}
+
+.selectionControl {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.28fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.selectionControl label {
+  color: var(--text-secondary, #afbec8);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.selectionControl select {
+  min-height: 2.75rem;
+  width: 100%;
+  border: 1px solid var(--border-strong, #365364);
+  border-radius: var(--radius-control, 0.5rem);
+  padding: 0.625rem 2.5rem 0.625rem 0.75rem;
+  color: var(--text-primary, #e4edf3);
+  background: var(--surface-raised, #101e29);
+  font: inherit;
+}
+
+.selectionControl select:focus-visible,
+.attribution a:focus-visible {
+  outline: 3px solid var(--focus-ring, #65c5e7);
+  outline-offset: 2px;
+}
+
+.selectionControl p {
+  grid-column: 2;
+  margin: 0;
+  color: var(--text-tertiary, #8396a2);
+  font-size: 0.75rem;
+}
+
+.attribution {
+  margin: 0;
+  color: var(--text-tertiary, #8396a2);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+
+.attribution a {
+  color: var(--text-secondary, #afbec8);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.canvasFrame :global(.maplibregl-canvas) {
+  outline: none;
+}
+
+.canvasFrame :global(.maplibregl-ctrl-attrib) {
+  color: #263b47;
+  background: rgb(228 237 243 / 0.88);
+}
+
+@media (max-width: 47.99rem) {
+  .canvasFrame,
+  .loadingState,
+  .emptyState {
+    min-height: 15rem;
+  }
+
+  .selectionControl {
+    grid-template-columns: 1fr;
+  }
+
+  .selectionControl p {
+    grid-column: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapModule *,
+  .mapModule *::before,
+  .mapModule *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

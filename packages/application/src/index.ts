@@ -61,7 +61,11 @@ export function createApplicationServices(
   };
 }
 
-export { GetPublishedCatalogHandler, type GetPublishedCatalog } from "./catalog.js";
+export {
+  GetCurrentPublishedCatalogHandler,
+  GetPublishedCatalogHandler,
+  type GetPublishedCatalog,
+} from "./catalog.js";
 export { FinancePostingService } from "./finance.js";
 export { AirlineFoundingService } from "./airline.js";
 export { DueAircraftDeliveryHandler, FleetService } from "./fleet.js";

@@ -43,4 +43,9 @@ export class AirlineFoundingService {
     await requireOwnedResource(this.identity, context.authorization, "airline", airlineId);
     return this.founding.summary(context.authorization.playerAccountId, airlineId);
   }
+
+  public currentSummary(context: QueryContext): Promise<AirlineSummary | null> {
+    requireVerifiedPlayer(context.authorization);
+    return this.founding.currentSummary(context.authorization.playerAccountId);
+  }
 }

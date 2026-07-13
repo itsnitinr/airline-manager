@@ -102,6 +102,7 @@ export type PublishedCatalog = Readonly<{
 
 /** Read-only port for future API and administration query consumers. */
 export interface CatalogRepository {
+  findCurrentPublishedCatalog(): Promise<PublishedCatalog | undefined>;
   findPublishedCatalogByWorldRuleset(version: string): Promise<PublishedCatalog | undefined>;
   findAirportByIataCode(
     worldRulesetVersion: string,

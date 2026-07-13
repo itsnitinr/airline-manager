@@ -13,6 +13,7 @@ import {
   type WeatherService,
   type FlightOperationsService,
   type NotificationService,
+  type GetCurrentPublishedCatalogHandler,
 } from "@airline-manager/application";
 import type { Database } from "@airline-manager/database";
 import cors from "@fastify/cors";
@@ -35,6 +36,7 @@ import { registerMaintenanceRoutes } from "./routes/maintenance.js";
 import { registerWeatherRoutes } from "./routes/weather.js";
 import { registerFlightOperationsRoutes } from "./routes/operations.js";
 import { registerNotificationRoutes } from "./routes/notifications.js";
+import { registerPublicRoutes } from "./routes/public.js";
 
 export type ApiAppOptions = Readonly<{
   applicationServices?: ApplicationServices;
@@ -57,6 +59,8 @@ export type ApiAppOptions = Readonly<{
   weatherService?: WeatherService;
   flightOperationsService?: FlightOperationsService;
   notificationService?: NotificationService;
+  currentCatalog?: GetCurrentPublishedCatalogHandler;
+  googleSignInAvailable?: boolean;
 }>;
 
 const defaultReadiness: ReadinessCheck = async () => ({ postgres: true, redis: true });
@@ -99,6 +103,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
         { name: "operations", description: "Process health and readiness." },
         { name: "system", description: "Non-gameplay application shell operations." },
         { name: "events", description: "Recoverable advisory event stream." },
+        { name: "catalog", description: "Published playable reference data." },
         { name: "airlines", description: "Authenticated airline career commands and queries." },
         {
           name: "fleet",
@@ -166,6 +171,10 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
     registerSystemRoutes(routes, {
       applicationServices: options.applicationServices ?? createApplicationServices(),
       checkReadiness: options.checkReadiness ?? defaultReadiness,
+    });
+    registerPublicRoutes(routes, {
+      googleSignInAvailable: options.googleSignInAvailable ?? false,
+      ...(options.currentCatalog ? { catalog: options.currentCatalog } : {}),
     });
     registerAirlineRoutes(routes, options.airlineFoundingService, options.fleetService);
     registerFuelRoutes(routes, options.fuelService);

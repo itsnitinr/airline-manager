@@ -144,14 +144,23 @@ describe("authenticated airline founding API", () => {
       headers: { "idempotency-key": "anonymous-founding" },
       payload: selection,
     });
+    const current = await app.inject({ method: "GET", url: "/v1/player/career" });
     expect(preview.statusCode).toBe(401);
     expect(preview.json()).toMatchObject({ error: { code: "authentication_required" } });
     expect(confirm.statusCode).toBe(401);
+    expect(current.statusCode).toBe(401);
   });
 
   it("previews explainable runway, confirms idempotently, and returns owned summary and guidance", async () => {
     const { app, email } = createFixture();
     const cookie = await registerVerifiedSession(app, email);
+    const beforeFounding = await app.inject({
+      method: "GET",
+      url: "/v1/player/career",
+      headers: { cookie },
+    });
+    expect(beforeFounding.statusCode).toBe(200);
+    expect(beforeFounding.json()).toEqual({ career: null });
     const preview = await app.inject({
       method: "POST",
       url: "/v1/airlines/founding/preview",
@@ -200,6 +209,13 @@ describe("authenticated airline founding API", () => {
       loanLiabilityMinor: "11000000",
       nextStep: "select_founder_aircraft",
     });
+    const current = await app.inject({
+      method: "GET",
+      url: "/v1/player/career",
+      headers: { cookie },
+    });
+    expect(current.statusCode).toBe(200);
+    expect(current.json()).toEqual({ career: summary.json() });
     const guidance = await app.inject({
       method: "GET",
       url: `/v1/airlines/${airlineId}/next-step`,

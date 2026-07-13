@@ -9,5 +9,6 @@ WORKDIR /workspace
 RUN corepack enable
 COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm turbo run build --filter=@airline-manager/web^...
 EXPOSE 3000
 CMD ["pnpm", "--filter", "@airline-manager/web", "dev", "--hostname", "0.0.0.0"]
