@@ -126,7 +126,16 @@ export type DatedFlight = Readonly<{
   departureAt: string;
   arrivalAt: string;
   readyAt: string;
-  status: "scheduled" | "sold" | "in_progress" | "settled";
+  status:
+    | "scheduled"
+    | "suspended"
+    | "cancelled"
+    | "delayed"
+    | "boarding"
+    | "departed"
+    | "diverted"
+    | "arrived"
+    | "settled";
   commercialOffer: CommercialFlightOfferInput;
 }>;
 

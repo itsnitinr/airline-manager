@@ -9,6 +9,7 @@ import {
   WorkforceDomainError,
   MaintenanceDomainError,
   WeatherDomainError,
+  FlightLifecycleError,
 } from "@airline-manager/domain";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 
@@ -178,6 +179,18 @@ export function registerErrorMapping(app: FastifyInstance): void {
       void reply
         .status(hidden ? 403 : conflict ? 409 : 400)
         .send(envelope(request, error.code, error.message));
+      return;
+    }
+    if (error instanceof FlightLifecycleError) {
+      const hidden = error.code === "flight_not_found";
+      void reply.status(hidden ? 403 : 409).send(
+        envelope(
+          request,
+          error.code,
+          error.message,
+          error.recoverySteps.map((issue) => ({ issue })),
+        ),
+      );
       return;
     }
     if (error.validation) {

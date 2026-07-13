@@ -145,6 +145,27 @@ export class KyselyRuntimeRepository {
         UNION ALL
         SELECT scope, scope_id, 1, intent_type, available_at,
           jsonb_build_object('source', 'weather_snapshot') FROM weather_snapshot_intents
+        UNION ALL
+        SELECT 'dated_flight', flight.id, flight.version,
+          CASE
+            WHEN flight.status = 'scheduled' THEN 'flight.booking_lock'
+            WHEN flight.status IN ('boarding','suspended','delayed') THEN 'flight.dispatch'
+            WHEN flight.status IN ('departed','diverted') THEN 'flight.arrival'
+            ELSE 'flight.settlement'
+          END,
+          CASE
+            WHEN flight.status = 'scheduled' THEN flight.departure_at - INTERVAL '30 minutes'
+            WHEN flight.status IN ('boarding','suspended','delayed')
+              THEN COALESCE(flight.suspension_next_retry_at, flight.departure_at)
+            WHEN flight.status IN ('departed','diverted')
+              THEN COALESCE(flight.actual_departure_at, flight.departure_at)
+                + COALESCE(result.realized_block_minutes, flight.planned_block_minutes) * INTERVAL '1 minute'
+            ELSE COALESCE(flight.actual_arrival_at, flight.state_effective_at)
+          END,
+          jsonb_build_object('source', 'flight_lifecycle')
+        FROM dated_flights flight
+        LEFT JOIN flight_operational_results result ON result.flight_id = flight.id
+        WHERE flight.status <> 'settled'
       ) source
       ON CONFLICT (entity_type, entity_id, expected_version, handler_kind, handler_version, target_time)
       DO NOTHING RETURNING 1

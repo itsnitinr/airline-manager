@@ -498,7 +498,9 @@ export class KyselyWorkforceRepository implements WorkforceRepository {
         await synchronizeDueTraining(transaction, airlineId, now);
         const flights = await sql<FlightRow>`${flightSelect}
           WHERE aircraft.operator_airline_id = ${airlineId}::uuid AND df.id = ${flightId}::uuid
-            AND df.status IN ('scheduled', 'sold') FOR UPDATE OF df`.execute(transaction);
+            AND df.status IN ('scheduled', 'suspended', 'delayed', 'boarding') FOR UPDATE OF df`.execute(
+          transaction,
+        );
         const flight = flights.rows[0] ? mapFlight(flights.rows[0]) : undefined;
         if (!flight)
           throw new WorkforceDomainError(

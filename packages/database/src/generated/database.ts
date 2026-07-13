@@ -425,13 +425,17 @@ export interface Currencies {
 }
 
 export interface DatedFlights {
+  actual_arrival_at: Timestamp | null;
+  actual_departure_at: Timestamp | null;
   aircraft_id: string;
   arrival_at: Timestamp;
   arrival_local: string;
+  cancellation_reason_code: string | null;
   created_at: Timestamp;
   departure_at: Timestamp;
   departure_local: string;
   destination_airport_id: string;
+  diversion_airport_id: string | null;
   flight_leg_template_id: string;
   flight_number: string;
   forecast_snapshot: Json;
@@ -445,8 +449,16 @@ export interface DatedFlights {
   route_id: string;
   ruleset_version: string;
   service_date: Timestamp;
+  settled_at: Timestamp | null;
+  state_effective_at: Generated<Timestamp>;
   status: Generated<string>;
+  suspension_explanation: string | null;
+  suspension_next_retry_at: Timestamp | null;
+  suspension_reason_code: string | null;
+  suspension_recovery_steps: Json | null;
+  suspension_retry_count: Generated<number>;
   timetable_version_id: string;
+  version: Generated<Int8>;
 }
 
 export interface ExchangeRateImports {
@@ -500,6 +512,72 @@ export interface FlightLegTemplates {
   planned_block_minutes: number;
   sequence: number;
   timetable_version_id: string;
+}
+
+export interface FlightLifecycleCommands {
+  command_id: string;
+  effective_at: Timestamp;
+  expected_version: Int8;
+  flight_id: string;
+  input_hash: string;
+  milestone: string;
+  outcome: string;
+  processed_at: Timestamp;
+  result: Generated<Json>;
+  resulting_version: Int8 | null;
+}
+
+export interface FlightMaterialSnapshots {
+  created_at: Timestamp;
+  effective_at: Timestamp;
+  flight_id: string;
+  id: Generated<string>;
+  input_hash: string;
+  material_inputs: Json;
+  schema_version: Generated<number>;
+  stage: string;
+}
+
+export interface FlightOperationalResults {
+  airport_cost_minor: Int8;
+  delay_minutes: number;
+  diverted: boolean;
+  flight_id: string;
+  formula_version: string;
+  fuel_burn_kg: Int8;
+  maintenance_allocation_minor: Int8;
+  operating_result_minor: Int8;
+  passenger_revenue_minor: Int8;
+  passengers_carried: Int8;
+  realized_at: Timestamp;
+  realized_block_minutes: number;
+  refund_minor: Int8;
+  result_snapshot: Json;
+  seed: string;
+  wage_allocation_minor: Int8;
+}
+
+export interface FlightSettlementJournals {
+  amount_minor: Int8;
+  component: string;
+  flight_id: string;
+  journal_entry_id: string | null;
+}
+
+export interface FlightTransitionHistory {
+  command_id: string | null;
+  effective_at: Timestamp;
+  expected_version: Int8;
+  explanation: string;
+  flight_id: string;
+  from_state: string | null;
+  id: Generated<string>;
+  milestone: string;
+  reason_code: string;
+  recorded_at: Timestamp;
+  resulting_version: Int8;
+  sequence: Int8;
+  to_state: string;
 }
 
 export interface FounderFinancingOffers {
@@ -1199,6 +1277,21 @@ export interface SecurityAuditEvents {
   target_type: string;
 }
 
+export interface SettledFlightSnapshots {
+  aggregates: Json;
+  content_hash: string;
+  created_at: Timestamp;
+  flight_id: string;
+  id: Generated<string>;
+  journal_entry_ids: Json;
+  material_inputs: Json;
+  outcome: Json;
+  reconciliation_references: Json;
+  ruleset_versions: Json;
+  schema_version: number;
+  settled_at: Timestamp;
+}
+
 export interface SimulationMilestones {
   applied_at: Timestamp | null;
   attempt_count: Generated<number>;
@@ -1493,6 +1586,11 @@ export interface DB {
   exchange_rates: ExchangeRates;
   flight_completion_utilization_inputs: FlightCompletionUtilizationInputs;
   flight_leg_templates: FlightLegTemplates;
+  flight_lifecycle_commands: FlightLifecycleCommands;
+  flight_material_snapshots: FlightMaterialSnapshots;
+  flight_operational_results: FlightOperationalResults;
+  flight_settlement_journals: FlightSettlementJournals;
+  flight_transition_history: FlightTransitionHistory;
   founder_financing_offers: FounderFinancingOffers;
   founder_package_options: FounderPackageOptions;
   founder_package_versions: FounderPackageVersions;
@@ -1545,6 +1643,7 @@ export interface DB {
   scheduling_ruleset_versions: SchedulingRulesetVersions;
   schema_migrations: SchemaMigrations;
   security_audit_events: SecurityAuditEvents;
+  settled_flight_snapshots: SettledFlightSnapshots;
   simulation_milestones: SimulationMilestones;
   timetable_versions: TimetableVersions;
   timezone_dataset_versions: TimezoneDatasetVersions;

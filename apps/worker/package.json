@@ -20,6 +20,7 @@
     "bullmq": "5.58.5"
   },
   "devDependencies": {
+    "@airline-manager/domain": "workspace:*",
     "@types/node": "catalog:",
     "kysely": "0.29.2",
     "rimraf": "6.1.3",

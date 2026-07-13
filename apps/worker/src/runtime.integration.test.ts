@@ -2,10 +2,18 @@ import { randomUUID } from "node:crypto";
 import { Queue } from "bullmq";
 import { parseJobEnvelope } from "@airline-manager/application";
 import {
+  KyselyAirlineFoundingRepository,
+  KyselyFleetRepository,
+  KyselyFuelRepository,
+  KyselyMarketRepository,
+  KyselySchedulingRepository,
+  KyselyWorkforceRepository,
   createDatabaseRuntime,
   readDatabasePoolOptions,
+  seedSliceOneCatalog,
   type DatabaseRuntime,
 } from "@airline-manager/database";
+import { forecastRoute, type FoundingSelection } from "@airline-manager/domain";
 import { sql } from "kysely";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { QUEUE_NAME, SimulationWorkerRuntime } from "./runtime.js";
@@ -49,8 +57,9 @@ function envelope(kind: string, targetTime = new Date().toISOString()) {
   });
 }
 
-beforeAll(() => {
+beforeAll(async () => {
   database = createDatabaseRuntime(readDatabasePoolOptions("test"));
+  await seedSliceOneCatalog(database.database);
 });
 beforeEach(async () => {
   if (worker) {
@@ -60,7 +69,8 @@ beforeEach(async () => {
   const queue = new Queue(QUEUE_NAME, { connection });
   await queue.obliterate({ force: true });
   await queue.close();
-  await sql`TRUNCATE worker_replay_audits, worker_dead_letters, simulation_milestones, outbox_events CASCADE`.execute(
+  await sql`TRUNCATE game_worlds, ledger_books, auth_user, idempotency_commands,
+    worker_replay_audits, worker_dead_letters, simulation_milestones, outbox_events CASCADE`.execute(
     database.database,
   );
 });
@@ -166,5 +176,142 @@ describe("real Redis and BullMQ transport", () => {
     await worker.reconcile();
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(applied).toBe(1);
+  });
+
+  it("settles an overdue flight with the API/browser offline after Redis work is deleted", async () => {
+    const scheduledAt = new Date("2026-07-12T00:00:00.000Z");
+    const simulatedNow = new Date("2026-07-21T00:00:00.000Z");
+    const user = await sql<{ id: string }>`INSERT INTO auth_user (name, email, "emailVerified")
+      VALUES ('Offline Flight', ${`offline-${randomUUID()}@example.test`}, true) RETURNING id`.execute(
+      database.database,
+    );
+    const account = await sql<{ id: string }>`SELECT id FROM player_accounts
+      WHERE authentication_user_id=${user.rows[0]!.id}::uuid`.execute(database.database);
+    const playerId = account.rows[0]!.id;
+    const selection: FoundingSelection = {
+      airlineName: `Offline ${randomUUID().slice(0, 8)}`,
+      fictionalIdentityConfirmed: true,
+      homeJurisdiction: "US",
+      principalBaseIataCode: "JFK",
+      reportingCurrency: "USD",
+      brand: { primaryColor: "#112233", secondaryColor: "#DDEEFF", logoMark: "OF" },
+      acceptFoundingLoan: false,
+      worldRulesetVersion: "contemporary-2026.07.11",
+    };
+    const founded = await new KyselyAirlineFoundingRepository(database.database).confirm(
+      playerId,
+      selection,
+      `found-${randomUUID()}`,
+      scheduledAt,
+    );
+    const lease = await new KyselyFleetRepository(database.database).acceptFounderLease(
+      playerId,
+      founded.airlineId,
+      "founder-atr-72-600",
+      `lease-${randomUUID()}`,
+      scheduledAt,
+    );
+    const markets = new KyselyMarketRepository(database.database);
+    const scheduling = new KyselySchedulingRepository(database.database);
+    const market = await markets.research(playerId, founded.airlineId, "JFK", "PHL", scheduledAt);
+    const [origin, destination, aircraft] = await Promise.all([
+      scheduling.airportFacts(founded.airlineId, "JFK", playerId),
+      scheduling.airportFacts(founded.airlineId, "PHL", playerId),
+      scheduling.aircraftFacts(founded.airlineId, lease.aircraft.id, playerId),
+    ]);
+    const route = await scheduling.createRoute(
+      playerId,
+      founded.airlineId,
+      market.marketId,
+      "JFK",
+      "PHL",
+      forecastRoute(origin, destination, aircraft, market),
+      scheduledAt,
+    );
+    const activation = await scheduling.activateTimetable(
+      playerId,
+      founded.airlineId,
+      route.id,
+      {
+        aircraftId: lease.aircraft.id,
+        effectiveFromLocalDate: "2026-07-20",
+        horizonDays: 7,
+        legs: [
+          {
+            dayOfWeek: 1,
+            originIataCode: "JFK",
+            destinationIataCode: "PHL",
+            departureLocalTime: "08:00",
+          },
+        ],
+      },
+      scheduledAt,
+    );
+    const flight = activation.flights[0]!;
+    await markets.createPricingStrategy(
+      playerId,
+      founded.airlineId,
+      {
+        marketId: market.marketId,
+        effectiveFrom: scheduledAt.toISOString(),
+        posture: market.recommendedPricing.posture,
+        baseFareMinor: market.recommendedPricing.baseFareMinor,
+        minimumFareMinor: market.recommendedPricing.minimumFareMinor,
+        maximumFareMinor: market.recommendedPricing.maximumFareMinor,
+        loadFactorTargetBasisPoints: market.recommendedPricing.loadFactorTargetBasisPoints,
+        revenueTargetMinor: market.recommendedPricing.revenueTargetMinor,
+      },
+      scheduledAt,
+    );
+    await markets.createCommercialOffer(
+      playerId,
+      { ...flight.commercialOffer, bookingOpensAt: scheduledAt.toISOString() },
+      scheduledAt,
+    );
+    const workforce = new KyselyWorkforceRepository(database.database);
+    for (const [role, capacity, qualificationAircraftVariantId] of [
+      ["pilot", 2, lease.aircraft.variantId],
+      ["cabin_crew", 2, undefined],
+      ["line_maintenance", 1, undefined],
+    ] as const)
+      await workforce.hire(
+        playerId,
+        founded.airlineId,
+        {
+          role,
+          capacity,
+          ...(qualificationAircraftVariantId ? { qualificationAircraftVariantId } : {}),
+        },
+        `hire-${role}-${randomUUID()}`,
+        scheduledAt,
+      );
+    const fuel = new KyselyFuelRepository(database.database);
+    const quote = await fuel.createQuote(playerId, founded.airlineId, 20_000n, scheduledAt);
+    await fuel.purchase(playerId, founded.airlineId, quote.id, `fuel-${randomUUID()}`, scheduledAt);
+
+    worker = new SimulationWorkerRuntime({
+      databaseRuntime: database,
+      redisUrl,
+      pollMilliseconds: 50,
+      now: () => simulatedNow,
+    });
+    await worker.reconcile();
+    const missing = (await worker.queue.getWaiting())[0] ?? (await worker.queue.getDelayed())[0];
+    expect(missing).toBeTruthy();
+    await missing!.remove();
+    await worker.start();
+    await waitFor(async () => {
+      await worker!.reconcile();
+      const state = await sql<{ status: string }>`SELECT status FROM dated_flights
+        WHERE id=${flight.id}::uuid`.execute(database.database);
+      return state.rows[0]?.status === "settled";
+    }, 20_000);
+    const exact = await sql<{ fuel: string; utilization: string; snapshot: string }>`SELECT
+      (SELECT count(*)::text FROM fuel_inventory_movements WHERE source_type='dated_flight' AND source_id=${flight.id}) fuel,
+      (SELECT count(*)::text FROM flight_completion_utilization_inputs WHERE completion_key=${`flight:${flight.id}:utilization`}) utilization,
+      (SELECT count(*)::text FROM settled_flight_snapshots WHERE flight_id=${flight.id}::uuid) snapshot`.execute(
+      database.database,
+    );
+    expect(exact.rows[0]).toEqual({ fuel: "1", utilization: "1", snapshot: "1" });
   });
 });

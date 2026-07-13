@@ -171,6 +171,9 @@ importers:
         specifier: 5.58.5
         version: 5.58.5
     devDependencies:
+      '@airline-manager/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.3

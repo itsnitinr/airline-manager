@@ -1767,6 +1767,82 @@ export const maintenanceHistoryResponseSchema = {
   items: { type: "object", additionalProperties: true },
 } as const;
 
+export const flightOperationsParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["airlineId", "flightId"],
+  properties: {
+    airlineId: { type: "string", format: "uuid" },
+    flightId: { type: "string", format: "uuid" },
+  },
+} as const;
+export const flightStatusResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "id",
+    "airlineId",
+    "flightNumber",
+    "state",
+    "version",
+    "departureAt",
+    "scheduledArrivalAt",
+    "effectiveAt",
+    "timeline",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    airlineId: { type: "string", format: "uuid" },
+    flightNumber: { type: "string" },
+    state: {
+      type: "string",
+      enum: [
+        "scheduled",
+        "suspended",
+        "cancelled",
+        "delayed",
+        "boarding",
+        "departed",
+        "diverted",
+        "arrived",
+        "settled",
+      ],
+    },
+    version: exactMinorSchema,
+    departureAt: { type: "string", format: "date-time" },
+    scheduledArrivalAt: { type: "string", format: "date-time" },
+    effectiveAt: { type: "string", format: "date-time" },
+    timeline: { type: "array", items: { type: "object", additionalProperties: true } },
+    suspension: { type: "object", additionalProperties: true },
+  },
+} as const;
+export const flightSettlementResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "id",
+    "flightId",
+    "schemaVersion",
+    "settledAt",
+    "materialInputs",
+    "outcome",
+    "journalEntryIds",
+    "reconciliation",
+    "contentHash",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    flightId: { type: "string", format: "uuid" },
+    schemaVersion: { type: "integer", const: 1 },
+    settledAt: { type: "string", format: "date-time" },
+    materialInputs: { type: "object", additionalProperties: true },
+    outcome: { type: "object", additionalProperties: true },
+    journalEntryIds: { type: "array", items: { type: "string", format: "uuid" } },
+    reconciliation: { type: "object", additionalProperties: { type: "string" } },
+    contentHash: { type: "string", pattern: "^[0-9a-f]{64}$" },
+  },
+} as const;
+
 export function createHealthResponse(service: HealthResponse["service"]): HealthResponse {
   return { service, status: "ok" };
 }

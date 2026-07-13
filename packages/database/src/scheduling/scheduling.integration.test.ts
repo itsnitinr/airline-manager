@@ -212,7 +212,8 @@ describe("PostgreSQL routes, timetables, rotations, and dated flights", () => {
       now,
     );
     const protectedFlight = first.flights.find((flight) => flight.serviceDate === "2026-07-20")!;
-    await sql`UPDATE dated_flights SET status = 'sold' WHERE id = ${protectedFlight.id}::uuid`.execute(
+    await sql`UPDATE dated_flights SET status = 'boarding', version = version + 1,
+      state_effective_at = departure_at - INTERVAL '30 minutes' WHERE id = ${protectedFlight.id}::uuid`.execute(
       runtime.database,
     );
     await expect(
@@ -247,7 +248,7 @@ describe("PostgreSQL routes, timetables, rotations, and dated flights", () => {
       runtime.database,
     );
     expect(retained.rows[0]).toEqual({
-      status: "sold",
+      status: "boarding",
       departure_at: new Date(protectedFlight.departureAt),
     });
     await expect(

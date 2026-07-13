@@ -14,6 +14,7 @@ import {
   KyselyWorkforceRepository,
   KyselyMaintenanceRepository,
   KyselyWeatherRepository,
+  KyselyFlightOperationsRepository,
   createDatabaseRuntime,
   createInfrastructureReadinessCheck,
   readDatabasePoolOptions,
@@ -27,6 +28,7 @@ import {
   WorkforceService,
   MaintenanceService,
   WeatherService,
+  FlightOperationsService,
 } from "@airline-manager/application";
 import type { FastifyInstance } from "fastify";
 import { createApiServer } from "./app.js";
@@ -147,6 +149,10 @@ export async function startApi(
     ),
     weatherService: new WeatherService(
       new KyselyWeatherRepository(databaseRuntime.database),
+      new KyselyIdentityRepository(databaseRuntime.database),
+    ),
+    flightOperationsService: new FlightOperationsService(
+      new KyselyFlightOperationsRepository(databaseRuntime.database),
       new KyselyIdentityRepository(databaseRuntime.database),
     ),
     ...(rateLimitMax === undefined ? {} : { rateLimitMax }),

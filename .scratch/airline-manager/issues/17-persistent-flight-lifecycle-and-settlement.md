@@ -1,7 +1,7 @@
 # Implement the persistent flight lifecycle and settlement
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 10, 11, 12, 13, 14, 15, 16
 
 ## Goal
@@ -56,4 +56,5 @@ immutable outcome snapshot.
 
 ## Comments
 
-None yet.
+- 2026-07-13: Added the version-guarded scheduled/suspended/cancelled/delayed/boarding/departed/diverted/arrived/settled state machine; deterministic booking-lock, dispatch, arrival, and settlement milestones; PostgreSQL-driven catch-up/reconciliation; bounded shortage recovery; exact-once booking, fuel, workforce, aircraft-location/utilization, maintenance, ledger, and outbox effects; staged material freezes; immutable settlement snapshots; and owner-only status/timeline/recovery/settlement APIs.
+- Validation passed frozen install, formatting, lint, eight boundary probes, typecheck, 108 unit tests, production build, blank/repeat/prior-schema migrations, Kysely and OpenAPI/client freshness, 97 PostgreSQL plus 27 API integration tests, 3 real Redis/BullMQ tests, deleted-Redis-job offline flight completion with API/browser absent, and a fresh-volume healthy five-service Compose rebuild.

@@ -2,6 +2,7 @@ import { Queue, Worker, type ConnectionOptions, type Job } from "bullmq";
 import {
   DrainCoordinator,
   DueAircraftDeliveryHandler,
+  FlightMilestoneHandler,
   VersionedHandlerRegistry,
   authorizeReplay,
   classifyJobError,
@@ -14,6 +15,7 @@ import {
 } from "@airline-manager/application";
 import {
   KyselyFleetRepository,
+  KyselyFlightOperationsRepository,
   KyselyRuntimeRepository,
   runtimeIdentity,
   type DatabaseRuntime,
@@ -127,6 +129,11 @@ export class SimulationWorkerRuntime {
         ? { kind: "applied" }
         : { kind: "duplicate" };
     });
+    const operations = new KyselyFlightOperationsRepository(input.databaseRuntime.database);
+    for (const milestone of ["booking_lock", "dispatch", "arrival", "settlement"] as const) {
+      const handler = new FlightMilestoneHandler(operations, milestone, this.#now);
+      this.registry.register(`flight.${milestone}`, 1, (envelope) => handler.handle(envelope));
+    }
     // Ticket 16 transports these persisted intents. Their gameplay-specific transitions remain with later tickets.
     for (const kind of [
       "workforce.checkpoint_due.v1",

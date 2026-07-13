@@ -1633,6 +1633,209 @@ export type GetAircraftDeliveryStatusResponses = {
 export type GetAircraftDeliveryStatusResponse =
   GetAircraftDeliveryStatusResponses[keyof GetAircraftDeliveryStatusResponses];
 
+export type GetFlightSettlementData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    flightId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/flights/{flightId}/settlement";
+};
+
+export type GetFlightSettlementErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFlightSettlementError = GetFlightSettlementErrors[keyof GetFlightSettlementErrors];
+
+export type GetFlightSettlementResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    contentHash: string;
+    flightId: string;
+    id: string;
+    journalEntryIds: Array<string>;
+    materialInputs: {
+      [key: string]: unknown;
+    };
+    outcome: {
+      [key: string]: unknown;
+    };
+    reconciliation: {
+      [key: string]: string;
+    };
+    schemaVersion: 1;
+    settledAt: string;
+    [key: string]: unknown;
+  };
+};
+
+export type GetFlightSettlementResponse =
+  GetFlightSettlementResponses[keyof GetFlightSettlementResponses];
+
+export type GetFlightStatusData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    flightId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/flights/{flightId}/status";
+};
+
+export type GetFlightStatusErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFlightStatusError = GetFlightStatusErrors[keyof GetFlightStatusErrors];
+
+export type GetFlightStatusResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    airlineId: string;
+    departureAt: string;
+    effectiveAt: string;
+    flightNumber: string;
+    id: string;
+    scheduledArrivalAt: string;
+    state:
+      | "scheduled"
+      | "suspended"
+      | "cancelled"
+      | "delayed"
+      | "boarding"
+      | "departed"
+      | "diverted"
+      | "arrived"
+      | "settled";
+    suspension?: {
+      [key: string]: unknown;
+    };
+    timeline: Array<{
+      [key: string]: unknown;
+    }>;
+    version: string;
+    [key: string]: unknown;
+  };
+};
+
+export type GetFlightStatusResponse = GetFlightStatusResponses[keyof GetFlightStatusResponses];
+
 export type AcceptFounderLeaseData = {
   body: {
     optionCode: string;
