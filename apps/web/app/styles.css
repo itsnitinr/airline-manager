@@ -2690,6 +2690,685 @@ th small {
   display: none;
 }
 
+/* Ticket 21 live operations, finance, and persisted notification workstations. */
+.authority-status,
+.reconciliation-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+}
+.authority-status > span,
+.reconciliation-status > span {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+.authority-status[data-connection="connected"] {
+  color: var(--status-positive);
+}
+.authority-status[data-connection="reconnecting"],
+.authority-status[data-connection="stale"],
+.reconciliation-status[data-balanced="false"] {
+  color: var(--status-warning);
+}
+.authority-status[data-connection="offline"],
+.authority-status[data-connection="session_expired"],
+.authority-status[data-connection="forbidden"] {
+  color: var(--status-critical);
+}
+.reconciliation-status[data-balanced="true"] {
+  color: var(--status-positive);
+}
+.state-label {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.42rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-family: "JetBrains Mono Variable", monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.state-label::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.state-label[data-state="departed"],
+.state-label[data-state="arrived"],
+.state-label[data-state="settled"],
+.state-label[data-state="paid"] {
+  color: var(--status-positive);
+}
+.state-label[data-state="delayed"],
+.state-label[data-state="boarding"],
+.state-label[data-state="scheduled"],
+.state-label[data-state="overdue"] {
+  color: var(--status-warning);
+}
+.state-label[data-state="suspended"],
+.state-label[data-state="cancelled"],
+.state-label[data-state="diverted"] {
+  color: var(--status-critical);
+}
+
+.operations-desk {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--map-water);
+}
+.operations-map {
+  position: absolute;
+  inset: 0;
+}
+.operations-board,
+.flight-inspector {
+  position: absolute;
+  z-index: var(--layer-sheet);
+  top: 6rem;
+  bottom: 1rem;
+  overflow: auto;
+  border: 1px solid rgb(117 151 166 / 0.26);
+  border-radius: var(--radius-panel);
+  background: rgb(7 17 24 / 0.94);
+  box-shadow: 0 24px 64px rgb(1 7 12 / 0.45);
+  backdrop-filter: blur(18px) saturate(112%);
+}
+.operations-board {
+  left: 9.25rem;
+  right: 30rem;
+  min-width: 31rem;
+  display: flex;
+  flex-direction: column;
+}
+.flight-inspector {
+  right: 1rem;
+  width: 28rem;
+  padding: 1rem;
+}
+.operations-toolbar,
+.finance-titlebar,
+.notification-titlebar,
+.advanced-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.operations-toolbar {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.operations-toolbar h2,
+.finance-titlebar h2,
+.notification-titlebar h2,
+.advanced-heading h2 {
+  margin: 0.2rem 0;
+  font-size: clamp(1.3rem, 2vw, 2rem);
+}
+.operations-toolbar small,
+.finance-titlebar small,
+.notification-titlebar small,
+.advanced-heading small {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+}
+.change-summary {
+  margin: 0.75rem 1rem 0;
+  padding: 0.75rem;
+  border-left: 3px solid var(--accent);
+  background: rgb(88 183 211 / 0.08);
+}
+.change-summary > p,
+.change-summary li {
+  font-size: 0.7rem;
+}
+.change-summary summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--accent-strong);
+  font-size: 0.68rem;
+}
+.operations-filters,
+.notification-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.operations-filters label,
+.notification-filters label,
+.notification-preferences label {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.62rem;
+}
+.operations-filters select,
+.notification-filters select,
+.notification-preferences select,
+.notification-preferences input {
+  min-height: 44px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-input);
+  color: var(--text-primary);
+  padding: 0.55rem;
+}
+.flight-board-scroll {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+}
+.flight-board-scroll table {
+  min-width: 50rem;
+}
+.flight-board-scroll thead {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  background: #0a1821;
+}
+.flight-board-scroll tr[data-selected="true"] {
+  background: rgb(88 183 211 / 0.09);
+}
+.flight-board-scroll th button {
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.flight-board-scroll td,
+.flight-board-scroll th {
+  vertical-align: top;
+  font-size: 0.68rem;
+}
+.flight-board-scroll td > strong,
+.flight-board-scroll td > small {
+  display: block;
+}
+.flight-board-scroll td > small {
+  margin-top: 0.18rem;
+  color: var(--text-muted);
+}
+.recovery-link {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--status-warning);
+  font-weight: 700;
+}
+.flight-detail {
+  display: grid;
+  gap: 1.2rem;
+}
+.flight-detail > header,
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.flight-detail h2 {
+  font-family: "JetBrains Mono Variable", monospace;
+  font-size: 2rem;
+}
+.flight-detail h3,
+.finance-section h3,
+.notification-preferences h3 {
+  margin-bottom: 0.7rem;
+  font-size: 0.88rem;
+}
+.detail-facts,
+.settlement-ledger,
+.permission-state {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--border-subtle);
+  border-left: 1px solid var(--border-subtle);
+}
+.detail-facts > div,
+.settlement-ledger > div,
+.permission-state > div {
+  min-width: 0;
+  padding: 0.65rem;
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.detail-facts dt,
+.settlement-ledger dt,
+.permission-state dt {
+  color: var(--text-muted);
+  font-size: 0.58rem;
+}
+.detail-facts dd,
+.settlement-ledger dd,
+.permission-state dd {
+  margin: 0.25rem 0 0;
+  overflow-wrap: anywhere;
+  font-size: 0.68rem;
+}
+.settlement-ledger .settlement-result {
+  grid-column: 1 / -1;
+  color: var(--accent-strong);
+}
+.operational-callout {
+  padding: 0.8rem;
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--status-warning);
+  background: rgb(224 185 106 / 0.08);
+  font-size: 0.7rem;
+}
+.operational-callout[data-severity="critical"] {
+  border-left-color: var(--status-critical);
+  background: rgb(239 140 134 / 0.08);
+}
+.state-timeline,
+.result-list,
+.notification-list,
+.journal-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.state-timeline li {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 0.55rem;
+  padding-bottom: 0.8rem;
+}
+.state-timeline li > span {
+  width: 10px;
+  height: 10px;
+  margin-top: 0.18rem;
+  border: 2px solid var(--accent);
+  transform: rotate(45deg);
+}
+.state-timeline p,
+.state-timeline small {
+  font-size: 0.65rem;
+}
+.snapshot-stages,
+.reconciliation-list {
+  display: grid;
+  gap: 0.35rem;
+}
+.snapshot-stages > div,
+.reconciliation-list > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.65fr) 1fr;
+  gap: 0.6rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.64rem;
+}
+.reconciliation-list code {
+  overflow-wrap: anywhere;
+  color: var(--accent-strong);
+}
+
+.finance-workspace,
+.notification-workspace {
+  display: grid;
+  align-content: start;
+  gap: 1.3rem;
+}
+.finance-titlebar,
+.notification-titlebar {
+  position: sticky;
+  z-index: 3;
+  top: -1.75rem;
+  padding: 0.25rem 0 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: #0b1b24;
+}
+.view-switch {
+  display: inline-flex;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+.view-switch button {
+  min-height: 44px;
+  padding: 0.5rem 0.8rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.view-switch button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.finance-overview,
+.advanced-finance {
+  display: grid;
+  gap: 1rem;
+}
+.finance-position {
+  display: grid;
+  grid-template-columns: minmax(16rem, 1.4fr) repeat(2, minmax(11rem, 0.7fr));
+  border-block: 1px solid var(--border-subtle);
+}
+.finance-position > div {
+  min-height: 8.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  border-right: 1px solid var(--border-subtle);
+}
+.finance-position span,
+.finance-position small {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+}
+.finance-position strong {
+  font-family: "JetBrains Mono Variable", monospace;
+  font-size: 1.25rem;
+}
+.finance-position .position-primary strong {
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
+  letter-spacing: -0.05em;
+}
+.finance-position > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0.7rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+}
+.finance-section,
+.statement-section,
+.journal-section {
+  padding: 1rem;
+  border: 1px solid var(--border-subtle);
+  background: rgb(3 12 17 / 0.28);
+}
+.finance-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.result-list li {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.2rem 0.8rem;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.68rem;
+}
+.result-list li span {
+  grid-column: 1;
+  color: var(--text-muted);
+}
+.result-list li strong {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  font-family: "JetBrains Mono Variable", monospace;
+}
+.reporting-basis,
+.bounded-note {
+  color: var(--text-muted);
+  font-size: 0.64rem;
+}
+.statement-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 1px solid var(--border-subtle);
+}
+.statement-summary > div {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border-right: 1px solid var(--border-subtle);
+}
+.statement-summary span {
+  color: var(--text-muted);
+  font-size: 0.58rem;
+}
+.statement-summary strong {
+  font-family: "JetBrains Mono Variable", monospace;
+  font-size: 0.8rem;
+}
+.journal-list details {
+  border-bottom: 1px solid var(--border-subtle);
+}
+.journal-list summary {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+}
+.journal-list summary span {
+  display: grid;
+}
+.journal-list summary small {
+  color: var(--text-muted);
+  font-size: 0.58rem;
+}
+
+.notification-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+  gap: 1rem;
+}
+.notification-inbox,
+.notification-preferences {
+  min-width: 0;
+  border: 1px solid var(--border-subtle);
+  background: rgb(3 12 17 / 0.28);
+}
+.notification-filters {
+  padding: 1rem;
+}
+.notification-list > li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  opacity: 0.72;
+}
+.notification-list > li[data-unread="true"] {
+  opacity: 1;
+  background: rgb(88 183 211 / 0.045);
+}
+.severity-shape {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-family: "JetBrains Mono Variable", monospace;
+  font-size: 0.7rem;
+}
+.notification-list > li[data-severity="warning"] .severity-shape {
+  color: var(--status-warning);
+  border-radius: 0;
+  transform: rotate(45deg);
+}
+.notification-list > li[data-severity="warning"] .severity-shape::first-letter {
+  transform: rotate(-45deg);
+}
+.notification-list > li[data-severity="critical"] .severity-shape {
+  color: var(--status-critical);
+  border-radius: 0;
+}
+.notification-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.notification-heading span {
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+.notification-list p,
+.notification-list small {
+  font-size: 0.68rem;
+}
+.notification-list small {
+  color: var(--text-muted);
+}
+.notification-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+.notification-preferences {
+  align-self: start;
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+.notification-preferences > p,
+.notification-preferences form {
+  font-size: 0.68rem;
+}
+.notification-preferences form,
+.notification-preferences fieldset {
+  display: grid;
+  gap: 0.75rem;
+}
+.notification-preferences fieldset {
+  padding: 0.8rem;
+  border: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 78rem) {
+  .operations-board {
+    right: 26rem;
+  }
+  .flight-inspector {
+    width: 24rem;
+  }
+  .statement-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 56.25rem) {
+  .operations-desk {
+    position: relative;
+    min-height: calc(100dvh - 68px);
+    padding: 5.5rem 0.75rem 1rem;
+    overflow: visible;
+  }
+  .operations-map,
+  .operations-board,
+  .flight-inspector {
+    position: relative;
+    inset: auto;
+    width: auto;
+  }
+  .operations-map {
+    height: 44dvh;
+    min-height: 22rem;
+    margin-inline: -0.75rem;
+  }
+  .operations-board,
+  .flight-inspector {
+    min-width: 0;
+    margin-top: 0.75rem;
+    overflow: visible;
+    backdrop-filter: none;
+  }
+  .flight-board-scroll {
+    max-height: 34rem;
+  }
+  .flight-inspector {
+    padding: 1rem;
+  }
+  .finance-position,
+  .finance-split,
+  .notification-layout {
+    grid-template-columns: 1fr;
+  }
+  .finance-titlebar,
+  .notification-titlebar {
+    top: 0;
+  }
+  .statement-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .notification-preferences {
+    order: -1;
+  }
+  .mobile-nav {
+    grid-template-columns: repeat(8, minmax(72px, 1fr));
+  }
+}
+
+@media (max-width: 40rem) {
+  .operations-toolbar,
+  .finance-titlebar,
+  .notification-titlebar,
+  .advanced-heading {
+    display: grid;
+  }
+  .operations-filters,
+  .notification-filters,
+  .detail-facts,
+  .settlement-ledger,
+  .permission-state,
+  .statement-summary {
+    grid-template-columns: 1fr;
+  }
+  .finance-position {
+    grid-template-columns: 1fr;
+  }
+  .finance-position > div {
+    min-height: 7rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .flight-board-scroll table,
+  .table-scroll table {
+    min-width: 44rem;
+  }
+  .snapshot-stages > div,
+  .reconciliation-list > div {
+    grid-template-columns: 1fr;
+  }
+  .notification-actions .button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .operations-board,
+  .flight-inspector {
+    background: #08151d;
+    backdrop-filter: none;
+  }
+}
+
 @keyframes skeleton {
   to {
     background-position: -120% 0;

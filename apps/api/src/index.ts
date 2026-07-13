@@ -16,6 +16,7 @@ import {
   KyselyMaintenanceRepository,
   KyselyWeatherRepository,
   KyselyFlightOperationsRepository,
+  KyselyFinanceReadRepository,
   KyselyNotificationRepository,
   createDatabaseRuntime,
   createInfrastructureReadinessCheck,
@@ -32,6 +33,7 @@ import {
   MaintenanceService,
   WeatherService,
   FlightOperationsService,
+  FinanceQueryService,
   NotificationService,
 } from "@airline-manager/application";
 import type { FastifyInstance } from "fastify";
@@ -163,6 +165,10 @@ export async function startApi(
     ),
     flightOperationsService: new FlightOperationsService(
       new KyselyFlightOperationsRepository(databaseRuntime.database),
+      new KyselyIdentityRepository(databaseRuntime.database),
+    ),
+    financeQueryService: new FinanceQueryService(
+      new KyselyFinanceReadRepository(databaseRuntime.database),
       new KyselyIdentityRepository(databaseRuntime.database),
     ),
     notificationService: new NotificationService(

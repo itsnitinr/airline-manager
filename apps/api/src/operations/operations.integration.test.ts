@@ -70,6 +70,21 @@ function server(playerId: string, owns: boolean) {
     advanceMilestone: async () => "noop",
     status: async () => status,
     settlement: async () => settlement,
+    board: async () => ({
+      asOf: "2026-07-20T12:00:00.000Z",
+      from: "2026-07-20T00:00:00.000Z",
+      to: "2026-07-21T00:00:00.000Z",
+      items: [],
+      truncated: false,
+    }),
+    changes: async () => ({
+      asOf: "2026-07-20T12:00:00.000Z",
+      since: "2026-07-19T12:00:00.000Z",
+      through: "2026-07-20T12:00:00.000Z",
+      total: 0,
+      byState: {},
+      items: [],
+    }),
   };
   app = createApiServer({
     logger: false,

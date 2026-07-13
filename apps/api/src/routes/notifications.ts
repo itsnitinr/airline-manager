@@ -1,9 +1,11 @@
 import type { AuthorizationContext, NotificationService } from "@airline-manager/application";
 import {
   errorEnvelopeSchema,
+  notificationCenterResponseSchema,
   notificationListResponseSchema,
   notificationPreferencesSchema,
   notificationReadRequestSchema,
+  notificationMarkAllResponseSchema,
   playerNotificationSchema,
   type NotificationPreferencesRequest,
   type NotificationReadRequest,
@@ -74,6 +76,61 @@ export function registerNotificationRoutes(
     },
     (request) =>
       required().markRead(request.params.notificationId, request.body.read, context(request)),
+  );
+  app.get<{
+    Querystring: {
+      cursor?: string;
+      limit?: number;
+      severity?: string;
+      category?: string;
+      read?: "all" | "read" | "unread";
+    };
+  }>(
+    "/v1/notification-center",
+    {
+      schema: {
+        operationId: "getNotificationCenter",
+        tags: ["notifications"],
+        querystring: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            cursor: cursorSchema,
+            limit: { type: "integer", minimum: 1, maximum: 100, default: 50 },
+            severity: { type: "string" },
+            category: { type: "string" },
+            read: { type: "string", enum: ["all", "read", "unread"], default: "all" },
+          },
+        },
+        response: { 200: notificationCenterResponseSchema, ...errors },
+      },
+    },
+    (request) =>
+      required().center(
+        {
+          ...(request.query.cursor ? { beforeEventId: BigInt(request.query.cursor) } : {}),
+          limit: request.query.limit ?? 50,
+          ...(request.query.severity
+            ? { severities: request.query.severity.split(",") as never }
+            : {}),
+          ...(request.query.category
+            ? { categories: request.query.category.split(",") as never }
+            : {}),
+          readState: request.query.read ?? "all",
+        },
+        context(request),
+      ),
+  );
+  app.post(
+    "/v1/notifications/read-all",
+    {
+      schema: {
+        operationId: "markAllNotificationsRead",
+        tags: ["notifications"],
+        response: { 200: notificationMarkAllResponseSchema, ...errors },
+      },
+    },
+    (request) => required().markAllRead(context(request)),
   );
   app.get(
     "/v1/notification-preferences",

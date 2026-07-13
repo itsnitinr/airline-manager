@@ -6,7 +6,11 @@ import type {
   ExchangeRateImport,
   ExchangeRateRepository,
   ExactExchangeRate,
+  FinanceOverview,
+  FinanceReadRepository,
+  FinanceStatements,
   ImportedExchangeRates,
+  JournalPage,
   LedgerBook,
   LedgerReportRow,
   LedgerReports,
@@ -350,6 +354,370 @@ export class KyselyLedgerRepository implements LedgerRepository {
       read("ledger_cash_flow_report", "cash_flow"),
     ]);
     return { cash, profitAndLoss, balanceSheet, cashFlow };
+  }
+}
+
+export class KyselyFinanceReadRepository implements FinanceReadRepository {
+  public constructor(private readonly database: Database) {}
+
+  private async book(playerAccountId: string, airlineId: string) {
+    const result = await sql<{ id: string; reporting_currency: CurrencyCode }>`SELECT book.id,
+      book.reporting_currency FROM ledger_books book
+      JOIN resource_ownerships ownership ON ownership.resource_type='airline'
+        AND ownership.resource_id=book.owner_id
+      WHERE book.owner_type='airline' AND book.owner_id=${airlineId}::uuid
+        AND ownership.player_account_id=${playerAccountId}::uuid`.execute(this.database);
+    const row = result.rows[0];
+    if (!row) throw new Error("Finance report is unavailable.");
+    return row;
+  }
+
+  public async overview(
+    playerAccountId: string,
+    airlineId: string,
+    asOf: Date,
+  ): Promise<FinanceOverview> {
+    const book = await this.book(playerAccountId, airlineId);
+    const horizon = new Date(asOf.getTime() + 30 * 86_400_000);
+    const [cash, obligations, routes, fuel, results, currencies] = await Promise.all([
+      sql<{ amount: string }>`SELECT COALESCE(sum(CASE posting.side WHEN 'debit'
+        THEN posting.reporting_amount_minor ELSE -posting.reporting_amount_minor END),0)::text AS amount
+        FROM ledger_postings posting JOIN ledger_accounts account ON account.id=posting.account_id
+        JOIN journal_entries journal ON journal.id=posting.journal_entry_id AND journal.status='posted'
+        WHERE account.ledger_book_id=${book.id}::uuid AND account.is_cash
+          AND journal.occurred_at<=${asOf.toISOString()}::timestamptz`.execute(this.database),
+      sql<{
+        id: string;
+        kind: "founder_loan" | "operating_lease";
+        due_at: Date;
+        amount_minor: string;
+        currency: CurrencyCode;
+        status: "scheduled" | "overdue";
+        source_id: string;
+      }>`SELECT * FROM (
+        SELECT loan.id::text || ':' || schedule.installment_number AS id,
+          'founder_loan'::text AS kind, schedule.due_at, schedule.total_minor::text AS amount_minor,
+          loan.currency, schedule.status, loan.id AS source_id
+        FROM founding_loans loan JOIN founding_loan_schedule schedule ON schedule.loan_id=loan.id
+        WHERE loan.airline_id=${airlineId}::uuid AND schedule.status IN ('scheduled','overdue')
+        UNION ALL
+        SELECT lease.id::text || ':' || schedule.payment_number AS id,
+          'operating_lease'::text AS kind, schedule.due_at, schedule.amount_minor::text,
+          lease.currency, schedule.status, lease.id AS source_id
+        FROM operating_leases lease JOIN operating_lease_payment_schedule schedule
+          ON schedule.lease_id=lease.id
+        WHERE lease.airline_id=${airlineId}::uuid AND schedule.status IN ('scheduled','overdue')
+      ) obligation WHERE due_at<=${horizon.toISOString()}::timestamptz ORDER BY due_at LIMIT 100`.execute(
+        this.database,
+      ),
+      sql<{
+        route_id: string;
+        origin: string;
+        destination: string;
+        revenue: string;
+        cost: string;
+        result: string;
+        flights: number;
+      }>`SELECT route.id AS route_id, origin.iata_code AS origin,
+        destination.iata_code AS destination,
+        COALESCE(sum((snapshot.outcome->>'passengerRevenueMinor')::bigint),0)::text AS revenue,
+        COALESCE(sum((snapshot.outcome->>'passengerRevenueMinor')::bigint
+          - (snapshot.outcome->>'operatingResultMinor')::bigint),0)::text AS cost,
+        COALESCE(sum((snapshot.outcome->>'operatingResultMinor')::bigint),0)::text AS result,
+        count(snapshot.id)::integer AS flights
+        FROM airline_routes route JOIN curated_airports origin ON origin.id=route.origin_airport_id
+        JOIN curated_airports destination ON destination.id=route.destination_airport_id
+        LEFT JOIN dated_flights flight ON flight.route_id=route.id
+        LEFT JOIN settled_flight_snapshots snapshot ON snapshot.flight_id=flight.id
+          AND snapshot.settled_at<=${asOf.toISOString()}::timestamptz
+        WHERE route.airline_id=${airlineId}::uuid GROUP BY route.id, origin.iata_code,
+          destination.iata_code ORDER BY result DESC, route.id LIMIT 100`.execute(this.database),
+      sql<{
+        on_hand_kg: string;
+        inventory_value_minor: string;
+        weighted_unit_cost_numerator: string;
+        weighted_unit_cost_denominator: string;
+      }>`SELECT on_hand_kg::text, inventory_value_minor::text,
+        inventory_value_minor::text AS weighted_unit_cost_numerator,
+        CASE WHEN on_hand_kg=0 THEN '1' ELSE on_hand_kg::text END AS weighted_unit_cost_denominator
+        FROM airline_fuel_inventories WHERE airline_id=${airlineId}::uuid`.execute(this.database),
+      sql<{
+        flight_id: string;
+        flight_number: string;
+        route_id: string;
+        settled_at: Date;
+        revenue: string;
+        cost: string;
+        result: string;
+      }>`SELECT flight.id AS flight_id, flight.flight_number, flight.route_id,
+        snapshot.settled_at, snapshot.outcome->>'passengerRevenueMinor' AS revenue,
+        ((snapshot.outcome->>'passengerRevenueMinor')::bigint
+          - (snapshot.outcome->>'operatingResultMinor')::bigint)::text AS cost,
+        snapshot.outcome->>'operatingResultMinor' AS result
+        FROM settled_flight_snapshots snapshot JOIN dated_flights flight ON flight.id=snapshot.flight_id
+        JOIN airline_routes route ON route.id=flight.route_id
+        WHERE route.airline_id=${airlineId}::uuid AND snapshot.settled_at<=${asOf.toISOString()}::timestamptz
+        ORDER BY snapshot.settled_at DESC LIMIT 12`.execute(this.database),
+      sql<{ transaction_currency: CurrencyCode }>`SELECT DISTINCT journal.transaction_currency
+        FROM journal_entries journal WHERE journal.ledger_book_id=${book.id}::uuid
+        AND journal.status='posted' ORDER BY journal.transaction_currency`.execute(this.database),
+    ]);
+    const cashMinor = BigInt(cash.rows[0]?.amount ?? "0");
+    const upcoming = obligations.rows.reduce((sum, row) => sum + BigInt(row.amount_minor), 0n);
+    const daily = upcoming === 0n ? 0n : (upcoming + 29n) / 30n;
+    return {
+      asOf: asOf.toISOString(),
+      reportingCurrency: book.reporting_currency,
+      supportedTransactionCurrencies:
+        currencies.rows.length > 0
+          ? currencies.rows.map(({ transaction_currency }) => transaction_currency)
+          : [book.reporting_currency],
+      cashMinor: cashMinor.toString(),
+      upcomingObligationsMinor: upcoming.toString(),
+      runwayDays: daily > 0n ? Number(cashMinor / daily) : null,
+      runwayHorizonDays: 30,
+      runwayExplanation:
+        daily > 0n
+          ? "Cash divided by the average scheduled founder-loan and operating-lease obligations due in the next 30 days. Forecast operations are excluded."
+          : "No founder-loan or operating-lease obligation is due in the next 30 days; a bounded obligation-only runway is not meaningful.",
+      obligations: obligations.rows.map((row) => ({
+        id: row.id,
+        kind: row.kind,
+        dueAt: row.due_at.toISOString(),
+        amountMinor: row.amount_minor,
+        currency: row.currency,
+        status: row.status,
+        sourceId: row.source_id,
+      })),
+      routeProfitability: routes.rows.map((row) => ({
+        routeId: row.route_id,
+        originIataCode: row.origin,
+        destinationIataCode: row.destination,
+        realizedRevenueMinor: row.revenue,
+        realizedCostMinor: row.cost,
+        operatingResultMinor: row.result,
+        settledFlights: row.flights,
+      })),
+      fuel: {
+        onHandKg: fuel.rows[0]?.on_hand_kg ?? "0",
+        inventoryValueMinor: fuel.rows[0]?.inventory_value_minor ?? "0",
+        weightedUnitCostNumerator: fuel.rows[0]?.weighted_unit_cost_numerator ?? "0",
+        weightedUnitCostDenominator: fuel.rows[0]?.weighted_unit_cost_denominator ?? "1",
+      },
+      recentResults: results.rows.map((row) => ({
+        flightId: row.flight_id,
+        flightNumber: row.flight_number,
+        routeId: row.route_id,
+        settledAt: row.settled_at.toISOString(),
+        revenueMinor: row.revenue,
+        costMinor: row.cost,
+        operatingResultMinor: row.result,
+      })),
+    };
+  }
+
+  public async statements(
+    playerAccountId: string,
+    airlineId: string,
+    from: Date,
+    to: Date,
+  ): Promise<FinanceStatements> {
+    const book = await this.book(playerAccountId, airlineId);
+    type StatementRow = { code: string; name: string; account_type: string; amount: string };
+    const [profitAndLoss, balanceSheet, cashFlow, balanceCheck, journalCheck, lifetimeEarnings] =
+      await Promise.all([
+        sql<StatementRow>`SELECT account.code, account.name, account.account_type,
+          sum(CASE WHEN account.account_type='revenue' THEN CASE posting.side WHEN 'credit'
+            THEN posting.reporting_amount_minor ELSE -posting.reporting_amount_minor END
+            ELSE CASE posting.side WHEN 'debit' THEN posting.reporting_amount_minor
+            ELSE -posting.reporting_amount_minor END END)::text AS amount
+          FROM ledger_accounts account JOIN ledger_postings posting ON posting.account_id=account.id
+          JOIN journal_entries journal ON journal.id=posting.journal_entry_id AND journal.status='posted'
+          WHERE account.ledger_book_id=${book.id}::uuid AND account.account_type IN ('revenue','expense')
+            AND journal.occurred_at>=${from.toISOString()}::timestamptz
+            AND journal.occurred_at<${to.toISOString()}::timestamptz
+          GROUP BY account.code, account.name, account.account_type ORDER BY account.code`.execute(
+          this.database,
+        ),
+        sql<StatementRow>`SELECT account.code, account.name, account.account_type,
+          sum(CASE WHEN account.normal_balance='debit' THEN CASE posting.side WHEN 'debit'
+            THEN posting.reporting_amount_minor ELSE -posting.reporting_amount_minor END
+            ELSE CASE posting.side WHEN 'credit' THEN posting.reporting_amount_minor
+            ELSE -posting.reporting_amount_minor END END)::text AS amount
+          FROM ledger_accounts account JOIN ledger_postings posting ON posting.account_id=account.id
+          JOIN journal_entries journal ON journal.id=posting.journal_entry_id AND journal.status='posted'
+          WHERE account.ledger_book_id=${book.id}::uuid AND account.account_type IN ('asset','liability','equity')
+            AND journal.occurred_at<${to.toISOString()}::timestamptz
+          GROUP BY account.code, account.name, account.account_type ORDER BY account.code`.execute(
+          this.database,
+        ),
+        sql<{ activity: string; amount: string }>`SELECT journal.cash_flow_activity AS activity,
+          sum(CASE posting.side WHEN 'debit' THEN posting.reporting_amount_minor
+            ELSE -posting.reporting_amount_minor END)::text AS amount
+          FROM ledger_postings posting JOIN ledger_accounts account ON account.id=posting.account_id
+          JOIN journal_entries journal ON journal.id=posting.journal_entry_id AND journal.status='posted'
+          WHERE account.ledger_book_id=${book.id}::uuid AND account.is_cash
+            AND journal.occurred_at>=${from.toISOString()}::timestamptz
+            AND journal.occurred_at<${to.toISOString()}::timestamptz
+          GROUP BY journal.cash_flow_activity ORDER BY journal.cash_flow_activity`.execute(
+          this.database,
+        ),
+        sql<{ difference: string }>`SELECT COALESCE(sum(CASE posting.side WHEN 'debit'
+          THEN posting.reporting_amount_minor ELSE -posting.reporting_amount_minor END),0)::text AS difference
+          FROM ledger_postings posting JOIN journal_entries journal ON journal.id=posting.journal_entry_id
+          WHERE journal.ledger_book_id=${book.id}::uuid AND journal.status='posted'
+            AND journal.occurred_at<${to.toISOString()}::timestamptz`.execute(this.database),
+        sql<{ balanced: boolean }>`SELECT NOT EXISTS (SELECT 1 FROM journal_entries journal
+          JOIN ledger_postings posting ON posting.journal_entry_id=journal.id
+          WHERE journal.ledger_book_id=${book.id}::uuid AND journal.status='posted'
+            AND journal.occurred_at<${to.toISOString()}::timestamptz GROUP BY journal.id
+          HAVING sum(CASE posting.side WHEN 'debit' THEN posting.reporting_amount_minor
+            ELSE -posting.reporting_amount_minor END)<>0) AS balanced`.execute(this.database),
+        sql<{ amount: string }>`SELECT COALESCE(sum(CASE WHEN account.account_type='revenue'
+          THEN CASE posting.side WHEN 'credit' THEN posting.reporting_amount_minor ELSE -posting.reporting_amount_minor END
+          ELSE CASE posting.side WHEN 'debit' THEN -posting.reporting_amount_minor ELSE posting.reporting_amount_minor END END),0)::text AS amount
+          FROM ledger_accounts account JOIN ledger_postings posting ON posting.account_id=account.id
+          JOIN journal_entries journal ON journal.id=posting.journal_entry_id AND journal.status='posted'
+          WHERE account.ledger_book_id=${book.id}::uuid AND account.account_type IN ('revenue','expense')
+            AND journal.occurred_at<${to.toISOString()}::timestamptz`.execute(this.database),
+      ]);
+    const pnlRows = profitAndLoss.rows.map((row) => ({
+      accountCode: row.code,
+      accountName: row.name,
+      group: row.account_type,
+      amountMinor: row.amount,
+    }));
+    const bsRows = balanceSheet.rows.map((row) => ({
+      accountCode: row.code,
+      accountName: row.name,
+      group: row.account_type,
+      amountMinor: row.amount,
+    }));
+    const assets = balanceSheet.rows
+      .filter(({ account_type }) => account_type === "asset")
+      .reduce((sum, row) => sum + BigInt(row.amount), 0n);
+    const liabilitiesEquity = balanceSheet.rows
+      .filter(({ account_type }) => account_type !== "asset")
+      .reduce((sum, row) => sum + BigInt(row.amount), 0n);
+    const currentEarnings = BigInt(lifetimeEarnings.rows[0]?.amount ?? "0");
+    const balanceDifference = assets - liabilitiesEquity - currentEarnings;
+    return {
+      period: { from: from.toISOString(), to: to.toISOString() },
+      asOf: new Date().toISOString(),
+      reportingCurrency: book.reporting_currency,
+      basis: "posted_double_entry_ledger",
+      profitAndLoss: {
+        rows: pnlRows,
+        netIncomeMinor: pnlRows
+          .reduce(
+            (sum, row) => sum + BigInt(row.amountMinor) * (row.group === "revenue" ? 1n : -1n),
+            0n,
+          )
+          .toString(),
+      },
+      balanceSheet: {
+        rows: bsRows,
+        assetsMinor: assets.toString(),
+        liabilitiesAndEquityMinor: liabilitiesEquity.toString(),
+        currentEarningsMinor: currentEarnings.toString(),
+      },
+      cashFlow: {
+        rows: cashFlow.rows.map((row) => ({ group: row.activity, amountMinor: row.amount })),
+        netCashChangeMinor: cashFlow.rows
+          .reduce((sum, row) => sum + BigInt(row.amount), 0n)
+          .toString(),
+      },
+      reconciliation: {
+        journalsBalanced: journalCheck.rows[0]?.balanced ?? false,
+        trialBalanceDifferenceMinor: balanceCheck.rows[0]?.difference ?? "0",
+        balanceSheetDifferenceMinor: balanceDifference.toString(),
+      },
+    };
+  }
+
+  public async journals(
+    playerAccountId: string,
+    airlineId: string,
+    cursor: number,
+    limit: number,
+  ): Promise<JournalPage> {
+    const book = await this.book(playerAccountId, airlineId);
+    const journals = await sql<{
+      id: string;
+      sequence: string;
+      occurred_at: Date;
+      posted_at: Date;
+      description: string;
+      command_type: JournalPage["items"][number]["commandType"];
+      transaction_currency: CurrencyCode;
+    }>`SELECT id, row_number() OVER (ORDER BY occurred_at, id)::text AS sequence,
+      occurred_at, posted_at, description, command_type, transaction_currency
+      FROM journal_entries WHERE ledger_book_id=${book.id}::uuid AND status='posted'
+      ORDER BY occurred_at DESC, id DESC OFFSET ${cursor} LIMIT ${limit + 1}`.execute(
+      this.database,
+    );
+    const page = journals.rows.slice(0, limit);
+    const ids = page.map(({ id }) => id);
+    const lines = ids.length
+      ? await sql<{
+          journal_entry_id: string;
+          account_code: string;
+          account_name: string;
+          side: "debit" | "credit";
+          transaction_amount_minor: string;
+          reporting_amount_minor: string;
+          flight_id: string | null;
+          route_id: string | null;
+          aircraft_id: string | null;
+          contract_id: string | null;
+          airline_id: string | null;
+        }>`SELECT posting.journal_entry_id, account.code AS account_code,
+          account.name AS account_name, posting.side, posting.transaction_amount_minor::text,
+          posting.reporting_amount_minor::text, posting.flight_id, posting.route_id,
+          posting.aircraft_id, posting.contract_id, posting.airline_id
+          FROM ledger_postings posting JOIN ledger_accounts account ON account.id=posting.account_id
+          WHERE posting.journal_entry_id=ANY(${ids}::uuid[])
+          ORDER BY posting.journal_entry_id, posting.line_number`.execute(this.database)
+      : { rows: [] };
+    return {
+      asOf: new Date().toISOString(),
+      reportingCurrency: book.reporting_currency,
+      items: page.map((journal) => {
+        const journalLines = lines.rows.filter(
+          ({ journal_entry_id }) => journal_entry_id === journal.id,
+        );
+        const dimension = journalLines[0];
+        const source = dimension?.flight_id
+          ? { entityType: "flight", entityId: dimension.flight_id }
+          : dimension?.route_id
+            ? { entityType: "route", entityId: dimension.route_id }
+            : dimension?.aircraft_id
+              ? { entityType: "aircraft", entityId: dimension.aircraft_id }
+              : dimension?.contract_id
+                ? { entityType: "contract", entityId: dimension.contract_id }
+                : dimension?.airline_id
+                  ? { entityType: "airline", entityId: dimension.airline_id }
+                  : null;
+        return {
+          id: journal.id,
+          sequence: journal.sequence,
+          occurredAt: journal.occurred_at.toISOString(),
+          postedAt: journal.posted_at.toISOString(),
+          description: journal.description,
+          commandType: journal.command_type,
+          transactionCurrency: journal.transaction_currency,
+          source,
+          lines: journalLines.map((line) => ({
+            accountCode: line.account_code,
+            accountName: line.account_name,
+            side: line.side,
+            transactionAmountMinor: line.transaction_amount_minor,
+            reportingAmountMinor: line.reporting_amount_minor,
+          })),
+        };
+      }),
+      nextCursor: journals.rows.length > limit ? String(cursor + limit) : null,
+    };
   }
 }
 

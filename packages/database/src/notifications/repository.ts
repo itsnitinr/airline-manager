@@ -3,6 +3,8 @@ import {
   notificationIntentForOutbox,
   NotificationDomainError,
   type NotificationPreferences,
+  type NotificationCenter,
+  type NotificationCenterQuery,
   type NotificationRepository,
   type PlayerNotification,
   type RecoveryAction,
@@ -145,10 +147,9 @@ export class KyselyNotificationRepository implements NotificationRepository {
     playerAccountId: string,
     notificationId: string,
     read: boolean,
-    at: Date,
   ): Promise<PlayerNotification> {
     const updated =
-      await sql`UPDATE player_notifications SET read_at=${read ? at.toISOString() : null}::timestamptz
+      await sql`UPDATE player_notifications SET read_at=${read ? sql`CURRENT_TIMESTAMP` : sql`NULL`}
       WHERE id=${notificationId}::uuid AND player_account_id=${playerAccountId}::uuid`.execute(
         this.database,
       );
@@ -158,6 +159,56 @@ export class KyselyNotificationRepository implements NotificationRepository {
       this.database,
     );
     return notificationFromRow(result.rows[0]!);
+  }
+
+  public async center(
+    playerAccountId: string,
+    query: NotificationCenterQuery,
+  ): Promise<NotificationCenter> {
+    const cursor = query.beforeEventId
+      ? sql`AND notification.event_sequence<${query.beforeEventId.toString()}::bigint`
+      : sql``;
+    const severities = query.severities?.length
+      ? sql`AND intent.severity=ANY(${query.severities}::text[])`
+      : sql``;
+    const categories = query.categories?.length
+      ? sql`AND split_part(intent.event_type, '.', 1)=ANY(${query.categories}::text[])`
+      : sql``;
+    const state =
+      query.readState === "read"
+        ? sql`AND notification.read_at IS NOT NULL`
+        : query.readState === "unread"
+          ? sql`AND notification.read_at IS NULL`
+          : sql``;
+    const [items, unread] = await Promise.all([
+      sql<NotificationRow>`${projection}
+        WHERE notification.player_account_id=${playerAccountId}::uuid
+          ${cursor} ${severities} ${categories} ${state}
+        ORDER BY notification.event_sequence DESC LIMIT ${query.limit + 1}`.execute(this.database),
+      sql<{ count: number }>`SELECT count(*)::integer AS count FROM player_notifications
+        WHERE player_account_id=${playerAccountId}::uuid AND read_at IS NULL`.execute(
+        this.database,
+      ),
+    ]);
+    const page = items.rows.slice(0, query.limit);
+    return {
+      asOf: new Date().toISOString(),
+      items: page.map(notificationFromRow),
+      nextCursor: items.rows.length > query.limit ? (page.at(-1)?.event_sequence ?? null) : null,
+      unreadCount: unread.rows[0]?.count ?? 0,
+    };
+  }
+
+  public async markAllRead(
+    playerAccountId: string,
+  ): Promise<Readonly<{ updated: number; readAt: string }>> {
+    const result = await sql<{ read_at: Date }>`UPDATE player_notifications
+      SET read_at=CURRENT_TIMESTAMP WHERE player_account_id=${playerAccountId}::uuid
+        AND read_at IS NULL RETURNING read_at`.execute(this.database);
+    return {
+      updated: Number(result.numAffectedRows ?? 0n),
+      readAt: result.rows[0]?.read_at.toISOString() ?? new Date().toISOString(),
+    };
   }
 
   public async preferences(playerAccountId: string): Promise<NotificationPreferences> {

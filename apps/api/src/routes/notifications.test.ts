@@ -39,10 +39,30 @@ class MemoryNotifications implements NotificationRepository {
       .filter((entry) => BigInt(entry.eventId) > after)
       .slice(0, limit);
   }
-  async markRead(player: string, id: string, read: boolean, at: Date) {
+  async markRead(player: string, id: string, read: boolean) {
     const found = (this.rows.get(player) ?? []).find((entry) => entry.id === id);
     if (!found) throw new Error("Notification is unavailable.");
-    return { ...found, readAt: read ? at.toISOString() : null };
+    return { ...found, readAt: read ? "2026-07-13T12:30:00.000Z" : null };
+  }
+  async center(player: string, query: { limit: number }) {
+    const items = [...(this.rows.get(player) ?? [])].reverse().slice(0, query.limit);
+    return {
+      asOf: "2026-07-13T12:30:00.000Z",
+      items,
+      nextCursor: null,
+      unreadCount: items.filter(({ readAt }) => readAt === null).length,
+    };
+  }
+  async markAllRead(player: string) {
+    const items = this.rows.get(player) ?? [];
+    this.rows.set(
+      player,
+      items.map((entry) => ({ ...entry, readAt: "2026-07-13T12:30:00.000Z" })),
+    );
+    return {
+      updated: items.filter(({ readAt }) => readAt === null).length,
+      readAt: "2026-07-13T12:30:00.000Z",
+    };
   }
   async preferences(player: string) {
     return (
@@ -141,5 +161,21 @@ describe("notification API and recoverable SSE", () => {
       headers: { "x-player": right },
     });
     expect(owned.json()).toMatchObject({ items: [{ eventId: "3" }], nextCursor: "3" });
+    const center = await app.inject({
+      method: "GET",
+      url: "/v1/notification-center?read=unread&limit=10",
+      headers: { "x-player": right },
+    });
+    expect(center.json()).toMatchObject({
+      items: [{ eventId: "3" }],
+      unreadCount: 1,
+      nextCursor: null,
+    });
+    const markAll = await app.inject({
+      method: "POST",
+      url: "/v1/notifications/read-all",
+      headers: { "x-player": right },
+    });
+    expect(markAll.json()).toMatchObject({ updated: 1 });
   });
 });

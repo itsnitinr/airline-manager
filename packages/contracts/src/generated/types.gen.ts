@@ -1470,6 +1470,314 @@ export type GetDepartureWeatherForecastResponses = {
 export type GetDepartureWeatherForecastResponse =
   GetDepartureWeatherForecastResponses[keyof GetDepartureWeatherForecastResponses];
 
+export type ListFinanceJournalsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: {
+    cursor?: number;
+    limit?: number;
+  };
+  url: "/v1/airlines/{airlineId}/finance/journals";
+};
+
+export type ListFinanceJournalsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListFinanceJournalsError = ListFinanceJournalsErrors[keyof ListFinanceJournalsErrors];
+
+export type ListFinanceJournalsResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    asOf: string;
+    items: Array<{
+      [key: string]: unknown;
+    }>;
+    nextCursor: unknown | string;
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+  };
+};
+
+export type ListFinanceJournalsResponse =
+  ListFinanceJournalsResponses[keyof ListFinanceJournalsResponses];
+
+export type GetFinanceOverviewData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/finance/overview";
+};
+
+export type GetFinanceOverviewErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFinanceOverviewError = GetFinanceOverviewErrors[keyof GetFinanceOverviewErrors];
+
+export type GetFinanceOverviewResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    asOf: string;
+    cashMinor: string;
+    fuel: {
+      [key: string]: unknown;
+    };
+    obligations: Array<{
+      [key: string]: unknown;
+    }>;
+    recentResults: Array<{
+      [key: string]: unknown;
+    }>;
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    routeProfitability: Array<{
+      [key: string]: unknown;
+    }>;
+    runwayDays: number | unknown;
+    runwayExplanation: string;
+    runwayHorizonDays: number;
+    supportedTransactionCurrencies: Array<"CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD">;
+    upcomingObligationsMinor: string;
+    [key: string]: unknown;
+  };
+};
+
+export type GetFinanceOverviewResponse =
+  GetFinanceOverviewResponses[keyof GetFinanceOverviewResponses];
+
+export type GetFinanceStatementsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query: {
+    from: string;
+    to: string;
+  };
+  url: "/v1/airlines/{airlineId}/finance/statements";
+};
+
+export type GetFinanceStatementsErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFinanceStatementsError =
+  GetFinanceStatementsErrors[keyof GetFinanceStatementsErrors];
+
+export type GetFinanceStatementsResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    asOf: string;
+    balanceSheet: {
+      [key: string]: unknown;
+    };
+    basis: "posted_double_entry_ledger";
+    cashFlow: {
+      [key: string]: unknown;
+    };
+    period: {
+      [key: string]: unknown;
+    };
+    profitAndLoss: {
+      [key: string]: unknown;
+    };
+    reconciliation: {
+      [key: string]: unknown;
+    };
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    [key: string]: unknown;
+  };
+};
+
+export type GetFinanceStatementsResponse =
+  GetFinanceStatementsResponses[keyof GetFinanceStatementsResponses];
+
 export type ListFleetData = {
   body?: never;
   path: {
@@ -4659,6 +4967,205 @@ export type GetAirlineNextStepGuidanceResponses = {
 export type GetAirlineNextStepGuidanceResponse =
   GetAirlineNextStepGuidanceResponses[keyof GetAirlineNextStepGuidanceResponses];
 
+export type ListOfflineOperationalChangesData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query: {
+    since: string;
+    limit?: number;
+  };
+  url: "/v1/airlines/{airlineId}/operations/changes";
+};
+
+export type ListOfflineOperationalChangesErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListOfflineOperationalChangesError =
+  ListOfflineOperationalChangesErrors[keyof ListOfflineOperationalChangesErrors];
+
+export type ListOfflineOperationalChangesResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    asOf: string;
+    byState: {
+      [key: string]: number;
+    };
+    items: Array<{
+      [key: string]: unknown;
+    }>;
+    since: string;
+    through: string;
+    total: number;
+  };
+};
+
+export type ListOfflineOperationalChangesResponse =
+  ListOfflineOperationalChangesResponses[keyof ListOfflineOperationalChangesResponses];
+
+export type ListOperationalFlightsData = {
+  body?: never;
+  path: {
+    airlineId: string;
+  };
+  query: {
+    from: string;
+    to: string;
+    state?: string;
+    routeId?: string;
+    aircraftId?: string;
+    limit?: number;
+  };
+  url: "/v1/airlines/{airlineId}/operations/flights";
+};
+
+export type ListOperationalFlightsErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type ListOperationalFlightsError =
+  ListOperationalFlightsErrors[keyof ListOperationalFlightsErrors];
+
+export type ListOperationalFlightsResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    asOf: string;
+    from: string;
+    items: Array<{
+      [key: string]: unknown;
+    }>;
+    to: string;
+    truncated: boolean;
+  };
+};
+
+export type ListOperationalFlightsResponse =
+  ListOperationalFlightsResponses[keyof ListOperationalFlightsResponses];
+
 export type ListDirectRoutesData = {
   body?: never;
   path: {
@@ -6968,6 +7475,120 @@ export type SubscribeToEventsResponses = {
 export type SubscribeToEventsResponse =
   SubscribeToEventsResponses[keyof SubscribeToEventsResponses];
 
+export type GetNotificationCenterData = {
+  body?: never;
+  path?: never;
+  query?: {
+    cursor?: string;
+    limit?: number;
+    severity?: string;
+    category?: string;
+    read?: "all" | "read" | "unread";
+  };
+  url: "/v1/notification-center";
+};
+
+export type GetNotificationCenterErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetNotificationCenterError =
+  GetNotificationCenterErrors[keyof GetNotificationCenterErrors];
+
+export type GetNotificationCenterResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    asOf: string;
+    items: Array<{
+      body: string;
+      createdAt: string;
+      eventId: string;
+      eventType: string;
+      id: string;
+      occurredAt: string;
+      readAt: unknown | string;
+      recoveryAction:
+        | unknown
+        | {
+            label: string;
+            path: string;
+            resourceId: string;
+            resourceType: string;
+          };
+      resourceId: string;
+      resourceType: string;
+      severity: "info" | "warning" | "critical";
+      title: string;
+    }>;
+    nextCursor: unknown | string;
+    unreadCount: number;
+  };
+};
+
+export type GetNotificationCenterResponse =
+  GetNotificationCenterResponses[keyof GetNotificationCenterResponses];
+
 export type GetNotificationPreferencesData = {
   body?: never;
   path?: never;
@@ -7378,6 +7999,92 @@ export type SetNotificationReadStateResponses = {
 
 export type SetNotificationReadStateResponse =
   SetNotificationReadStateResponses[keyof SetNotificationReadStateResponses];
+
+export type MarkAllNotificationsReadData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/notifications/read-all";
+};
+
+export type MarkAllNotificationsReadErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type MarkAllNotificationsReadError =
+  MarkAllNotificationsReadErrors[keyof MarkAllNotificationsReadErrors];
+
+export type MarkAllNotificationsReadResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    readAt: string;
+    updated: number;
+  };
+};
+
+export type MarkAllNotificationsReadResponse =
+  MarkAllNotificationsReadResponses[keyof MarkAllNotificationsReadResponses];
 
 export type GetCurrentPlayerCareerData = {
   body?: never;

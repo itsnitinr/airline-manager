@@ -187,6 +187,79 @@ export type FlightStatus = Readonly<{
   timeline: readonly FlightTimelineEntry[];
 }>;
 
+export type FlightBoardAirport = Readonly<{
+  id: string;
+  iataCode: string;
+  name: string;
+  timeZone: string;
+  latitudeDeg: string;
+  longitudeDeg: string;
+}>;
+
+export type FlightBoardItem = Readonly<{
+  id: string;
+  airlineId: string;
+  routeId: string;
+  aircraftId: string;
+  flightNumber: string;
+  state: FlightState;
+  version: string;
+  departureAt: string;
+  scheduledArrivalAt: string;
+  departureLocal: string;
+  arrivalLocal: string;
+  effectiveAt: string;
+  origin: FlightBoardAirport;
+  destination: FlightBoardAirport;
+  aircraft: Readonly<{ serialNumber: string; variant: string; currentAirportId: string | null }>;
+  delayMinutes: number;
+  passengersBooked: string;
+  passengersCarried: string | null;
+  bookedRevenueMinor: string;
+  reportingCurrency: string;
+  weatherImpact: Readonly<{ summary: string; provenance: string }> | null;
+  alerts: readonly Readonly<{
+    kind: "suspension" | "fuel" | "maintenance" | "workforce" | "weather";
+    severity: "warning" | "critical";
+    label: string;
+    explanation: string;
+    recoveryPath: string;
+  }>[];
+}>;
+
+export type FlightBoardQuery = Readonly<{
+  from: Date;
+  to: Date;
+  states?: readonly FlightState[];
+  routeId?: string;
+  aircraftId?: string;
+  limit: number;
+}>;
+
+export type FlightBoard = Readonly<{
+  asOf: string;
+  from: string;
+  to: string;
+  items: readonly FlightBoardItem[];
+  truncated: boolean;
+}>;
+
+export type OfflineFlightChanges = Readonly<{
+  asOf: string;
+  since: string;
+  through: string;
+  total: number;
+  byState: Readonly<Partial<Record<FlightState, number>>>;
+  items: readonly Readonly<{
+    flightId: string;
+    flightNumber: string;
+    fromState: FlightState | null;
+    toState: FlightState;
+    effectiveAt: string;
+    explanation: string;
+  }>[];
+}>;
+
 export type SettledFlightSnapshot = Readonly<{
   id: string;
   flightId: string;
@@ -214,4 +287,11 @@ export interface FlightOperationsRepository {
     airlineId: string,
     flightId: string,
   ): Promise<SettledFlightSnapshot>;
+  board(playerAccountId: string, airlineId: string, query: FlightBoardQuery): Promise<FlightBoard>;
+  changes(
+    playerAccountId: string,
+    airlineId: string,
+    since: Date,
+    limit: number,
+  ): Promise<OfflineFlightChanges>;
 }

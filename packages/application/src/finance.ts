@@ -1,9 +1,61 @@
 import type {
+  FinanceOverview,
+  FinanceReadRepository,
+  FinanceStatements,
+  IdentityRepository,
+  JournalPage,
   LedgerCommandType,
   LedgerRepository,
   PostJournalCommand,
   PostedJournal,
 } from "@airline-manager/domain";
+import { requireOwnedResource, requireVerifiedPlayer } from "./authorization.js";
+import type { QueryContext } from "./index.js";
+
+export class FinanceQueryService {
+  public constructor(
+    private readonly reports: FinanceReadRepository,
+    private readonly identity: Pick<IdentityRepository, "ownsResource">,
+    private readonly now: () => Date = () => new Date(),
+  ) {}
+
+  private async player(airlineId: string, context: QueryContext): Promise<string> {
+    requireVerifiedPlayer(context.authorization);
+    await requireOwnedResource(this.identity, context.authorization, "airline", airlineId);
+    return context.authorization.playerAccountId;
+  }
+
+  public async overview(airlineId: string, context: QueryContext): Promise<FinanceOverview> {
+    return this.reports.overview(await this.player(airlineId, context), airlineId, this.now());
+  }
+
+  public async statements(
+    airlineId: string,
+    from: Date,
+    to: Date,
+    context: QueryContext,
+  ): Promise<FinanceStatements> {
+    const player = await this.player(airlineId, context);
+    if (to <= from || to.getTime() - from.getTime() > 366 * 86_400_000) {
+      throw new Error("Financial reporting period must be positive and no longer than 366 days.");
+    }
+    return this.reports.statements(player, airlineId, from, to);
+  }
+
+  public async journals(
+    airlineId: string,
+    cursor: number,
+    limit: number,
+    context: QueryContext,
+  ): Promise<JournalPage> {
+    return this.reports.journals(
+      await this.player(airlineId, context),
+      airlineId,
+      Math.max(0, cursor),
+      Math.min(100, Math.max(1, limit)),
+    );
+  }
+}
 
 type TypedPostingCommand = Omit<PostJournalCommand, "commandType">;
 

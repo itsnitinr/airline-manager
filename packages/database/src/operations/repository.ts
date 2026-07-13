@@ -4,10 +4,14 @@ import {
   FlightLifecycleError,
   realizeFlight,
   type CurrencyCode,
+  type FlightBoard,
+  type FlightBoardQuery,
+  type FlightBoardItem,
   type FlightMilestone,
   type FlightOperationsRepository,
   type FlightState,
   type FlightStatus,
+  type OfflineFlightChanges,
   type RealizedFlightOutcome,
   type SettledFlightSnapshot,
 } from "@airline-manager/domain";
@@ -861,6 +865,219 @@ export class KyselyFlightOperationsRepository implements FlightOperationsReposit
       journalEntryIds: snapshot.journal_entry_ids,
       reconciliation: snapshot.reconciliation_references,
       contentHash: snapshot.content_hash,
+    };
+  }
+
+  public async board(
+    playerAccountId: string,
+    airlineId: string,
+    query: FlightBoardQuery,
+  ): Promise<FlightBoard> {
+    type Row = Readonly<{
+      id: string;
+      route_id: string;
+      aircraft_id: string;
+      flight_number: string;
+      status: FlightState;
+      version: string;
+      departure_at: Date;
+      arrival_at: Date;
+      departure_local: string;
+      arrival_local: string;
+      state_effective_at: Date;
+      origin_id: string;
+      origin_iata: string;
+      origin_name: string;
+      origin_timezone: string;
+      origin_latitude: string;
+      origin_longitude: string;
+      destination_id: string;
+      destination_iata: string;
+      destination_name: string;
+      destination_timezone: string;
+      destination_latitude: string;
+      destination_longitude: string;
+      serial_number: string;
+      variant_code: string;
+      current_airport_id: string | null;
+      delay_minutes: number | null;
+      booked_passengers: string;
+      passengers_carried: string | null;
+      realized_revenue_minor: string;
+      reporting_currency: string;
+      forecast_snapshot: Record<string, unknown>;
+      suspension_reason_code: string | null;
+      suspension_explanation: string | null;
+      maintenance_blocking: boolean;
+    }>;
+    const states = query.states?.length ? sql`AND df.status = ANY(${query.states}::text[])` : sql``;
+    const route = query.routeId ? sql`AND df.route_id=${query.routeId}::uuid` : sql``;
+    const aircraft = query.aircraftId ? sql`AND df.aircraft_id=${query.aircraftId}::uuid` : sql``;
+    const result = await sql<Row>`SELECT df.id, df.route_id, df.aircraft_id, df.flight_number,
+      df.status, df.version::text, df.departure_at, df.arrival_at, df.departure_local,
+      df.arrival_local, df.state_effective_at, origin.id AS origin_id,
+      origin.iata_code AS origin_iata, origin.name AS origin_name,
+      origin.timezone_name AS origin_timezone, origin.latitude_deg::text AS origin_latitude,
+      origin.longitude_deg::text AS origin_longitude, destination.id AS destination_id,
+      destination.iata_code AS destination_iata, destination.name AS destination_name,
+      destination.timezone_name AS destination_timezone,
+      destination.latitude_deg::text AS destination_latitude,
+      destination.longitude_deg::text AS destination_longitude, item.serial_number,
+      variant.code AS variant_code, item.current_airport_id, result.delay_minutes,
+      offer.booked_passengers::text, result.passengers_carried::text,
+      offer.realized_revenue_minor::text, book.reporting_currency, df.forecast_snapshot,
+      df.suspension_reason_code, df.suspension_explanation,
+      EXISTS (SELECT 1 FROM maintenance_faults fault WHERE fault.aircraft_id=df.aircraft_id
+        AND fault.status='active' AND fault.grounds_aircraft) AS maintenance_blocking
+      FROM dated_flights df
+      JOIN airline_routes airline_route ON airline_route.id=df.route_id
+      JOIN resource_ownerships ownership ON ownership.resource_type='airline'
+        AND ownership.resource_id=airline_route.airline_id
+      JOIN curated_airports origin ON origin.id=df.origin_airport_id
+      JOIN curated_airports destination ON destination.id=df.destination_airport_id
+      JOIN aircraft item ON item.id=df.aircraft_id
+      JOIN curated_aircraft_variants variant ON variant.id=item.aircraft_variant_id
+      JOIN commercial_flight_offers offer ON offer.id=df.id
+      JOIN ledger_books book ON book.owner_type='airline' AND book.owner_id=airline_route.airline_id
+      LEFT JOIN flight_operational_results result ON result.flight_id=df.id
+      WHERE ownership.player_account_id=${playerAccountId}::uuid
+        AND airline_route.airline_id=${airlineId}::uuid
+        AND df.departure_at>=${query.from.toISOString()}::timestamptz
+        AND df.departure_at<${query.to.toISOString()}::timestamptz
+        ${states} ${route} ${aircraft}
+      ORDER BY df.departure_at, df.id LIMIT ${query.limit + 1}`.execute(this.database);
+
+    const items = result.rows.slice(0, query.limit).map((row): FlightBoardItem => {
+      const alerts: FlightBoardItem["alerts"][number][] = [];
+      if (row.suspension_reason_code) {
+        const reason = row.suspension_reason_code;
+        const kind = reason.includes("fuel")
+          ? "fuel"
+          : reason.includes("workforce")
+            ? "workforce"
+            : reason.includes("maintenance")
+              ? "maintenance"
+              : "suspension";
+        const view = kind === "fuel" ? "fuel" : kind === "workforce" ? "workforce" : "maintenance";
+        alerts.push({
+          kind,
+          severity: "critical",
+          label: `${kind === "suspension" ? "Operational" : kind} suspension`,
+          explanation:
+            row.suspension_explanation ?? "The authoritative lifecycle suspended this flight.",
+          recoveryPath: `/app?view=${view}`,
+        });
+      }
+      if (row.maintenance_blocking && !alerts.some(({ kind }) => kind === "maintenance")) {
+        alerts.push({
+          kind: "maintenance",
+          severity: "critical",
+          label: "Aircraft fault",
+          explanation: "An active persisted fault currently grounds this aircraft.",
+          recoveryPath: `/app?view=maintenance&aircraft=${row.aircraft_id}`,
+        });
+      }
+      const weatherSummary = Object.keys(row.forecast_snapshot ?? {}).length
+        ? "Generated operational forecast is frozen with this dated flight."
+        : null;
+      return {
+        id: row.id,
+        airlineId,
+        routeId: row.route_id,
+        aircraftId: row.aircraft_id,
+        flightNumber: row.flight_number,
+        state: row.status,
+        version: row.version,
+        departureAt: row.departure_at.toISOString(),
+        scheduledArrivalAt: row.arrival_at.toISOString(),
+        departureLocal: row.departure_local,
+        arrivalLocal: row.arrival_local,
+        effectiveAt: row.state_effective_at.toISOString(),
+        origin: {
+          id: row.origin_id,
+          iataCode: row.origin_iata,
+          name: row.origin_name,
+          timeZone: row.origin_timezone,
+          latitudeDeg: row.origin_latitude,
+          longitudeDeg: row.origin_longitude,
+        },
+        destination: {
+          id: row.destination_id,
+          iataCode: row.destination_iata,
+          name: row.destination_name,
+          timeZone: row.destination_timezone,
+          latitudeDeg: row.destination_latitude,
+          longitudeDeg: row.destination_longitude,
+        },
+        aircraft: {
+          serialNumber: row.serial_number,
+          variant: row.variant_code,
+          currentAirportId: row.current_airport_id,
+        },
+        delayMinutes: row.delay_minutes ?? 0,
+        passengersBooked: row.booked_passengers,
+        passengersCarried: row.passengers_carried,
+        bookedRevenueMinor: row.realized_revenue_minor,
+        reportingCurrency: row.reporting_currency,
+        weatherImpact: weatherSummary
+          ? { summary: weatherSummary, provenance: "dated_flights.forecast_snapshot" }
+          : null,
+        alerts,
+      };
+    });
+    const asOf = new Date().toISOString();
+    return {
+      asOf,
+      from: query.from.toISOString(),
+      to: query.to.toISOString(),
+      items,
+      truncated: result.rows.length > query.limit,
+    };
+  }
+
+  public async changes(
+    playerAccountId: string,
+    airlineId: string,
+    since: Date,
+    limit: number,
+  ): Promise<OfflineFlightChanges> {
+    const result = await sql<{
+      flight_id: string;
+      flight_number: string;
+      from_state: FlightState | null;
+      to_state: FlightState;
+      effective_at: Date;
+      explanation: string;
+    }>`SELECT history.flight_id, flight.flight_number, history.from_state, history.to_state,
+      history.effective_at, history.explanation
+      FROM flight_transition_history history
+      JOIN dated_flights flight ON flight.id=history.flight_id
+      JOIN airline_routes route ON route.id=flight.route_id
+      JOIN resource_ownerships ownership ON ownership.resource_type='airline'
+        AND ownership.resource_id=route.airline_id
+      WHERE ownership.player_account_id=${playerAccountId}::uuid
+        AND route.airline_id=${airlineId}::uuid
+        AND history.effective_at>${since.toISOString()}::timestamptz
+      ORDER BY history.effective_at DESC, history.sequence DESC LIMIT ${limit}`.execute(
+      this.database,
+    );
+    const byState: Partial<Record<FlightState, number>> = {};
+    for (const row of result.rows) byState[row.to_state] = (byState[row.to_state] ?? 0) + 1;
+    const through = new Date();
+    return {
+      asOf: through.toISOString(),
+      since: since.toISOString(),
+      through: through.toISOString(),
+      total: result.rows.length,
+      byState,
+      items: result.rows.map((row) => ({
+        flightId: row.flight_id,
+        flightNumber: row.flight_number,
+        fromState: row.from_state,
+        toState: row.to_state,
+        effectiveAt: row.effective_at.toISOString(),
+        explanation: row.explanation,
+      })),
     };
   }
 }

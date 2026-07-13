@@ -69,7 +69,7 @@ async function registerVerifyAndSignIn(
     await page.screenshot({ path: "test-results/visual-qa/onboarding-mobile.png", fullPage: true });
 }
 
-async function foundAirline(page: Page, suffix: string) {
+async function foundAirline(page: Page, suffix: string, aircraftName: RegExp = /ATR.*72-600/) {
   await page.getByLabel("Airline name").fill(`Meridian Coast ${suffix}`);
   await page.getByRole("textbox", { name: "Tail mark", exact: true }).fill("MC");
   await page.getByRole("checkbox", { name: /This is a fictional airline/ }).check();
@@ -98,7 +98,7 @@ async function foundAirline(page: Page, suffix: string) {
       path: "test-results/visual-qa/founder-aircraft-comparison-mobile.png",
     });
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-  await page.getByRole("tab", { name: /ATR.*72-600/ }).click();
+  await page.getByRole("tab", { name: aircraftName }).click();
   await page.getByRole("button", { name: "Preview schedule" }).click();
   await expect(page.getByText("Acceptance schedule")).toBeVisible();
   await page.getByRole("button", { name: "Accept founder lease" }).click();
@@ -249,6 +249,43 @@ async function exerciseTicket20Planning(page: Page) {
 }
 
 test.describe.serial("player onboarding", () => {
+  test("pending founder delivery keeps monitoring destinations available", async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(180_000);
+    const stamp = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const email = `pending-${stamp}@example.test`;
+    await registerVerifyAndSignIn(page, request, email, "Initial-password-2026");
+    await foundAirline(page, stamp.slice(-6), /Airbus.*A320neo/);
+
+    await page.goto("/app?view=fleet");
+    await expect(
+      page.getByRole("heading", { name: "Aircraft obligations and readiness" }),
+    ).toBeVisible();
+    await expect(page.getByText("Delivery pending")).toBeVisible();
+    await expect(page.getByText("Awaiting delivery")).toBeVisible();
+
+    await page.goto("/app?view=maintenance");
+    await expect(
+      page.getByRole("heading", { name: "Maintenance readiness unavailable" }),
+    ).toBeVisible();
+    await expect(page.getByText("Maintenance begins after delivery")).toBeVisible();
+
+    for (const [destination, heading] of [
+      ["operations", "Flight board"],
+      ["finance", "Financial control"],
+      ["notifications", "Alerts and notifications"],
+    ] as const) {
+      await page.goto(`/app?view=${destination}`);
+      await expect(page.locator(".application-shell")).toHaveAttribute(
+        "data-planning-view",
+        destination,
+      );
+      await expect(page.getByRole("heading", { name: heading })).toBeVisible();
+    }
+  });
+
   test("mobile registration, verification, keyboard airport selection, founding, lease, and shell recovery", async ({
     page,
     request,

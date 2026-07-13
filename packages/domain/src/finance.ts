@@ -154,6 +154,123 @@ export interface ExchangeRateRepository {
   ): Promise<(ExactExchangeRate & { importId: string; effectiveAt: Date }) | undefined>;
 }
 
+export type FinancialObligation = Readonly<{
+  id: string;
+  kind: "founder_loan" | "operating_lease";
+  dueAt: string;
+  amountMinor: string;
+  currency: CurrencyCode;
+  status: "scheduled" | "overdue";
+  sourceId: string;
+}>;
+
+export type RouteProfitability = Readonly<{
+  routeId: string;
+  originIataCode: string;
+  destinationIataCode: string;
+  realizedRevenueMinor: string;
+  realizedCostMinor: string;
+  operatingResultMinor: string;
+  settledFlights: number;
+}>;
+
+export type FinanceOverview = Readonly<{
+  asOf: string;
+  reportingCurrency: CurrencyCode;
+  supportedTransactionCurrencies: readonly CurrencyCode[];
+  cashMinor: string;
+  upcomingObligationsMinor: string;
+  runwayDays: number | null;
+  runwayHorizonDays: number;
+  runwayExplanation: string;
+  obligations: readonly FinancialObligation[];
+  routeProfitability: readonly RouteProfitability[];
+  fuel: Readonly<{
+    onHandKg: string;
+    inventoryValueMinor: string;
+    weightedUnitCostNumerator: string;
+    weightedUnitCostDenominator: string;
+  }>;
+  recentResults: readonly Readonly<{
+    flightId: string;
+    flightNumber: string;
+    routeId: string;
+    settledAt: string;
+    revenueMinor: string;
+    costMinor: string;
+    operatingResultMinor: string;
+  }>[];
+}>;
+
+export type FinancialStatementRow = Readonly<{
+  accountCode?: string;
+  accountName?: string;
+  group: string;
+  amountMinor: string;
+}>;
+
+export type FinanceStatements = Readonly<{
+  period: Readonly<{ from: string; to: string }>;
+  asOf: string;
+  reportingCurrency: CurrencyCode;
+  basis: "posted_double_entry_ledger";
+  profitAndLoss: Readonly<{ rows: readonly FinancialStatementRow[]; netIncomeMinor: string }>;
+  balanceSheet: Readonly<{
+    rows: readonly FinancialStatementRow[];
+    assetsMinor: string;
+    liabilitiesAndEquityMinor: string;
+    currentEarningsMinor: string;
+  }>;
+  cashFlow: Readonly<{
+    rows: readonly FinancialStatementRow[];
+    netCashChangeMinor: string;
+  }>;
+  reconciliation: Readonly<{
+    journalsBalanced: boolean;
+    trialBalanceDifferenceMinor: string;
+    balanceSheetDifferenceMinor: string;
+  }>;
+}>;
+
+export type JournalPage = Readonly<{
+  asOf: string;
+  reportingCurrency: CurrencyCode;
+  items: readonly Readonly<{
+    id: string;
+    sequence: string;
+    occurredAt: string;
+    postedAt: string;
+    description: string;
+    commandType: LedgerCommandType;
+    transactionCurrency: CurrencyCode;
+    source: Readonly<{ entityType: string; entityId: string }> | null;
+    lines: readonly Readonly<{
+      accountCode: string;
+      accountName: string;
+      side: PostingSide;
+      transactionAmountMinor: string;
+      reportingAmountMinor: string;
+    }>[];
+  }>[];
+  nextCursor: string | null;
+}>;
+
+export interface FinanceReadRepository {
+  overview(playerAccountId: string, airlineId: string, asOf: Date): Promise<FinanceOverview>;
+  statements(
+    playerAccountId: string,
+    airlineId: string,
+    from: Date,
+    to: Date,
+  ): Promise<FinanceStatements>;
+  journals(
+    playerAccountId: string,
+    airlineId: string,
+    cursor: number,
+    limit: number,
+  ): Promise<JournalPage>;
+}
+
 export function assertBalancedPostings(postings: readonly PostingLine[]): void {
   if (postings.length < 2) throw new Error("A journal requires at least two posting lines.");
   let transactionDelta = 0n;

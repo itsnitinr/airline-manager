@@ -5,6 +5,7 @@ import {
   type ApplicationServices,
   type AirlineFoundingService,
   type FleetService,
+  type FinanceQueryService,
   type FuelService,
   type MarketService,
   type SchedulingService,
@@ -29,6 +30,7 @@ import type { AuthenticationAdapter } from "./auth/better-auth.js";
 import { registerAuthenticationRoutes } from "./auth/fastify.js";
 import { registerAirlineRoutes } from "./routes/airlines.js";
 import { registerFuelRoutes } from "./routes/fuel.js";
+import { registerFinanceRoutes } from "./routes/finance.js";
 import { registerMarketRoutes } from "./routes/markets.js";
 import { registerSchedulingRoutes } from "./routes/scheduling.js";
 import { registerWorkforceRoutes } from "./routes/workforce.js";
@@ -58,6 +60,7 @@ export type ApiAppOptions = Readonly<{
   maintenanceService?: MaintenanceService;
   weatherService?: WeatherService;
   flightOperationsService?: FlightOperationsService;
+  financeQueryService?: FinanceQueryService;
   notificationService?: NotificationService;
   currentCatalog?: GetCurrentPublishedCatalogHandler;
   googleSignInAvailable?: boolean;
@@ -133,6 +136,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
           description:
             "Authoritative flight status, timeline, recovery, and settlement explanations.",
         },
+        { name: "finance", description: "Owner-scoped ledger-derived financial reporting." },
         {
           name: "notifications",
           description: "Persisted in-game notification center and preferences.",
@@ -149,6 +153,11 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
     global: true,
     max: options.rateLimitMax ?? 120,
     timeWindow: "1 minute",
+    hook: "preHandler",
+    keyGenerator: (request) =>
+      request.authorizationContext.playerAccountId
+        ? `player:${request.authorizationContext.playerAccountId}`
+        : `ip:${request.ip}`,
   });
 
   app.addHook("onRequest", async (request) => {
@@ -184,6 +193,7 @@ export function createApiServer(options: ApiAppOptions = {}): FastifyInstance {
     registerMaintenanceRoutes(routes, options.maintenanceService);
     registerWeatherRoutes(routes, options.weatherService);
     registerFlightOperationsRoutes(routes, options.flightOperationsService);
+    registerFinanceRoutes(routes, options.financeQueryService);
     registerNotificationRoutes(routes, options.notificationService);
     registerEventRoutes(routes, {
       authorize: options.sseAuthorization ?? defaultSseAuthorization,

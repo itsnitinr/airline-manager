@@ -15,7 +15,15 @@ import {
 import type { ReactNode } from "react";
 import { SignOutButton } from "./session-actions";
 
-export type PlanningView = "network" | "fleet" | "fuel" | "workforce" | "maintenance";
+export type PlanningView =
+  | "network"
+  | "fleet"
+  | "fuel"
+  | "workforce"
+  | "maintenance"
+  | "operations"
+  | "finance"
+  | "notifications";
 
 const AVAILABLE_NAVIGATION = [
   { id: "network", label: "Network", icon: MapTrifold },
@@ -23,12 +31,9 @@ const AVAILABLE_NAVIGATION = [
   { id: "fuel", label: "Fuel", icon: Drop },
   { id: "workforce", label: "Workforce", icon: UsersThree },
   { id: "maintenance", label: "Maintenance", icon: Wrench },
-] as const;
-
-const DEFERRED_NAVIGATION = [
-  { label: "Operations", icon: Clock, owner: "Ticket 21" },
-  { label: "Finance", icon: ChartLineUp, owner: "Ticket 21" },
-  { label: "Notifications", icon: Bell, owner: "Ticket 21" },
+  { id: "operations", label: "Operations", icon: Clock },
+  { id: "finance", label: "Finance", icon: ChartLineUp },
+  { id: "notifications", label: "Alerts", icon: Bell },
 ] as const;
 
 function readableBrandMarkColor(background: string) {
@@ -90,16 +95,6 @@ export function AppShell({
             ))}
           </ul>
         </nav>
-        <div className="deferred-navigation" aria-label="Unavailable destinations">
-          <p>Later operations</p>
-          {DEFERRED_NAVIGATION.map(({ label, icon: Icon, owner }) => (
-            <button key={label} type="button" disabled title={`${label} is owned by ${owner}`}>
-              <Icon aria-hidden />
-              <span>{label}</span>
-              <small>{owner}</small>
-            </button>
-          ))}
-        </div>
         <div className="nav-account">
           <small>{userEmail}</small>
           <SignOutButton />
@@ -110,7 +105,7 @@ export function AppShell({
         <div className="status-identity">
           <span style={{ background: career.brand.primaryColor }}>{career.brand.logoMark}</span>
           <div>
-            <p>Planning control</p>
+            <p>Airline control</p>
             <h1>{AVAILABLE_NAVIGATION.find(({ id }) => id === activeView)?.label}</h1>
           </div>
         </div>

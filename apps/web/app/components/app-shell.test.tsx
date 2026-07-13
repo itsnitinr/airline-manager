@@ -69,7 +69,7 @@ const aircraft = {
 } as const;
 
 describe("planning shell boundaries", () => {
-  it("exposes ticket-20 destinations and honestly defers ticket 21", () => {
+  it("exposes planning and ticket-21 destinations without player administration", () => {
     render(
       <AppShell
         career={career}
@@ -90,7 +90,19 @@ describe("planning shell boundaries", () => {
       "href",
       "/app?view=fuel",
     );
-    expect(within(rail).getByRole("button", { name: /OperationsTicket 21/ })).toBeDisabled();
+    expect(within(rail).getByRole("link", { name: "Operations" })).toHaveAttribute(
+      "href",
+      "/app?view=operations",
+    );
+    expect(within(rail).getByRole("link", { name: "Finance" })).toHaveAttribute(
+      "href",
+      "/app?view=finance",
+    );
+    expect(within(rail).getByRole("link", { name: "Alerts" })).toHaveAttribute(
+      "href",
+      "/app?view=notifications",
+    );
+    expect(within(rail).queryByText(/administration/i)).not.toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Authoritative fleet workspace" })).toBeVisible();
     expect(screen.getByRole("navigation", { name: "Mobile planning navigation" })).toBeTruthy();
   });

@@ -49,7 +49,13 @@ export function FleetWorkspace({
           const current = airports.find(({ id }) => id === currentAirportId);
           const planned = airports.find(({ id }) => id === plannedAirportId);
           const available =
-            aircraft.deliveryState === "delivered" && Boolean(forecast?.dispatchReady ?? true);
+            aircraft.deliveryState === "delivered" && forecast?.dispatchReady === true;
+          const statusLabel =
+            aircraft.deliveryState === "pending"
+              ? "Delivery pending"
+              : available
+                ? "Available"
+                : "Planning constraint";
           return (
             <article className="aircraft-dossier" key={aircraft.id}>
               <header className="aircraft-heading">
@@ -66,7 +72,7 @@ export function FleetWorkspace({
                   </div>
                 </div>
                 <span className="status-chip" data-status={available ? "ready" : "warning"}>
-                  {available ? "Available" : "Planning constraint"}
+                  {statusLabel}
                 </span>
               </header>
 
@@ -171,23 +177,29 @@ export function FleetWorkspace({
                   <dl>
                     <div>
                       <dt>Dispatch</dt>
-                      <dd>{forecast?.dispatchReady ? "Ready" : "Blocked"}</dd>
+                      <dd>
+                        {aircraft.deliveryState === "pending"
+                          ? "Awaiting delivery"
+                          : forecast?.dispatchReady
+                            ? "Ready"
+                            : "Blocked"}
+                      </dd>
                     </div>
                     <div>
                       <dt>Due work</dt>
                       <dd>
                         {forecast?.due.filter(
                           (item) => (item as { state?: string }).state !== "not_due",
-                        ).length ?? 0}
+                        ).length ?? "Not available"}
                       </dd>
                     </div>
                     <div>
                       <dt>Planned windows</dt>
-                      <dd>{forecast?.plannedWork.length ?? 0}</dd>
+                      <dd>{forecast?.plannedWork.length ?? "Not available"}</dd>
                     </div>
                     <div>
                       <dt>Active faults</dt>
-                      <dd>{forecast?.activeFaults.length ?? 0}</dd>
+                      <dd>{forecast?.activeFaults.length ?? "Not available"}</dd>
                     </div>
                   </dl>
                   <ProvenanceLabel classification="derived" />

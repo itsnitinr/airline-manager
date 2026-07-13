@@ -24,7 +24,11 @@ export {
   type SecurityAuditWriter,
 } from "./identity/audit.js";
 export { setPlayerRole } from "./identity/roles.js";
-export { KyselyExchangeRateRepository, KyselyLedgerRepository } from "./finance/repository.js";
+export {
+  KyselyExchangeRateRepository,
+  KyselyFinanceReadRepository,
+  KyselyLedgerRepository,
+} from "./finance/repository.js";
 export {
   KyselyAirlineFoundingRepository,
   foundingMaterialStages,

@@ -138,6 +138,41 @@ describe("Fastify API shell", () => {
     expect(second.json()).toMatchObject({ error: { code: "rate_limited" } });
   });
 
+  it("isolates authenticated player limits behind a shared proxy address", async () => {
+    const app = track(
+      createApiServer({
+        logger: false,
+        rateLimitMax: 1,
+        authorizationResolver: async ({ headers }) => ({
+          authenticated: true,
+          playerAccountId: String(headers["x-test-player"]),
+          emailVerified: true,
+          roles: ["player"],
+        }),
+      }),
+    );
+
+    const firstPlayer = await app.inject({
+      method: "GET",
+      url: "/health",
+      headers: { "x-test-player": "player-one" },
+    });
+    const secondPlayer = await app.inject({
+      method: "GET",
+      url: "/health",
+      headers: { "x-test-player": "player-two" },
+    });
+    const repeatedFirstPlayer = await app.inject({
+      method: "GET",
+      url: "/health",
+      headers: { "x-test-player": "player-one" },
+    });
+
+    expect(firstPlayer.statusCode).toBe(200);
+    expect(secondPlayer.statusCode).toBe(200);
+    expect(repeatedFirstPlayer.statusCode).toBe(429);
+  });
+
   it("correlates IDs in structured logs while redacting request secrets", async () => {
     let logs = "";
     const stream = new Writable({
@@ -174,6 +209,13 @@ describe("Fastify API shell", () => {
       markRead: async () => {
         throw new Error("unused");
       },
+      center: async () => ({
+        asOf: new Date().toISOString(),
+        items: [],
+        nextCursor: null,
+        unreadCount: 0,
+      }),
+      markAllRead: async () => ({ updated: 0, readAt: new Date().toISOString() }),
       preferences: async () => ({
         browserEnabled: false,
         minimumBrowserSeverity: "warning",

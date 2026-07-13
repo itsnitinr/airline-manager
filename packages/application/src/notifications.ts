@@ -1,4 +1,6 @@
 import type {
+  NotificationCenter,
+  NotificationCenterQuery,
   NotificationPreferences,
   NotificationRepository,
   PlayerNotification,
@@ -53,7 +55,18 @@ export class NotificationService {
     read: boolean,
     context: QueryContext,
   ): Promise<PlayerNotification> {
-    return this.notifications.markRead(this.player(context), notificationId, read, this.now());
+    return this.notifications.markRead(this.player(context), notificationId, read);
+  }
+
+  center(query: NotificationCenterQuery, context: QueryContext): Promise<NotificationCenter> {
+    return this.notifications.center(this.player(context), {
+      ...query,
+      limit: Math.min(100, Math.max(1, query.limit)),
+    });
+  }
+
+  markAllRead(context: QueryContext): Promise<Readonly<{ updated: number; readAt: string }>> {
+    return this.notifications.markAllRead(this.player(context));
   }
 
   preferences(context: QueryContext): Promise<NotificationPreferences> {

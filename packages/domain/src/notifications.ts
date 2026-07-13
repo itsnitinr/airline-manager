@@ -40,6 +40,30 @@ export type PlayerNotification = Readonly<{
   readAt: string | null;
 }>;
 
+export const notificationCategories = [
+  "flight",
+  "fuel",
+  "maintenance",
+  "workforce",
+  "finance",
+  "aircraft",
+  "account",
+] as const;
+export type NotificationCategory = (typeof notificationCategories)[number];
+export type NotificationCenterQuery = Readonly<{
+  beforeEventId?: bigint;
+  limit: number;
+  severities?: readonly NotificationSeverity[];
+  categories?: readonly NotificationCategory[];
+  readState?: "all" | "read" | "unread";
+}>;
+export type NotificationCenter = Readonly<{
+  asOf: string;
+  items: readonly PlayerNotification[];
+  nextCursor: string | null;
+  unreadCount: number;
+}>;
+
 export interface NotificationRepository {
   consumeOutbox(
     input: Readonly<{
@@ -58,8 +82,9 @@ export interface NotificationRepository {
     playerAccountId: string,
     notificationId: string,
     read: boolean,
-    at: Date,
   ): Promise<PlayerNotification>;
+  center(playerAccountId: string, query: NotificationCenterQuery): Promise<NotificationCenter>;
+  markAllRead(playerAccountId: string): Promise<Readonly<{ updated: number; readAt: string }>>;
   preferences(playerAccountId: string): Promise<NotificationPreferences>;
   savePreferences(
     playerAccountId: string,
@@ -195,7 +220,7 @@ export function notificationIntentForOutbox(
               label: "Review recovery",
               resourceType: "dated_flight",
               resourceId,
-              path: `/flights/${resourceId}`,
+              path: `/app?view=operations&flight=${resourceId}`,
             }
           : null,
     };
@@ -224,7 +249,7 @@ export function notificationIntentForOutbox(
         label: "Review finances",
         resourceType: "ledger_book",
         resourceId,
-        path: `/finance/${resourceId}`,
+        path: "/app?view=finance",
       },
     };
   }
@@ -243,7 +268,12 @@ export function notificationIntentForOutbox(
               label: "Review details",
               resourceType: definition[2],
               resourceId,
-              path: `/${definition[2].replaceAll("_", "-")}/${resourceId}`,
+              path:
+                definition[2] === "aircraft"
+                  ? `/app?view=maintenance&aircraft=${resourceId}`
+                  : definition[2] === "workforce_pool"
+                    ? "/app?view=workforce"
+                    : "/app?view=notifications",
             }
           : null,
     };

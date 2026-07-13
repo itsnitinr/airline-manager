@@ -9,7 +9,13 @@ describe("flight milestone handler", () => {
       .mockResolvedValue("applied");
     const now = new Date("2026-07-20T14:00:00Z");
     const handler = new FlightMilestoneHandler(
-      { advanceMilestone, status: vi.fn(), settlement: vi.fn() },
+      {
+        advanceMilestone,
+        status: vi.fn(),
+        settlement: vi.fn(),
+        board: vi.fn(),
+        changes: vi.fn(),
+      },
       "dispatch",
       () => now,
     );

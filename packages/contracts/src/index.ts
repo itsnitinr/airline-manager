@@ -2459,6 +2459,99 @@ export const flightSettlementResponseSchema = {
     contentHash: { type: "string", pattern: "^[0-9a-f]{64}$" },
   },
 } as const;
+export const flightBoardResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["asOf", "from", "to", "items", "truncated"],
+  properties: {
+    asOf: { type: "string", format: "date-time" },
+    from: { type: "string", format: "date-time" },
+    to: { type: "string", format: "date-time" },
+    items: { type: "array", items: { type: "object", additionalProperties: true } },
+    truncated: { type: "boolean" },
+  },
+} as const;
+export const offlineFlightChangesResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["asOf", "since", "through", "total", "byState", "items"],
+  properties: {
+    asOf: { type: "string", format: "date-time" },
+    since: { type: "string", format: "date-time" },
+    through: { type: "string", format: "date-time" },
+    total: { type: "integer", minimum: 0 },
+    byState: { type: "object", additionalProperties: { type: "integer", minimum: 0 } },
+    items: { type: "array", items: { type: "object", additionalProperties: true } },
+  },
+} as const;
+
+export const financeOverviewResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "asOf",
+    "reportingCurrency",
+    "supportedTransactionCurrencies",
+    "cashMinor",
+    "upcomingObligationsMinor",
+    "runwayDays",
+    "runwayHorizonDays",
+    "runwayExplanation",
+    "obligations",
+    "routeProfitability",
+    "fuel",
+    "recentResults",
+  ],
+  properties: {
+    asOf: { type: "string", format: "date-time" },
+    reportingCurrency: fuelCurrencySchema,
+    supportedTransactionCurrencies: { type: "array", items: fuelCurrencySchema },
+    cashMinor: exactIntegerStringSchema,
+    upcomingObligationsMinor: exactMinorSchema,
+    runwayDays: { anyOf: [{ type: "integer", minimum: 0 }, { type: "null" }] },
+    runwayHorizonDays: { type: "integer", minimum: 1 },
+    runwayExplanation: { type: "string" },
+    obligations: { type: "array", items: { type: "object", additionalProperties: true } },
+    routeProfitability: { type: "array", items: { type: "object", additionalProperties: true } },
+    fuel: { type: "object", additionalProperties: true },
+    recentResults: { type: "array", items: { type: "object", additionalProperties: true } },
+  },
+} as const;
+export const financeStatementsResponseSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "period",
+    "asOf",
+    "reportingCurrency",
+    "basis",
+    "profitAndLoss",
+    "balanceSheet",
+    "cashFlow",
+    "reconciliation",
+  ],
+  properties: {
+    period: { type: "object", additionalProperties: true },
+    asOf: { type: "string", format: "date-time" },
+    reportingCurrency: fuelCurrencySchema,
+    basis: { type: "string", const: "posted_double_entry_ledger" },
+    profitAndLoss: { type: "object", additionalProperties: true },
+    balanceSheet: { type: "object", additionalProperties: true },
+    cashFlow: { type: "object", additionalProperties: true },
+    reconciliation: { type: "object", additionalProperties: true },
+  },
+} as const;
+export const journalPageResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["asOf", "reportingCurrency", "items", "nextCursor"],
+  properties: {
+    asOf: { type: "string", format: "date-time" },
+    reportingCurrency: fuelCurrencySchema,
+    items: { type: "array", items: { type: "object", additionalProperties: true } },
+    nextCursor: { anyOf: [{ type: "null" }, exactMinorSchema] },
+  },
+} as const;
 
 export type NotificationPreferencesRequest = Readonly<{
   browserEnabled: boolean;
@@ -2555,6 +2648,26 @@ export const notificationListResponseSchema = {
   properties: {
     items: { type: "array", items: playerNotificationSchema },
     nextCursor: { anyOf: [{ type: "null" }, exactMinorSchema] },
+  },
+} as const;
+export const notificationCenterResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["asOf", "items", "nextCursor", "unreadCount"],
+  properties: {
+    asOf: { type: "string", format: "date-time" },
+    items: { type: "array", items: playerNotificationSchema },
+    nextCursor: { anyOf: [{ type: "null" }, exactMinorSchema] },
+    unreadCount: { type: "integer", minimum: 0 },
+  },
+} as const;
+export const notificationMarkAllResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["updated", "readAt"],
+  properties: {
+    updated: { type: "integer", minimum: 0 },
+    readAt: { type: "string", format: "date-time" },
   },
 } as const;
 

@@ -7,6 +7,7 @@ import { seedSliceOneCatalog } from "../catalog/seed.js";
 import { readDatabasePoolOptions } from "../config.js";
 import { createDatabaseRuntime, type DatabaseRuntime } from "../database.js";
 import { KyselyFleetRepository } from "../fleet/repository.js";
+import { KyselyFinanceReadRepository } from "../finance/repository.js";
 import { KyselyFuelRepository } from "../fuel/repository.js";
 import { KyselyMarketRepository } from "../market/repository.js";
 import { KyselySchedulingRepository } from "../scheduling/repository.js";
@@ -266,6 +267,33 @@ describe("persistent flight lifecycle and settlement", () => {
       runtime.database,
     );
     expect(counts.rows[0]).toEqual({ fuel: "1", workforce: "3", utilization: "1", snapshots: "1" });
+    const finance = new KyselyFinanceReadRepository(runtime.database);
+    const [overview, statements, journals] = await Promise.all([
+      finance.overview(fixture.playerId, fixture.airlineId, new Date("2026-07-22T00:00:00Z")),
+      finance.statements(
+        fixture.playerId,
+        fixture.airlineId,
+        new Date("2026-07-01T00:00:00Z"),
+        new Date("2026-08-01T00:00:00Z"),
+      ),
+      finance.journals(fixture.playerId, fixture.airlineId, 0, 10),
+    ]);
+    expect(overview.routeProfitability).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          routeId: fixture.flight.routeId,
+          operatingResultMinor: snapshot.outcome.operatingResultMinor,
+          settledFlights: 1,
+        }),
+      ]),
+    );
+    expect(statements.reconciliation).toEqual({
+      journalsBalanced: true,
+      trialBalanceDifferenceMinor: "0",
+      balanceSheetDifferenceMinor: "0",
+    });
+    expect(journals.items.length).toBeGreaterThan(0);
+    expect(journals.items.every(({ lines }) => lines.length >= 2)).toBe(true);
     await expect(
       sql`UPDATE settled_flight_snapshots SET outcome='{}'::jsonb WHERE flight_id=${fixture.flight.id}::uuid`.execute(
         runtime.database,
@@ -306,5 +334,46 @@ describe("persistent flight lifecycle and settlement", () => {
     const status = await operations.status(fixture.playerId, fixture.airlineId, fixture.flight.id);
     expect(status.state).toBe("cancelled");
     expect(status.suspension?.retryCount).toBe(3);
+  });
+
+  it("returns bounded owner-scoped flight boards and offline changes", async () => {
+    const fixture = await setup();
+    const foreignPlayer = await player();
+    const operations = new KyselyFlightOperationsRepository(runtime.database);
+    const query = {
+      from: new Date("2026-07-19T00:00:00Z"),
+      to: new Date("2026-07-27T00:00:00Z"),
+      states: ["scheduled" as const],
+      limit: 10,
+    };
+    const board = await operations.board(fixture.playerId, fixture.airlineId, query);
+    expect(board.items).toHaveLength(1);
+    expect(board.items[0]).toMatchObject({
+      id: fixture.flight.id,
+      routeId: fixture.flight.routeId,
+      aircraftId: fixture.aircraftId,
+      state: "scheduled",
+      origin: { iataCode: "JFK" },
+      destination: { iataCode: "PHL" },
+    });
+    expect(board.truncated).toBe(false);
+    expect(await operations.board(foreignPlayer, fixture.airlineId, query)).toMatchObject({
+      items: [],
+    });
+    const changes = await operations.changes(
+      fixture.playerId,
+      fixture.airlineId,
+      new Date("2026-07-11T00:00:00Z"),
+      10,
+    );
+    expect(changes).toMatchObject({ total: 1, byState: { scheduled: 1 } });
+    expect(
+      await operations.changes(
+        foreignPlayer,
+        fixture.airlineId,
+        new Date("2026-07-11T00:00:00Z"),
+        10,
+      ),
+    ).toMatchObject({ total: 0 });
   });
 });

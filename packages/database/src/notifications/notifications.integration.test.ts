@@ -103,15 +103,29 @@ describe("PostgreSQL notification projection", () => {
     });
     expect(await repository.list(owner, BigInt(notification!.eventId), 10)).toEqual([]);
     expect(await repository.list(foreign, 0n, 10)).toEqual([]);
-    await expect(repository.markRead(foreign, notification!.id, true, new Date())).rejects.toThrow(
+    await expect(repository.markRead(foreign, notification!.id, true)).rejects.toThrow(
       "unavailable",
     );
-    expect(
-      await repository.markRead(owner, notification!.id, true, new Date("2026-07-13T12:00:00Z")),
-    ).toMatchObject({ readAt: "2026-07-13T12:00:00.000Z" });
-    expect(await repository.markRead(owner, notification!.id, false, new Date())).toMatchObject({
+    const read = await repository.markRead(owner, notification!.id, true);
+    expect(read.readAt).not.toBeNull();
+    expect(new Date(read.readAt!).getTime()).toBeGreaterThanOrEqual(
+      new Date(read.createdAt).getTime(),
+    );
+    expect((await repository.markRead(owner, notification!.id, true)).readAt).not.toBeNull();
+    expect(await repository.markRead(owner, notification!.id, false)).toMatchObject({
       readAt: null,
     });
+    expect(await repository.center(owner, { limit: 10, readState: "unread" })).toMatchObject({
+      unreadCount: 1,
+      items: [{ id: notification!.id }],
+      nextCursor: null,
+    });
+    expect(await repository.center(foreign, { limit: 10 })).toMatchObject({
+      unreadCount: 0,
+      items: [],
+    });
+    expect(await repository.markAllRead(owner)).toMatchObject({ updated: 1 });
+    expect(await repository.markAllRead(owner)).toMatchObject({ updated: 0 });
     expect(
       await repository.savePreferences(
         owner,
