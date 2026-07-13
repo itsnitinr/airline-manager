@@ -79,6 +79,7 @@ export type GetAirlineCareerSummaryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -93,6 +94,7 @@ export type GetAirlineCareerSummaryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -107,6 +109,7 @@ export type GetAirlineCareerSummaryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -185,6 +188,7 @@ export type RecordAircraftMaintenanceUtilizationErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -199,6 +203,7 @@ export type RecordAircraftMaintenanceUtilizationErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -213,6 +218,7 @@ export type RecordAircraftMaintenanceUtilizationErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -227,6 +233,7 @@ export type RecordAircraftMaintenanceUtilizationErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -241,6 +248,7 @@ export type RecordAircraftMaintenanceUtilizationErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -291,6 +299,7 @@ export type GetAircraftMaintenanceForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -305,6 +314,7 @@ export type GetAircraftMaintenanceForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -319,6 +329,7 @@ export type GetAircraftMaintenanceForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -333,6 +344,7 @@ export type GetAircraftMaintenanceForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -347,6 +359,7 @@ export type GetAircraftMaintenanceForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -365,27 +378,48 @@ export type GetAircraftMaintenanceForecastResponses = {
    */
   200: {
     activeFaults: Array<{
-      [key: string]: unknown;
+      explanation: string;
+      groundsAircraft: boolean;
+      id: string;
+      outcome: "delay" | "grounding";
+      repairDurationMinutes: number;
+      repairWorkforceCapacity: number;
     }>;
     aircraftId: string;
+    conditionBasisPoints: number;
     dispatchReady: boolean;
+    dispatchReliabilityBasisPoints: number;
     due: Array<{
-      [key: string]: unknown;
+      calendarDaysRemaining?: number;
+      cyclesRemaining?: string;
+      explanation: string;
+      hardLimitExceeded: boolean;
+      hoursMinutesRemaining?: string;
+      recoveryStep: string;
+      ruleCode: string;
+      state: "not_due" | "due" | "soft_overdue" | "hard_overdue";
     }>;
     explanations: Array<string>;
     generatedAt: string;
     plannedWork: Array<{
       aircraftId: string;
+      airportId: string;
       costMinor: string;
       endsAt: string;
+      faultId?: string;
       id: string;
+      journalEntryId?: string;
+      programVersion: string;
+      ruleCode?: string;
       source: "planned" | "repair";
       startsAt: string;
       status: "planned" | "completed";
-      [key: string]: unknown;
+      workforceCapacity: number;
     }>;
     programVersion: string;
     recoverySteps: Array<string>;
+    scheduleConflicts: Array<string>;
+    workforceNeeds: Array<string>;
     [key: string]: unknown;
   };
 };
@@ -411,6 +445,7 @@ export type ListAircraftMaintenanceHistoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -425,6 +460,7 @@ export type ListAircraftMaintenanceHistoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -439,6 +475,7 @@ export type ListAircraftMaintenanceHistoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -453,6 +490,7 @@ export type ListAircraftMaintenanceHistoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -467,6 +505,7 @@ export type ListAircraftMaintenanceHistoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -484,7 +523,15 @@ export type ListAircraftMaintenanceHistoryResponses = {
    * Default Response
    */
   200: Array<{
-    [key: string]: unknown;
+    aircraftId: string;
+    details: {
+      [key: string]: unknown;
+    };
+    eventType: string;
+    id: string;
+    journalEntryId?: string;
+    occurredAt: string;
+    sequence: string;
   }>;
 };
 
@@ -509,6 +556,7 @@ export type GetAircraftMaintenanceProgramErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -523,6 +571,7 @@ export type GetAircraftMaintenanceProgramErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -537,6 +586,7 @@ export type GetAircraftMaintenanceProgramErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -551,6 +601,7 @@ export type GetAircraftMaintenanceProgramErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -565,6 +616,7 @@ export type GetAircraftMaintenanceProgramErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -584,10 +636,28 @@ export type GetAircraftMaintenanceProgramResponses = {
   200: {
     aircraftVariantCode: string;
     aircraftVariantId: string;
+    calendarSemantics?: "elapsed_utc_days";
+    conditionFormulaVersion?: string;
+    faultFormulaVersion?: string;
     id: string;
     rules: Array<{
-      [key: string]: unknown;
+      code: string;
+      conditionRestoreBasisPoints: number;
+      costMinor: string;
+      durationMinutes: number;
+      hardLimit: boolean;
+      id: string;
+      intervalCalendarDays?: number;
+      intervalCycles?: string;
+      intervalHoursMinutes?: string;
+      kind: "line" | "package";
+      maximumDeferralCalendarDays: number;
+      maximumDeferralCycles: string;
+      maximumDeferralHoursMinutes: string;
+      name: string;
+      workforceCapacity: number;
     }>;
+    utilizationFormulaVersion?: string;
     version: string;
     [key: string]: unknown;
   };
@@ -616,6 +686,7 @@ export type GetAircraftMaintenanceDispatchReadinessErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -630,6 +701,7 @@ export type GetAircraftMaintenanceDispatchReadinessErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -644,6 +716,7 @@ export type GetAircraftMaintenanceDispatchReadinessErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -658,6 +731,7 @@ export type GetAircraftMaintenanceDispatchReadinessErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -672,6 +746,7 @@ export type GetAircraftMaintenanceDispatchReadinessErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -690,27 +765,48 @@ export type GetAircraftMaintenanceDispatchReadinessResponses = {
    */
   200: {
     activeFaults: Array<{
-      [key: string]: unknown;
+      explanation: string;
+      groundsAircraft: boolean;
+      id: string;
+      outcome: "delay" | "grounding";
+      repairDurationMinutes: number;
+      repairWorkforceCapacity: number;
     }>;
     aircraftId: string;
+    conditionBasisPoints: number;
     dispatchReady: boolean;
+    dispatchReliabilityBasisPoints: number;
     due: Array<{
-      [key: string]: unknown;
+      calendarDaysRemaining?: number;
+      cyclesRemaining?: string;
+      explanation: string;
+      hardLimitExceeded: boolean;
+      hoursMinutesRemaining?: string;
+      recoveryStep: string;
+      ruleCode: string;
+      state: "not_due" | "due" | "soft_overdue" | "hard_overdue";
     }>;
     explanations: Array<string>;
     generatedAt: string;
     plannedWork: Array<{
       aircraftId: string;
+      airportId: string;
       costMinor: string;
       endsAt: string;
+      faultId?: string;
       id: string;
+      journalEntryId?: string;
+      programVersion: string;
+      ruleCode?: string;
       source: "planned" | "repair";
       startsAt: string;
       status: "planned" | "completed";
-      [key: string]: unknown;
+      workforceCapacity: number;
     }>;
     programVersion: string;
     recoverySteps: Array<string>;
+    scheduleConflicts: Array<string>;
+    workforceNeeds: Array<string>;
     [key: string]: unknown;
   };
 };
@@ -743,6 +839,7 @@ export type ScheduleAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -757,6 +854,7 @@ export type ScheduleAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -771,6 +869,7 @@ export type ScheduleAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -785,6 +884,7 @@ export type ScheduleAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -799,6 +899,7 @@ export type ScheduleAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -817,13 +918,18 @@ export type ScheduleAircraftMaintenanceWorkResponses = {
    */
   201: {
     aircraftId: string;
+    airportId: string;
     costMinor: string;
     endsAt: string;
+    faultId?: string;
     id: string;
+    journalEntryId?: string;
+    programVersion: string;
+    ruleCode?: string;
     source: "planned" | "repair";
     startsAt: string;
     status: "planned" | "completed";
-    [key: string]: unknown;
+    workforceCapacity: number;
   };
 };
 
@@ -864,6 +970,7 @@ export type CreateCommercialFlightOfferErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -878,6 +985,7 @@ export type CreateCommercialFlightOfferErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -892,6 +1000,7 @@ export type CreateCommercialFlightOfferErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -906,6 +1015,7 @@ export type CreateCommercialFlightOfferErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -920,6 +1030,7 @@ export type CreateCommercialFlightOfferErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -982,6 +1093,7 @@ export type GetCommercialFlightBookingAnalyticsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -996,6 +1108,7 @@ export type GetCommercialFlightBookingAnalyticsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1010,6 +1123,7 @@ export type GetCommercialFlightBookingAnalyticsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1024,6 +1138,7 @@ export type GetCommercialFlightBookingAnalyticsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1038,6 +1153,7 @@ export type GetCommercialFlightBookingAnalyticsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1139,6 +1255,7 @@ export type RefreshCommercialFlightBookingsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1153,6 +1270,7 @@ export type RefreshCommercialFlightBookingsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1167,6 +1285,7 @@ export type RefreshCommercialFlightBookingsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1181,6 +1300,7 @@ export type RefreshCommercialFlightBookingsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1195,6 +1315,7 @@ export type RefreshCommercialFlightBookingsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1253,6 +1374,7 @@ export type GetDepartureWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1267,6 +1389,7 @@ export type GetDepartureWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1281,6 +1404,7 @@ export type GetDepartureWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1295,6 +1419,7 @@ export type GetDepartureWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1309,6 +1434,7 @@ export type GetDepartureWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1361,6 +1487,7 @@ export type ListFleetErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1375,6 +1502,7 @@ export type ListFleetErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1389,6 +1517,7 @@ export type ListFleetErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1468,6 +1597,7 @@ export type GetFleetAircraftErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1482,6 +1612,7 @@ export type GetFleetAircraftErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1496,6 +1627,7 @@ export type GetFleetAircraftErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1575,6 +1707,7 @@ export type GetAircraftDeliveryStatusErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1589,6 +1722,7 @@ export type GetAircraftDeliveryStatusErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1603,6 +1737,7 @@ export type GetAircraftDeliveryStatusErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1633,6 +1768,136 @@ export type GetAircraftDeliveryStatusResponses = {
 export type GetAircraftDeliveryStatusResponse =
   GetAircraftDeliveryStatusResponses[keyof GetAircraftDeliveryStatusResponses];
 
+export type GetFleetAircraftPlanningDetailData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    aircraftId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/fleet/{aircraftId}/planning";
+};
+
+export type GetFleetAircraftPlanningDetailErrors = {
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetFleetAircraftPlanningDetailError =
+  GetFleetAircraftPlanningDetailErrors[keyof GetFleetAircraftPlanningDetailErrors];
+
+export type GetFleetAircraftPlanningDetailResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    aircraft: {
+      accumulatedCycles: string;
+      accumulatedHoursMinutes: string;
+      airlineId: string | unknown;
+      cabin: {
+        bookingClassesConfigured: false;
+        businessSeats: 0;
+        configurationKind: "physical_cabin";
+        economySeats: number;
+        firstSeats: 0;
+        premiumEconomySeats: 0;
+      };
+      catalogReleaseId: string;
+      catalogReleaseVersion: string;
+      chronologicalAgeSeconds: string;
+      conditionBasisPoints: number;
+      currentAirportId: string | unknown;
+      deliveredAt: string | unknown;
+      deliveryState: "pending" | "delivered" | "returned" | "defaulted";
+      deliveryTargetAt: string;
+      dispatchReliabilityBasisPoints: number;
+      id: string;
+      leaseId: string;
+      manufacturedAt: string;
+      manufacturer: string;
+      model: string;
+      operatorAirlineId: string | unknown;
+      owner: {
+        lessorId: string;
+        name: string;
+      };
+      plannedAirportId: string | unknown;
+      restrictions: {
+        cashExtraction: true;
+        collateral: true;
+        sale: true;
+      };
+      serialNumber: string;
+      variantCode: string;
+      variantId: string;
+      version: string;
+    };
+    lease: {
+      currency: string;
+      id: string;
+      maturesAt: string;
+      paymentIntervalDays: number;
+      paymentSchedule: Array<{
+        amountMinor: string;
+        dueAt: string;
+        paymentNumber: number;
+        status: "scheduled" | "paid" | "overdue" | "cancelled";
+      }>;
+      recurringPaymentMinor: string;
+      startsAt: string;
+      status: "active" | "returned" | "defaulted";
+      termDays: number;
+    };
+  };
+};
+
+export type GetFleetAircraftPlanningDetailResponse =
+  GetFleetAircraftPlanningDetailResponses[keyof GetFleetAircraftPlanningDetailResponses];
+
 export type GetFlightSettlementData = {
   body?: never;
   path: {
@@ -1651,6 +1916,7 @@ export type GetFlightSettlementErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1665,6 +1931,7 @@ export type GetFlightSettlementErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1679,6 +1946,7 @@ export type GetFlightSettlementErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1693,6 +1961,7 @@ export type GetFlightSettlementErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1749,6 +2018,7 @@ export type GetFlightStatusErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1763,6 +2033,7 @@ export type GetFlightStatusErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1777,6 +2048,7 @@ export type GetFlightStatusErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1791,6 +2063,7 @@ export type GetFlightStatusErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1858,6 +2131,7 @@ export type AcceptFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1872,6 +2146,7 @@ export type AcceptFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1886,6 +2161,7 @@ export type AcceptFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1900,6 +2176,7 @@ export type AcceptFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -1914,6 +2191,7 @@ export type AcceptFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2014,6 +2292,7 @@ export type ListFounderPackageErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2028,6 +2307,7 @@ export type ListFounderPackageErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2042,6 +2322,7 @@ export type ListFounderPackageErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2056,6 +2337,7 @@ export type ListFounderPackageErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2295,6 +2577,7 @@ export type PreviewFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2309,6 +2592,7 @@ export type PreviewFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2323,6 +2607,7 @@ export type PreviewFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2337,6 +2622,7 @@ export type PreviewFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2351,6 +2637,7 @@ export type PreviewFounderLeaseErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2448,6 +2735,7 @@ export type GetFuelCapacityOffersErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2462,6 +2750,7 @@ export type GetFuelCapacityOffersErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2476,6 +2765,7 @@ export type GetFuelCapacityOffersErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2490,6 +2780,7 @@ export type GetFuelCapacityOffersErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2504,6 +2795,7 @@ export type GetFuelCapacityOffersErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2555,6 +2847,7 @@ export type PurchaseFuelCapacityErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2569,6 +2862,7 @@ export type PurchaseFuelCapacityErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2583,6 +2877,7 @@ export type PurchaseFuelCapacityErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2597,6 +2892,7 @@ export type PurchaseFuelCapacityErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2611,6 +2907,7 @@ export type PurchaseFuelCapacityErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2677,6 +2974,7 @@ export type ForecastFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2691,6 +2989,7 @@ export type ForecastFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2705,6 +3004,7 @@ export type ForecastFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2719,6 +3019,7 @@ export type ForecastFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2733,6 +3034,7 @@ export type ForecastFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2780,6 +3082,7 @@ export type GetFuelInventoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2794,6 +3097,7 @@ export type GetFuelInventoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2808,6 +3112,7 @@ export type GetFuelInventoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2822,6 +3127,7 @@ export type GetFuelInventoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2836,6 +3142,7 @@ export type GetFuelInventoryErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2889,6 +3196,7 @@ export type ListFuelLotsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2903,6 +3211,7 @@ export type ListFuelLotsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2917,6 +3226,7 @@ export type ListFuelLotsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2931,6 +3241,7 @@ export type ListFuelLotsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -2945,6 +3256,7 @@ export type ListFuelLotsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3003,6 +3315,7 @@ export type ListFuelMovementsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3017,6 +3330,7 @@ export type ListFuelMovementsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3031,6 +3345,7 @@ export type ListFuelMovementsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3045,6 +3360,7 @@ export type ListFuelMovementsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3059,6 +3375,7 @@ export type ListFuelMovementsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3119,6 +3436,7 @@ export type GetFuelPricesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3133,6 +3451,7 @@ export type GetFuelPricesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3147,6 +3466,7 @@ export type GetFuelPricesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3161,6 +3481,7 @@ export type GetFuelPricesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3175,6 +3496,7 @@ export type GetFuelPricesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3228,6 +3550,7 @@ export type PurchaseFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3242,6 +3565,7 @@ export type PurchaseFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3256,6 +3580,7 @@ export type PurchaseFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3270,6 +3595,7 @@ export type PurchaseFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3284,6 +3610,7 @@ export type PurchaseFuelErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3379,6 +3706,7 @@ export type CreateFuelQuoteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3393,6 +3721,7 @@ export type CreateFuelQuoteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3407,6 +3736,7 @@ export type CreateFuelQuoteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3421,6 +3751,7 @@ export type CreateFuelQuoteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3435,6 +3766,7 @@ export type CreateFuelQuoteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3490,6 +3822,7 @@ export type SetFuelReserveErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3504,6 +3837,7 @@ export type SetFuelReserveErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3518,6 +3852,7 @@ export type SetFuelReserveErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3532,6 +3867,7 @@ export type SetFuelReserveErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3546,6 +3882,7 @@ export type SetFuelReserveErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3603,6 +3940,7 @@ export type CompleteAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3617,6 +3955,7 @@ export type CompleteAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3631,6 +3970,7 @@ export type CompleteAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3645,6 +3985,7 @@ export type CompleteAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3659,6 +4000,7 @@ export type CompleteAircraftMaintenanceWorkErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3677,13 +4019,18 @@ export type CompleteAircraftMaintenanceWorkResponses = {
    */
   200: {
     aircraftId: string;
+    airportId: string;
     costMinor: string;
     endsAt: string;
+    faultId?: string;
     id: string;
+    journalEntryId?: string;
+    programVersion: string;
+    ruleCode?: string;
     source: "planned" | "repair";
     startsAt: string;
     status: "planned" | "completed";
-    [key: string]: unknown;
+    workforceCapacity: number;
   };
 };
 
@@ -3708,6 +4055,7 @@ export type ListPassengerPricingStrategiesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3722,6 +4070,7 @@ export type ListPassengerPricingStrategiesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3736,6 +4085,7 @@ export type ListPassengerPricingStrategiesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3750,6 +4100,7 @@ export type ListPassengerPricingStrategiesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3764,6 +4115,7 @@ export type ListPassengerPricingStrategiesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3824,6 +4176,7 @@ export type ForecastDirectPassengerDemandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3838,6 +4191,7 @@ export type ForecastDirectPassengerDemandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3852,6 +4206,7 @@ export type ForecastDirectPassengerDemandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3866,6 +4221,7 @@ export type ForecastDirectPassengerDemandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3880,6 +4236,7 @@ export type ForecastDirectPassengerDemandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3898,14 +4255,49 @@ export type ForecastDirectPassengerDemandResponses = {
    */
   200: {
     competition: {
-      [key: string]: unknown;
+      asOf: string;
+      bucket: string;
+      capacitySeats: string;
+      classification: "simulated_aggregate_market_pressure";
+      explanation: string;
+      farePressureBasisPoints: number;
+      formulaVersion: string;
+      frequencyPerWeek: number;
+      scheduleQualityBasisPoints: number;
+      serviceQualityBasisPoints: number;
     };
     explanation: Array<string>;
     forecast: {
+      destinationIataCode: string;
+      distanceNm: number;
+      generatedAt: string;
+      marketKey: string;
+      originIataCode: string;
+      segments: Array<{
+        dailyDemand: string;
+        segment: "business" | "leisure" | "vfr";
+        sensitivity: {
+          explanation: string;
+          [key: string]: unknown;
+        };
+      }>;
+      uncertaintyBasisPoints: number;
       [key: string]: unknown;
     };
     marketId: string;
     recommendedPricing: {
+      airlineId: string;
+      baseFareMinor: string;
+      currency: string;
+      effectiveFrom: string;
+      formulaVersion: string;
+      loadFactorTargetBasisPoints: number;
+      marketId: string;
+      maximumFareMinor: string;
+      minimumFareMinor: string;
+      posture: "value" | "balanced" | "yield";
+      recommendation: string;
+      revenueTargetMinor: string;
       [key: string]: unknown;
     };
   };
@@ -3943,6 +4335,7 @@ export type CreatePassengerPricingStrategyErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3957,6 +4350,7 @@ export type CreatePassengerPricingStrategyErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3971,6 +4365,7 @@ export type CreatePassengerPricingStrategyErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3985,6 +4380,7 @@ export type CreatePassengerPricingStrategyErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -3999,6 +4395,7 @@ export type CreatePassengerPricingStrategyErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4059,6 +4456,7 @@ export type ResearchDirectPassengerMarketErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4073,6 +4471,7 @@ export type ResearchDirectPassengerMarketErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4087,6 +4486,7 @@ export type ResearchDirectPassengerMarketErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4101,6 +4501,7 @@ export type ResearchDirectPassengerMarketErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4115,6 +4516,7 @@ export type ResearchDirectPassengerMarketErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4133,14 +4535,49 @@ export type ResearchDirectPassengerMarketResponses = {
    */
   200: {
     competition: {
-      [key: string]: unknown;
+      asOf: string;
+      bucket: string;
+      capacitySeats: string;
+      classification: "simulated_aggregate_market_pressure";
+      explanation: string;
+      farePressureBasisPoints: number;
+      formulaVersion: string;
+      frequencyPerWeek: number;
+      scheduleQualityBasisPoints: number;
+      serviceQualityBasisPoints: number;
     };
     explanation: Array<string>;
     forecast: {
+      destinationIataCode: string;
+      distanceNm: number;
+      generatedAt: string;
+      marketKey: string;
+      originIataCode: string;
+      segments: Array<{
+        dailyDemand: string;
+        segment: "business" | "leisure" | "vfr";
+        sensitivity: {
+          explanation: string;
+          [key: string]: unknown;
+        };
+      }>;
+      uncertaintyBasisPoints: number;
       [key: string]: unknown;
     };
     marketId: string;
     recommendedPricing: {
+      airlineId: string;
+      baseFareMinor: string;
+      currency: string;
+      effectiveFrom: string;
+      formulaVersion: string;
+      loadFactorTargetBasisPoints: number;
+      marketId: string;
+      maximumFareMinor: string;
+      minimumFareMinor: string;
+      posture: "value" | "balanced" | "yield";
+      recommendation: string;
+      revenueTargetMinor: string;
       [key: string]: unknown;
     };
   };
@@ -4166,6 +4603,7 @@ export type GetAirlineNextStepGuidanceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4180,6 +4618,7 @@ export type GetAirlineNextStepGuidanceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4194,6 +4633,7 @@ export type GetAirlineNextStepGuidanceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4236,6 +4676,7 @@ export type ListDirectRoutesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4250,6 +4691,7 @@ export type ListDirectRoutesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4264,6 +4706,7 @@ export type ListDirectRoutesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4278,6 +4721,7 @@ export type ListDirectRoutesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4292,6 +4736,7 @@ export type ListDirectRoutesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4365,6 +4810,7 @@ export type CreateDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4379,6 +4825,7 @@ export type CreateDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4393,6 +4840,7 @@ export type CreateDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4407,6 +4855,7 @@ export type CreateDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4421,6 +4870,7 @@ export type CreateDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4471,6 +4921,182 @@ export type CreateDirectRouteResponses = {
 export type CreateDirectRouteResponse =
   CreateDirectRouteResponses[keyof CreateDirectRouteResponses];
 
+export type GetRoutePlanningData = {
+  body?: never;
+  path: {
+    airlineId: string;
+    routeId: string;
+  };
+  query?: never;
+  url: "/v1/airlines/{airlineId}/routes/{routeId}/planning";
+};
+
+export type GetRoutePlanningErrors = {
+  /**
+   * Default Response
+   */
+  400: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  401: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  403: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  409: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+  /**
+   * Default Response
+   */
+  500: {
+    error: {
+      code: string;
+      details?: Array<{
+        code?: string;
+        field?: string;
+        issue: string;
+      }>;
+      message: string;
+      requestId: string;
+    };
+  };
+};
+
+export type GetRoutePlanningError = GetRoutePlanningErrors[keyof GetRoutePlanningErrors];
+
+export type GetRoutePlanningResponses = {
+  /**
+   * Default Response
+   */
+  200: {
+    forecast: {
+      blockTimeFormulaVersion: "schedule-block-v1";
+      currency: string;
+      distanceNm: number;
+      economicsAssumptions: Array<string>;
+      economicsEffectiveAt: string;
+      economicsFormulaVersion: "schedule-economics-v1";
+      expectedDailyProfitRangeMinor: [string, string];
+      expectedDailyRevenueRangeMinor: [string, string];
+      minimumTurnaroundMinutes: number;
+      operatingCostFormulaVersion: "schedule-cost-v1";
+      outsourcedService: true;
+      plannedBlockMinutes: number;
+      provisionalDailyDemand: string;
+      provisionalOperatingCostMinor: string;
+    };
+    route: {
+      airlineId: string;
+      createdAt: string;
+      destination: {
+        countryCode: string;
+        hourlyMovementCeiling: number;
+        iataCode: string;
+        id: string;
+        longestRunwayFt: number;
+        outsourcedServiceEligible: boolean;
+        timezoneName: string;
+        [key: string]: unknown;
+      };
+      distanceNm: number;
+      id: string;
+      marketId: string;
+      origin: {
+        countryCode: string;
+        hourlyMovementCeiling: number;
+        iataCode: string;
+        id: string;
+        longestRunwayFt: number;
+        outsourcedServiceEligible: boolean;
+        timezoneName: string;
+        [key: string]: unknown;
+      };
+      routeNumber: number;
+      rulesetVersion: string;
+      status: "researched" | "active";
+    };
+    timetable?: {
+      aircraftId: string;
+      effectiveFrom: string;
+      flights: Array<{
+        aircraftId: string;
+        arrivalAt: string;
+        arrivalLocal: string;
+        departureAt: string;
+        departureLocal: string;
+        destinationIataCode: string;
+        flightNumber: string;
+        id: string;
+        originIataCode: string;
+        readyAt: string;
+        routeId: string;
+        serviceDate: string;
+        status: string;
+        timetableVersionId: string;
+        [key: string]: unknown;
+      }>;
+      generatedThrough: string;
+      legs: Array<{
+        dayOfWeek: number;
+        departureLocalTime: string;
+        destinationIataCode: string;
+        originIataCode: string;
+      }>;
+      timetableVersionId: string;
+      version: number;
+    };
+  };
+};
+
+export type GetRoutePlanningResponse = GetRoutePlanningResponses[keyof GetRoutePlanningResponses];
+
 export type ActivateWeeklyTimetableData = {
   body: {
     aircraftId: string;
@@ -4502,6 +5128,7 @@ export type ActivateWeeklyTimetableErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4516,6 +5143,7 @@ export type ActivateWeeklyTimetableErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4530,6 +5158,7 @@ export type ActivateWeeklyTimetableErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4544,6 +5173,7 @@ export type ActivateWeeklyTimetableErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4558,6 +5188,7 @@ export type ActivateWeeklyTimetableErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4578,6 +5209,20 @@ export type ActivateWeeklyTimetableResponses = {
     aircraftId: string;
     effectiveFrom: string;
     flights: Array<{
+      aircraftId: string;
+      arrivalAt: string;
+      arrivalLocal: string;
+      departureAt: string;
+      departureLocal: string;
+      destinationIataCode: string;
+      flightNumber: string;
+      id: string;
+      originIataCode: string;
+      readyAt: string;
+      routeId: string;
+      serviceDate: string;
+      status: string;
+      timetableVersionId: string;
       [key: string]: unknown;
     }>;
     generatedThrough: string;
@@ -4643,6 +5288,7 @@ export type GetRouteWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4657,6 +5303,7 @@ export type GetRouteWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4671,6 +5318,7 @@ export type GetRouteWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4685,6 +5333,7 @@ export type GetRouteWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4699,6 +5348,7 @@ export type GetRouteWeatherForecastErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4756,6 +5406,7 @@ export type ResearchDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4770,6 +5421,7 @@ export type ResearchDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4784,6 +5436,7 @@ export type ResearchDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4798,6 +5451,7 @@ export type ResearchDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4812,6 +5466,7 @@ export type ResearchDirectRouteErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4830,7 +5485,20 @@ export type ResearchDirectRouteResponses = {
   200: {
     explanations: Array<string>;
     forecast: {
-      [key: string]: unknown;
+      blockTimeFormulaVersion: "schedule-block-v1";
+      currency: string;
+      distanceNm: number;
+      economicsAssumptions: Array<string>;
+      economicsEffectiveAt: string;
+      economicsFormulaVersion: "schedule-economics-v1";
+      expectedDailyProfitRangeMinor: [string, string];
+      expectedDailyRevenueRangeMinor: [string, string];
+      minimumTurnaroundMinutes: number;
+      operatingCostFormulaVersion: "schedule-cost-v1";
+      outsourcedService: true;
+      plannedBlockMinutes: number;
+      provisionalDailyDemand: string;
+      provisionalOperatingCostMinor: string;
     };
     issues: Array<{
       code: string;
@@ -4840,14 +5508,49 @@ export type ResearchDirectRouteResponses = {
     }>;
     market: {
       competition: {
-        [key: string]: unknown;
+        asOf: string;
+        bucket: string;
+        capacitySeats: string;
+        classification: "simulated_aggregate_market_pressure";
+        explanation: string;
+        farePressureBasisPoints: number;
+        formulaVersion: string;
+        frequencyPerWeek: number;
+        scheduleQualityBasisPoints: number;
+        serviceQualityBasisPoints: number;
       };
       explanation: Array<string>;
       forecast: {
+        destinationIataCode: string;
+        distanceNm: number;
+        generatedAt: string;
+        marketKey: string;
+        originIataCode: string;
+        segments: Array<{
+          dailyDemand: string;
+          segment: "business" | "leisure" | "vfr";
+          sensitivity: {
+            explanation: string;
+            [key: string]: unknown;
+          };
+        }>;
+        uncertaintyBasisPoints: number;
         [key: string]: unknown;
       };
       marketId: string;
       recommendedPricing: {
+        airlineId: string;
+        baseFareMinor: string;
+        currency: string;
+        effectiveFrom: string;
+        formulaVersion: string;
+        loadFactorTargetBasisPoints: number;
+        marketId: string;
+        maximumFareMinor: string;
+        minimumFareMinor: string;
+        posture: "value" | "balanced" | "yield";
+        recommendation: string;
+        revenueTargetMinor: string;
         [key: string]: unknown;
       };
     };
@@ -4881,6 +5584,7 @@ export type ExtendTimetableHorizonErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4895,6 +5599,7 @@ export type ExtendTimetableHorizonErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4909,6 +5614,7 @@ export type ExtendTimetableHorizonErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4923,6 +5629,7 @@ export type ExtendTimetableHorizonErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4937,6 +5644,7 @@ export type ExtendTimetableHorizonErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -4957,6 +5665,20 @@ export type ExtendTimetableHorizonResponses = {
     aircraftId: string;
     effectiveFrom: string;
     flights: Array<{
+      aircraftId: string;
+      arrivalAt: string;
+      arrivalLocal: string;
+      departureAt: string;
+      departureLocal: string;
+      destinationIataCode: string;
+      flightNumber: string;
+      id: string;
+      originIataCode: string;
+      readyAt: string;
+      routeId: string;
+      serviceDate: string;
+      status: string;
+      timetableVersionId: string;
       [key: string]: unknown;
     }>;
     generatedThrough: string;
@@ -5023,6 +5745,7 @@ export type AllocateFlightWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5037,6 +5760,7 @@ export type AllocateFlightWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5051,6 +5775,7 @@ export type AllocateFlightWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5065,6 +5790,7 @@ export type AllocateFlightWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5079,6 +5805,7 @@ export type AllocateFlightWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5133,6 +5860,7 @@ export type ForecastWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5147,6 +5875,7 @@ export type ForecastWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5161,6 +5890,7 @@ export type ForecastWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5175,6 +5905,7 @@ export type ForecastWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5189,6 +5920,7 @@ export type ForecastWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5209,7 +5941,18 @@ export type ForecastWorkforceResponses = {
     feasible: boolean;
     generatedAt: string;
     shortages: Array<{
-      [key: string]: unknown;
+      availableCapacity: number;
+      baseAirportId: string;
+      baseIataCode: string;
+      correction: string;
+      flightId: string;
+      flightNumber: string;
+      qualificationCode: string;
+      requiredCapacity: number;
+      role: "pilot" | "cabin_crew" | "line_maintenance" | "ground_handling";
+      shortfall: number;
+      windowEndsAt: string;
+      windowStartsAt: string;
     }>;
     through: string;
     [key: string]: unknown;
@@ -5243,6 +5986,7 @@ export type HireWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5257,6 +6001,7 @@ export type HireWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5271,6 +6016,7 @@ export type HireWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5285,6 +6031,7 @@ export type HireWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5299,6 +6046,7 @@ export type HireWorkforceErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5315,7 +6063,35 @@ export type HireWorkforceResponses = {
    * Default Response
    */
   201: {
-    [key: string]: unknown;
+    availableAt: string;
+    capacity: number;
+    hiredAt: string;
+    hiringCostMinor: string;
+    hiringJournalEntryId: string;
+    id: string;
+    pool: {
+      activeCapacity: number;
+      airlineId: string;
+      baseAirportId: string;
+      baseIataCode: string;
+      id: string;
+      nextAvailableAt?: string;
+      nextWageDueAt: string;
+      pendingCapacity: number;
+      qualification: {
+        aircraftVariantId?: string;
+        catalogReleaseId?: string;
+        code: string;
+      };
+      reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+      role: "pilot" | "cabin_crew" | "line_maintenance" | "ground_handling";
+      version: string;
+      wageCheckpointAt: string;
+      wagePerIntervalMinor: string;
+    };
+    status: "training" | "available";
+    trainingCostMinor: string;
+    trainingJournalEntryId: string;
   };
 };
 
@@ -5338,6 +6114,7 @@ export type ListWorkforcePoolsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5352,6 +6129,7 @@ export type ListWorkforcePoolsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5366,6 +6144,7 @@ export type ListWorkforcePoolsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5380,6 +6159,7 @@ export type ListWorkforcePoolsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5394,6 +6174,7 @@ export type ListWorkforcePoolsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5410,7 +6191,24 @@ export type ListWorkforcePoolsResponses = {
    * Default Response
    */
   200: Array<{
-    [key: string]: unknown;
+    activeCapacity: number;
+    airlineId: string;
+    baseAirportId: string;
+    baseIataCode: string;
+    id: string;
+    nextAvailableAt?: string;
+    nextWageDueAt: string;
+    pendingCapacity: number;
+    qualification: {
+      aircraftVariantId?: string;
+      catalogReleaseId?: string;
+      code: string;
+    };
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    role: "pilot" | "cabin_crew" | "line_maintenance" | "ground_handling";
+    version: string;
+    wageCheckpointAt: string;
+    wagePerIntervalMinor: string;
   }>;
 };
 
@@ -5434,6 +6232,7 @@ export type GetWorkforceRecommendationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5448,6 +6247,7 @@ export type GetWorkforceRecommendationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5462,6 +6262,7 @@ export type GetWorkforceRecommendationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5476,6 +6277,7 @@ export type GetWorkforceRecommendationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5490,6 +6292,7 @@ export type GetWorkforceRecommendationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5507,7 +6310,16 @@ export type GetWorkforceRecommendationsResponses = {
    * Default Response
    */
   200: Array<{
-    [key: string]: unknown;
+    explanation: string;
+    minimumCapacity: {
+      cabin_crew: number;
+      ground_handling: number;
+      line_maintenance: number;
+      pilot: number;
+    };
+    rulesetVersion: string;
+    variantCode: string;
+    variantId: string;
   }>;
 };
 
@@ -5536,6 +6348,7 @@ export type AccrueWorkforceWagesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5550,6 +6363,7 @@ export type AccrueWorkforceWagesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5564,6 +6378,7 @@ export type AccrueWorkforceWagesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5578,6 +6393,7 @@ export type AccrueWorkforceWagesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5592,6 +6408,7 @@ export type AccrueWorkforceWagesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5609,7 +6426,24 @@ export type AccrueWorkforceWagesResponses = {
    * Default Response
    */
   200: Array<{
-    [key: string]: unknown;
+    activeCapacity: number;
+    airlineId: string;
+    baseAirportId: string;
+    baseIataCode: string;
+    id: string;
+    nextAvailableAt?: string;
+    nextWageDueAt: string;
+    pendingCapacity: number;
+    qualification: {
+      aircraftVariantId?: string;
+      catalogReleaseId?: string;
+      code: string;
+    };
+    reportingCurrency: "CHF" | "EUR" | "GBP" | "JPY" | "KWD" | "USD";
+    role: "pilot" | "cabin_crew" | "line_maintenance" | "ground_handling";
+    version: string;
+    wageCheckpointAt: string;
+    wagePerIntervalMinor: string;
   }>;
 };
 
@@ -5647,6 +6481,7 @@ export type ConfirmAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5661,6 +6496,7 @@ export type ConfirmAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5675,6 +6511,7 @@ export type ConfirmAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5689,6 +6526,7 @@ export type ConfirmAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5703,6 +6541,7 @@ export type ConfirmAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5806,6 +6645,7 @@ export type PreviewAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5820,6 +6660,7 @@ export type PreviewAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5834,6 +6675,7 @@ export type PreviewAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5848,6 +6690,7 @@ export type PreviewAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5862,6 +6705,7 @@ export type PreviewAirlineFoundingErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5946,6 +6790,7 @@ export type GetPublishedCatalogErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -5960,6 +6805,7 @@ export type GetPublishedCatalogErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6055,6 +6901,7 @@ export type SubscribeToEventsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6069,6 +6916,7 @@ export type SubscribeToEventsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6083,6 +6931,7 @@ export type SubscribeToEventsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6097,6 +6946,7 @@ export type SubscribeToEventsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6133,6 +6983,7 @@ export type GetNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6147,6 +6998,7 @@ export type GetNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6161,6 +7013,7 @@ export type GetNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6175,6 +7028,7 @@ export type GetNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6232,6 +7086,7 @@ export type UpdateNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6246,6 +7101,7 @@ export type UpdateNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6260,6 +7116,7 @@ export type UpdateNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6274,6 +7131,7 @@ export type UpdateNotificationPreferencesErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6324,6 +7182,7 @@ export type ListNotificationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6338,6 +7197,7 @@ export type ListNotificationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6352,6 +7212,7 @@ export type ListNotificationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6366,6 +7227,7 @@ export type ListNotificationsErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6429,6 +7291,7 @@ export type SetNotificationReadStateErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6443,6 +7306,7 @@ export type SetNotificationReadStateErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6457,6 +7321,7 @@ export type SetNotificationReadStateErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6471,6 +7336,7 @@ export type SetNotificationReadStateErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6528,6 +7394,7 @@ export type GetCurrentPlayerCareerErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6542,6 +7409,7 @@ export type GetCurrentPlayerCareerErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6556,6 +7424,7 @@ export type GetCurrentPlayerCareerErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6647,6 +7516,7 @@ export type ExecuteSampleCommandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6661,6 +7531,7 @@ export type ExecuteSampleCommandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;
@@ -6675,6 +7546,7 @@ export type ExecuteSampleCommandErrors = {
     error: {
       code: string;
       details?: Array<{
+        code?: string;
         field?: string;
         issue: string;
       }>;

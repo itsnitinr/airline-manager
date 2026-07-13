@@ -12,6 +12,7 @@ import {
   type DatedFlight,
   type Route,
   type RouteForecast,
+  type RoutePlanningSnapshot,
   type SchedulingRepository,
   type SchedulingValidationIssue,
   type TimetableActivation,
@@ -552,6 +553,55 @@ export class KyselySchedulingRepository implements SchedulingRepository {
   public async listRoutes(playerAccountId: string, airlineId: string): Promise<readonly Route[]> {
     await context(this.database, playerAccountId, airlineId);
     return (await loadRoute(this.database, airlineId)).map(routeFrom);
+  }
+
+  public async getRoutePlanning(
+    playerAccountId: string,
+    airlineId: string,
+    routeId: string,
+  ): Promise<RoutePlanningSnapshot> {
+    await context(this.database, playerAccountId, airlineId);
+    const row = (await loadRoute(this.database, airlineId, routeId))[0];
+    if (!row) throw new SchedulingDomainError("route_not_found", "Route is unavailable.");
+    const route = routeFrom(row);
+    const active = await sql<TimetableRow>`SELECT tv.id, tv.route_id, tv.version,
+      tv.effective_from, tv.generated_through, ar.aircraft_id, ar.id AS rotation_id
+      FROM timetable_versions tv
+      JOIN aircraft_rotations ar ON ar.timetable_version_id = tv.id
+      WHERE tv.route_id = ${routeId}::uuid AND tv.status = 'active'
+      ORDER BY tv.version DESC LIMIT 1`.execute(this.database);
+    const timetable = active.rows[0];
+    if (!timetable) {
+      return { route, forecast: row.forecast_snapshot as RouteForecast };
+    }
+    const [templates, plane] = await Promise.all([
+      this.templates(this.database, timetable.id),
+      aircraft(this.database, airlineId, timetable.aircraft_id),
+    ]);
+    const activation = await this.readActivation(
+      this.database,
+      route,
+      timetable,
+      plane.economySeats,
+    );
+    return {
+      route,
+      forecast: row.forecast_snapshot as RouteForecast,
+      timetable: {
+        timetableVersionId: timetable.id,
+        version: timetable.version,
+        effectiveFrom: dateOnly(timetable.effective_from),
+        generatedThrough: dateOnly(timetable.generated_through),
+        aircraftId: timetable.aircraft_id,
+        legs: templates.map((template) => ({
+          dayOfWeek: template.day_of_week,
+          originIataCode: template.origin_iata,
+          destinationIataCode: template.destination_iata,
+          departureLocalTime: template.departure_local_time.slice(0, 5),
+        })),
+        flights: activation.flights,
+      },
+    };
   }
 
   public async activateTimetable(

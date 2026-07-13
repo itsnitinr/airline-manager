@@ -115,7 +115,7 @@ export function ProvenanceLabel({
 
 export function OperationalTable({ children, label }: { children: ReactNode; label: string }) {
   return (
-    <div className="table-scroll">
+    <div className="table-scroll" role="region" aria-label={`${label} scroll area`} tabIndex={0}>
       <table aria-label={label}>{children}</table>
     </div>
   );

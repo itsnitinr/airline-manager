@@ -110,9 +110,15 @@ describe("authenticated scheduling API", () => {
     expect(research.statusCode).toBe(200);
     expect(research.json()).toMatchObject({
       valid: true,
-      forecast: { outsourcedService: true },
+      forecast: {
+        outsourcedService: true,
+        economicsFormulaVersion: "schedule-economics-v1",
+        currency: "USD",
+      },
       issues: [],
     });
+    expect(research.json().forecast.expectedDailyRevenueRangeMinor).toHaveLength(2);
+    expect(research.json().forecast.expectedDailyProfitRangeMinor).toHaveLength(2);
     const created = await api.inject({
       method: "POST",
       url: `/v1/airlines/${owner.airlineId}/routes`,
@@ -152,6 +158,16 @@ describe("authenticated scheduling API", () => {
       validation: { valid: true },
     });
     expect(activation.json().flights).toHaveLength(4);
+    const planning = await api.inject({
+      method: "GET",
+      url: `/v1/airlines/${owner.airlineId}/routes/${routeId}/planning`,
+    });
+    expect(planning.statusCode).toBe(200);
+    expect(planning.json()).toMatchObject({
+      route: { id: routeId, status: "active" },
+      timetable: { version: 1, generatedThrough: "2026-07-26" },
+    });
+    expect(planning.json().timetable.flights).toHaveLength(4);
     const offers = await sql<{
       value: string;
     }>`SELECT count(*)::text AS value FROM commercial_flight_offers WHERE source_type = 'external_dated_flight'`.execute(

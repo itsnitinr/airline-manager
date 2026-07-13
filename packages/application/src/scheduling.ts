@@ -4,6 +4,7 @@ import type {
   MarketRepository,
   Route,
   RouteResearch,
+  RoutePlanningSnapshot,
   SchedulingRepository,
   TimetableActivation,
 } from "@airline-manager/domain";
@@ -101,6 +102,15 @@ export class SchedulingService {
   public async listRoutes(airlineId: string, context: QueryContext): Promise<readonly Route[]> {
     const playerId = await this.authorize(airlineId, context);
     return this.scheduling.listRoutes(playerId, airlineId);
+  }
+
+  public async getRoutePlanning(
+    airlineId: string,
+    routeId: string,
+    context: QueryContext,
+  ): Promise<RoutePlanningSnapshot> {
+    const playerId = await this.authorize(airlineId, context);
+    return this.scheduling.getRoutePlanning(playerId, airlineId, routeId);
   }
 
   public async activateTimetable(

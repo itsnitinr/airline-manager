@@ -2,28 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { AppShell } from "./app-shell";
 
-vi.mock("../map/airport-map", () => ({
-  AirportMap: ({
-    label,
-    presentation,
-    interactive,
-  }: {
-    label: string;
-    presentation: string;
-    interactive: boolean;
-  }) => (
-    <div
-      aria-label={label}
-      data-interactive={interactive}
-      data-presentation={presentation}
-      data-testid="map-props"
-    >
-      map
-    </div>
-  ),
-}));
 vi.mock("./session-actions", () => ({
-  BrowserNotificationButton: () => <button>Enable browser alerts</button>,
   SignOutButton: () => <button>Sign out</button>,
 }));
 
@@ -89,36 +68,30 @@ const aircraft = {
   restrictions: { sale: true, collateral: true, cashExtraction: true },
 } as const;
 
-describe("responsive shell boundaries", () => {
-  it("shows real airline state while future planners remain unavailable", () => {
+describe("planning shell boundaries", () => {
+  it("exposes ticket-20 destinations and honestly defers ticket 21", () => {
     render(
       <AppShell
         career={career}
         fleet={[aircraft]}
-        airports={[
-          {
-            id: "lhr",
-            iataCode: "LHR",
-            name: "London Heathrow Airport",
-            latitudeDeg: "51.47",
-            longitudeDeg: "-0.45",
-          },
-        ]}
         userEmail="pilot@example.test"
-      />,
+        activeView="fleet"
+      >
+        <section aria-label="Authoritative fleet workspace">Fleet detail</section>
+      </AppShell>,
     );
-    expect(screen.getByText("Founder aircraft delivered")).toBeTruthy();
-    expect(screen.getAllByText("Unavailable").length).toBeGreaterThan(1);
-    expect(screen.getByTestId("map-props")).toHaveAttribute("data-presentation", "shell");
-    expect(screen.getByTestId("map-props")).toHaveAttribute("data-interactive", "true");
-    const navigationRail = screen.getByRole("complementary", {
-      name: "Airline navigation rail",
-    });
-    expect(within(navigationRail).getByText("NA")).toHaveStyle({ color: "#071118" });
-    expect(navigationRail).toBeTruthy();
-    expect(screen.getByRole("banner", { name: "Operational status" })).toBeTruthy();
-    expect(screen.getByRole("complementary", { name: "Network inspector" })).toBeTruthy();
-    expect(screen.getByRole("region", { name: "Current network context" })).toBeTruthy();
-    expect(screen.getByRole("navigation", { name: "Mobile monitoring" })).toBeTruthy();
+
+    const rail = screen.getByRole("complementary", { name: "Airline navigation rail" });
+    expect(within(rail).getByRole("link", { name: "Fleet" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(within(rail).getByRole("link", { name: "Fuel" })).toHaveAttribute(
+      "href",
+      "/app?view=fuel",
+    );
+    expect(within(rail).getByRole("button", { name: /OperationsTicket 21/ })).toBeDisabled();
+    expect(screen.getByRole("region", { name: "Authoritative fleet workspace" })).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Mobile planning navigation" })).toBeTruthy();
   });
 });

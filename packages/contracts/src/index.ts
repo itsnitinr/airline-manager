@@ -14,7 +14,7 @@ export type ReadinessResponse = Readonly<{
   }>;
 }>;
 
-export type ErrorDetail = Readonly<{ field?: string; issue: string }>;
+export type ErrorDetail = Readonly<{ code?: string; field?: string; issue: string }>;
 
 export type ErrorEnvelope = Readonly<{
   error: Readonly<{
@@ -1080,6 +1080,56 @@ const fleetAircraftSchema = {
 
 export const fleetListResponseSchema = { type: "array", items: fleetAircraftSchema } as const;
 export const fleetAircraftResponseSchema = fleetAircraftSchema;
+export const fleetAircraftPlanningResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["aircraft", "lease"],
+  properties: {
+    aircraft: fleetAircraftSchema,
+    lease: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "id",
+        "status",
+        "currency",
+        "startsAt",
+        "maturesAt",
+        "termDays",
+        "paymentIntervalDays",
+        "recurringPaymentMinor",
+        "paymentSchedule",
+      ],
+      properties: {
+        id: { type: "string", format: "uuid" },
+        status: { type: "string", enum: ["active", "returned", "defaulted"] },
+        currency: { type: "string" },
+        startsAt: { type: "string", format: "date-time" },
+        maturesAt: { type: "string", format: "date-time" },
+        termDays: { type: "integer", minimum: 1 },
+        paymentIntervalDays: { type: "integer", minimum: 1 },
+        recurringPaymentMinor: exactMinorSchema,
+        paymentSchedule: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["paymentNumber", "dueAt", "amountMinor", "status"],
+            properties: {
+              paymentNumber: { type: "integer", minimum: 1 },
+              dueAt: { type: "string", format: "date-time" },
+              amountMinor: exactMinorSchema,
+              status: {
+                type: "string",
+                enum: ["scheduled", "paid", "overdue", "cancelled"],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+} as const;
 
 const marketIdentifierSchema = { type: "string", format: "uuid" } as const;
 const dateTimeSchema = { type: "string", format: "date-time" } as const;
@@ -1102,9 +1152,105 @@ export const marketResearchResponseSchema = {
   required: ["marketId", "forecast", "competition", "recommendedPricing", "explanation"],
   properties: {
     marketId: marketIdentifierSchema,
-    forecast: { type: "object", additionalProperties: true },
-    competition: { type: "object", additionalProperties: true },
-    recommendedPricing: { type: "object", additionalProperties: true },
+    forecast: {
+      type: "object",
+      additionalProperties: true,
+      required: [
+        "marketKey",
+        "originIataCode",
+        "destinationIataCode",
+        "distanceNm",
+        "generatedAt",
+        "segments",
+        "uncertaintyBasisPoints",
+      ],
+      properties: {
+        marketKey: { type: "string" },
+        originIataCode: { type: "string" },
+        destinationIataCode: { type: "string" },
+        distanceNm: { type: "integer" },
+        generatedAt: dateTimeSchema,
+        segments: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["segment", "dailyDemand", "sensitivity"],
+            properties: {
+              segment: { type: "string", enum: ["business", "leisure", "vfr"] },
+              dailyDemand: { type: "string" },
+              sensitivity: {
+                type: "object",
+                additionalProperties: true,
+                required: ["explanation"],
+                properties: { explanation: { type: "string" } },
+              },
+            },
+          },
+        },
+        uncertaintyBasisPoints: basisPointsSchema,
+      },
+    },
+    competition: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "asOf",
+        "bucket",
+        "capacitySeats",
+        "farePressureBasisPoints",
+        "scheduleQualityBasisPoints",
+        "frequencyPerWeek",
+        "serviceQualityBasisPoints",
+        "formulaVersion",
+        "classification",
+        "explanation",
+      ],
+      properties: {
+        asOf: dateTimeSchema,
+        bucket: { type: "string" },
+        capacitySeats: { type: "string" },
+        farePressureBasisPoints: basisPointsSchema,
+        scheduleQualityBasisPoints: basisPointsSchema,
+        frequencyPerWeek: { type: "integer" },
+        serviceQualityBasisPoints: basisPointsSchema,
+        formulaVersion: { type: "string" },
+        classification: { type: "string", const: "simulated_aggregate_market_pressure" },
+        explanation: { type: "string" },
+      },
+    },
+    recommendedPricing: {
+      type: "object",
+      additionalProperties: true,
+      required: [
+        "airlineId",
+        "marketId",
+        "effectiveFrom",
+        "posture",
+        "currency",
+        "baseFareMinor",
+        "minimumFareMinor",
+        "maximumFareMinor",
+        "loadFactorTargetBasisPoints",
+        "revenueTargetMinor",
+        "formulaVersion",
+        "recommendation",
+      ],
+      properties: {
+        airlineId: { type: "string", format: "uuid" },
+        marketId: marketIdentifierSchema,
+        effectiveFrom: dateTimeSchema,
+        posture: { type: "string", enum: ["value", "balanced", "yield"] },
+        currency: { type: "string" },
+        baseFareMinor: exactMinorSchema,
+        minimumFareMinor: exactMinorSchema,
+        maximumFareMinor: exactMinorSchema,
+        loadFactorTargetBasisPoints: basisPointsSchema,
+        revenueTargetMinor: exactMinorSchema,
+        formulaVersion: { type: "string" },
+        recommendation: { type: "string" },
+      },
+    },
     explanation: { type: "array", items: { type: "string" } },
   },
 } as const;
@@ -1425,6 +1571,7 @@ export const errorEnvelopeSchema = {
             additionalProperties: false,
             required: ["issue"],
             properties: {
+              code: { type: "string" },
               field: { type: "string" },
               issue: { type: "string" },
             },
@@ -1632,28 +1779,130 @@ export const routeResponseSchema = {
   },
 } as const;
 export const routesResponseSchema = { type: "array", items: routeResponseSchema } as const;
+const signedMinorSchema = { type: "string", pattern: "^-?[0-9]+$" } as const;
+const routeForecastSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "distanceNm",
+    "plannedBlockMinutes",
+    "minimumTurnaroundMinutes",
+    "provisionalOperatingCostMinor",
+    "provisionalDailyDemand",
+    "currency",
+    "expectedDailyRevenueRangeMinor",
+    "expectedDailyProfitRangeMinor",
+    "economicsEffectiveAt",
+    "economicsAssumptions",
+    "operatingCostFormulaVersion",
+    "economicsFormulaVersion",
+    "blockTimeFormulaVersion",
+    "outsourcedService",
+  ],
+  properties: {
+    distanceNm: { type: "integer", minimum: 0 },
+    plannedBlockMinutes: { type: "integer", minimum: 1 },
+    minimumTurnaroundMinutes: { type: "integer", minimum: 1 },
+    provisionalOperatingCostMinor: exactMinorSchema,
+    provisionalDailyDemand: { type: "string" },
+    currency: { type: "string" },
+    expectedDailyRevenueRangeMinor: {
+      type: "array",
+      minItems: 2,
+      maxItems: 2,
+      items: exactMinorSchema,
+    },
+    expectedDailyProfitRangeMinor: {
+      type: "array",
+      minItems: 2,
+      maxItems: 2,
+      items: signedMinorSchema,
+    },
+    economicsEffectiveAt: { type: "string", format: "date-time" },
+    economicsAssumptions: { type: "array", items: { type: "string" } },
+    operatingCostFormulaVersion: { type: "string", const: "schedule-cost-v1" },
+    economicsFormulaVersion: { type: "string", const: "schedule-economics-v1" },
+    blockTimeFormulaVersion: { type: "string", const: "schedule-block-v1" },
+    outsourcedService: { type: "boolean", const: true },
+  },
+} as const;
 export const routeResearchSchedulingResponseSchema = {
   type: "object",
   additionalProperties: false,
   required: ["market", "forecast", "valid", "issues", "explanations"],
   properties: {
     market: marketResearchResponseSchema,
-    forecast: {
-      type: "object",
-      additionalProperties: true,
-      required: [
-        "distanceNm",
-        "plannedBlockMinutes",
-        "minimumTurnaroundMinutes",
-        "provisionalOperatingCostMinor",
-        "provisionalDailyDemand",
-        "outsourcedService",
-      ],
-      properties: {},
-    },
+    forecast: routeForecastSchema,
     valid: { type: "boolean" },
     issues: { type: "array", items: schedulingIssueSchema },
     explanations: { type: "array", items: { type: "string" } },
+  },
+} as const;
+const datedFlightPlanningSchema = {
+  type: "object",
+  additionalProperties: true,
+  required: [
+    "id",
+    "routeId",
+    "timetableVersionId",
+    "aircraftId",
+    "flightNumber",
+    "serviceDate",
+    "originIataCode",
+    "destinationIataCode",
+    "departureLocal",
+    "arrivalLocal",
+    "departureAt",
+    "arrivalAt",
+    "readyAt",
+    "status",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    routeId: { type: "string", format: "uuid" },
+    timetableVersionId: { type: "string", format: "uuid" },
+    aircraftId: { type: "string", format: "uuid" },
+    flightNumber: { type: "string" },
+    serviceDate: localDateSchema,
+    originIataCode: iataSchema,
+    destinationIataCode: iataSchema,
+    departureLocal: { type: "string" },
+    arrivalLocal: { type: "string" },
+    departureAt: { type: "string", format: "date-time" },
+    arrivalAt: { type: "string", format: "date-time" },
+    readyAt: { type: "string", format: "date-time" },
+    status: { type: "string" },
+  },
+} as const;
+export const routePlanningResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["route", "forecast"],
+  properties: {
+    route: routeResponseSchema,
+    forecast: routeForecastSchema,
+    timetable: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "timetableVersionId",
+        "version",
+        "effectiveFrom",
+        "generatedThrough",
+        "aircraftId",
+        "legs",
+        "flights",
+      ],
+      properties: {
+        timetableVersionId: { type: "string", format: "uuid" },
+        version: { type: "integer", minimum: 1 },
+        effectiveFrom: localDateSchema,
+        generatedThrough: localDateSchema,
+        aircraftId: { type: "string", format: "uuid" },
+        legs: timetableActivationRequestSchema.properties.legs,
+        flights: { type: "array", items: datedFlightPlanningSchema },
+      },
+    },
   },
 } as const;
 export const timetableActivationResponseSchema = {
@@ -1676,7 +1925,7 @@ export const timetableActivationResponseSchema = {
     effectiveFrom: localDateSchema,
     generatedThrough: localDateSchema,
     aircraftId: { type: "string", format: "uuid" },
-    flights: { type: "array", items: { type: "object", additionalProperties: true } },
+    flights: { type: "array", items: datedFlightPlanningSchema },
     validation: { type: "object", additionalProperties: true },
   },
 } as const;
@@ -1742,12 +1991,140 @@ export const workforceFlightParamsSchema = {
     flightId: { type: "string", format: "uuid" },
   },
 } as const;
+const workforceQualificationSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["code"],
+  properties: {
+    code: { type: "string" },
+    aircraftVariantId: { type: "string", format: "uuid" },
+    catalogReleaseId: { type: "string", format: "uuid" },
+  },
+} as const;
+const workforcePoolSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "airlineId",
+    "baseAirportId",
+    "baseIataCode",
+    "role",
+    "qualification",
+    "activeCapacity",
+    "pendingCapacity",
+    "wagePerIntervalMinor",
+    "reportingCurrency",
+    "wageCheckpointAt",
+    "nextWageDueAt",
+    "version",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    airlineId: { type: "string", format: "uuid" },
+    baseAirportId: { type: "string", format: "uuid" },
+    baseIataCode: iataSchema,
+    role: workforceRoleSchema,
+    qualification: workforceQualificationSchema,
+    activeCapacity: { type: "integer", minimum: 0 },
+    pendingCapacity: { type: "integer", minimum: 0 },
+    nextAvailableAt: dateTimeSchema,
+    wagePerIntervalMinor: exactMinorSchema,
+    reportingCurrency: foundingSelectionProperties.reportingCurrency,
+    wageCheckpointAt: dateTimeSchema,
+    nextWageDueAt: dateTimeSchema,
+    version: exactMinorSchema,
+  },
+} as const;
 export const workforcePoolsResponseSchema = {
   type: "array",
-  items: { type: "object", additionalProperties: true },
+  items: workforcePoolSchema,
 } as const;
-export const workforceRecommendationsResponseSchema = workforcePoolsResponseSchema;
-export const workforceHireResponseSchema = { type: "object", additionalProperties: true } as const;
+export const workforceRecommendationsResponseSchema = {
+  type: "array",
+  items: {
+    type: "object",
+    additionalProperties: false,
+    required: ["variantId", "variantCode", "rulesetVersion", "minimumCapacity", "explanation"],
+    properties: {
+      variantId: { type: "string", format: "uuid" },
+      variantCode: { type: "string" },
+      rulesetVersion: { type: "string" },
+      minimumCapacity: {
+        type: "object",
+        additionalProperties: false,
+        required: ["pilot", "cabin_crew", "line_maintenance", "ground_handling"],
+        properties: {
+          pilot: { type: "integer", minimum: 0 },
+          cabin_crew: { type: "integer", minimum: 0 },
+          line_maintenance: { type: "integer", minimum: 0 },
+          ground_handling: { type: "integer", minimum: 0 },
+        },
+      },
+      explanation: { type: "string" },
+    },
+  },
+} as const;
+export const workforceHireResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "id",
+    "pool",
+    "capacity",
+    "hiredAt",
+    "availableAt",
+    "status",
+    "hiringCostMinor",
+    "trainingCostMinor",
+    "hiringJournalEntryId",
+    "trainingJournalEntryId",
+  ],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    pool: workforcePoolSchema,
+    capacity: { type: "integer", minimum: 1 },
+    hiredAt: dateTimeSchema,
+    availableAt: dateTimeSchema,
+    status: { type: "string", enum: ["training", "available"] },
+    hiringCostMinor: exactMinorSchema,
+    trainingCostMinor: exactMinorSchema,
+    hiringJournalEntryId: { type: "string", format: "uuid" },
+    trainingJournalEntryId: { type: "string", format: "uuid" },
+  },
+} as const;
+const workforceShortageSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "flightId",
+    "flightNumber",
+    "role",
+    "qualificationCode",
+    "baseAirportId",
+    "baseIataCode",
+    "windowStartsAt",
+    "windowEndsAt",
+    "requiredCapacity",
+    "availableCapacity",
+    "shortfall",
+    "correction",
+  ],
+  properties: {
+    flightId: { type: "string", format: "uuid" },
+    flightNumber: { type: "string" },
+    role: workforceRoleSchema,
+    qualificationCode: { type: "string" },
+    baseAirportId: { type: "string", format: "uuid" },
+    baseIataCode: iataSchema,
+    windowStartsAt: dateTimeSchema,
+    windowEndsAt: dateTimeSchema,
+    requiredCapacity: { type: "integer", minimum: 0 },
+    availableCapacity: { type: "integer", minimum: 0 },
+    shortfall: { type: "integer", minimum: 0 },
+    correction: { type: "string" },
+  },
+} as const;
 export const workforceForecastResponseSchema = {
   type: "object",
   additionalProperties: true,
@@ -1756,7 +2133,7 @@ export const workforceForecastResponseSchema = {
     generatedAt: { type: "string", format: "date-time" },
     through: { type: "string", format: "date-time" },
     feasible: { type: "boolean" },
-    shortages: { type: "array", items: { type: "object", additionalProperties: true } },
+    shortages: { type: "array", items: workforceShortageSchema },
     explanations: { type: "array", items: { type: "string" } },
   },
 } as const;
@@ -1821,7 +2198,48 @@ export const maintenanceProgramResponseSchema = {
     version: { type: "string" },
     aircraftVariantId: { type: "string", format: "uuid" },
     aircraftVariantCode: { type: "string" },
-    rules: { type: "array", items: { type: "object", additionalProperties: true } },
+    utilizationFormulaVersion: { type: "string" },
+    conditionFormulaVersion: { type: "string" },
+    faultFormulaVersion: { type: "string" },
+    calendarSemantics: { type: "string", const: "elapsed_utc_days" },
+    rules: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "hardLimit",
+          "maximumDeferralHoursMinutes",
+          "maximumDeferralCycles",
+          "maximumDeferralCalendarDays",
+          "durationMinutes",
+          "workforceCapacity",
+          "costMinor",
+          "conditionRestoreBasisPoints",
+        ],
+        properties: {
+          id: { type: "string", format: "uuid" },
+          code: { type: "string" },
+          name: { type: "string" },
+          kind: { type: "string", enum: ["line", "package"] },
+          intervalHoursMinutes: exactMinorSchema,
+          intervalCycles: exactMinorSchema,
+          intervalCalendarDays: { type: "integer", minimum: 0 },
+          hardLimit: { type: "boolean" },
+          maximumDeferralHoursMinutes: exactMinorSchema,
+          maximumDeferralCycles: exactMinorSchema,
+          maximumDeferralCalendarDays: { type: "integer", minimum: 0 },
+          durationMinutes: { type: "integer", minimum: 1 },
+          workforceCapacity: { type: "integer", minimum: 1 },
+          costMinor: exactMinorSchema,
+          conditionRestoreBasisPoints: basisPointsSchema,
+        },
+      },
+    },
   },
 } as const;
 export const maintenanceFlightCompletionResponseSchema = {
@@ -1846,8 +2264,19 @@ export const maintenanceFlightCompletionResponseSchema = {
 } as const;
 export const maintenanceWorkPackageResponseSchema = {
   type: "object",
-  additionalProperties: true,
-  required: ["id", "aircraftId", "source", "status", "startsAt", "endsAt", "costMinor"],
+  additionalProperties: false,
+  required: [
+    "id",
+    "aircraftId",
+    "source",
+    "status",
+    "startsAt",
+    "endsAt",
+    "airportId",
+    "workforceCapacity",
+    "costMinor",
+    "programVersion",
+  ],
   properties: {
     id: { type: "string", format: "uuid" },
     aircraftId: { type: "string", format: "uuid" },
@@ -1855,7 +2284,13 @@ export const maintenanceWorkPackageResponseSchema = {
     status: { type: "string", enum: ["planned", "completed"] },
     startsAt: { type: "string", format: "date-time" },
     endsAt: { type: "string", format: "date-time" },
+    airportId: { type: "string", format: "uuid" },
+    workforceCapacity: { type: "integer", minimum: 1 },
     costMinor: exactMinorSchema,
+    ruleCode: { type: "string" },
+    faultId: { type: "string", format: "uuid" },
+    programVersion: { type: "string" },
+    journalEntryId: { type: "string", format: "uuid" },
   },
 } as const;
 export const maintenanceForecastResponseSchema = {
@@ -1866,9 +2301,13 @@ export const maintenanceForecastResponseSchema = {
     "generatedAt",
     "programVersion",
     "dispatchReady",
+    "conditionBasisPoints",
+    "dispatchReliabilityBasisPoints",
     "due",
     "plannedWork",
     "activeFaults",
+    "scheduleConflicts",
+    "workforceNeeds",
     "explanations",
     "recoverySteps",
   ],
@@ -1877,16 +2316,72 @@ export const maintenanceForecastResponseSchema = {
     generatedAt: { type: "string", format: "date-time" },
     programVersion: { type: "string" },
     dispatchReady: { type: "boolean" },
-    due: { type: "array", items: { type: "object", additionalProperties: true } },
+    conditionBasisPoints: basisPointsSchema,
+    dispatchReliabilityBasisPoints: basisPointsSchema,
+    due: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["ruleCode", "state", "hardLimitExceeded", "explanation", "recoveryStep"],
+        properties: {
+          ruleCode: { type: "string" },
+          state: { type: "string", enum: ["not_due", "due", "soft_overdue", "hard_overdue"] },
+          hoursMinutesRemaining: exactMinorSchema,
+          cyclesRemaining: exactMinorSchema,
+          calendarDaysRemaining: { type: "integer" },
+          hardLimitExceeded: { type: "boolean" },
+          explanation: { type: "string" },
+          recoveryStep: { type: "string" },
+        },
+      },
+    },
     plannedWork: { type: "array", items: maintenanceWorkPackageResponseSchema },
-    activeFaults: { type: "array", items: { type: "object", additionalProperties: true } },
+    activeFaults: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: [
+          "id",
+          "outcome",
+          "groundsAircraft",
+          "repairDurationMinutes",
+          "repairWorkforceCapacity",
+          "explanation",
+        ],
+        properties: {
+          id: { type: "string", format: "uuid" },
+          outcome: { type: "string", enum: ["delay", "grounding"] },
+          groundsAircraft: { type: "boolean" },
+          repairDurationMinutes: { type: "integer", minimum: 0 },
+          repairWorkforceCapacity: { type: "integer", minimum: 0 },
+          explanation: { type: "string" },
+        },
+      },
+    },
+    scheduleConflicts: { type: "array", items: { type: "string" } },
+    workforceNeeds: { type: "array", items: { type: "string" } },
     explanations: { type: "array", items: { type: "string" } },
     recoverySteps: { type: "array", items: { type: "string" } },
   },
 } as const;
 export const maintenanceHistoryResponseSchema = {
   type: "array",
-  items: { type: "object", additionalProperties: true },
+  items: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "aircraftId", "sequence", "eventType", "occurredAt", "details"],
+    properties: {
+      id: { type: "string", format: "uuid" },
+      aircraftId: { type: "string", format: "uuid" },
+      sequence: exactMinorSchema,
+      eventType: { type: "string" },
+      occurredAt: dateTimeSchema,
+      details: { type: "object", additionalProperties: true },
+      journalEntryId: { type: "string", format: "uuid" },
+    },
+  },
 } as const;
 
 export const flightOperationsParamsSchema = {

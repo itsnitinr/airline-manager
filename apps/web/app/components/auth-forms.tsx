@@ -4,16 +4,17 @@ import { GoogleLogo, SpinnerGap } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { authApi, WebApiError } from "../lib/client-api";
+import { authApi, WebApiError, type ActionableError } from "../lib/client-api";
 import { Button, Field, StateMessage } from "./ui";
 
-function submitError(error: unknown) {
+function submitError(error: unknown): ActionableError {
   return error instanceof WebApiError
     ? error.actionable
     : {
         code: "unknown",
         message: "The request could not be completed. Try again.",
         fields: {},
+        details: [],
         recoverable: true,
       };
 }

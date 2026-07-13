@@ -4,6 +4,7 @@ import type {
 } from "@airline-manager/contracts";
 import { notFound } from "next/navigation";
 import { AppShell } from "../../components/app-shell";
+import { NetworkWorkspace } from "../../components/network-workspace";
 
 const career = {
   careerId: "visual-career",
@@ -108,9 +109,21 @@ export default async function ShellTestHarness({
     <AppShell
       career={career}
       fleet={fleet}
-      airports={airports}
       userEmail="dispatcher@example.test"
-      {...(query.map === "degraded" ? { mapStyleUrl: "/__map-style-failure__.json" } : {})}
-    />
+      activeView="network"
+    >
+      <NetworkWorkspace
+        airlineId={career.airlineId}
+        baseAirportId={career.principalBase.airportId}
+        reportingCurrency={career.reportingCurrency}
+        airports={airports}
+        fleet={fleet}
+        initialRoutes={[]}
+        initialPlanning={null}
+        initialWeather={null}
+        initialPricingStrategies={[]}
+        {...(query.map === "degraded" ? { mapStyleUrl: "/__map-style-failure__.json" } : {})}
+      />
+    </AppShell>
   );
 }

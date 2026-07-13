@@ -72,7 +72,13 @@ export type RouteForecast = Readonly<{
   minimumTurnaroundMinutes: number;
   provisionalOperatingCostMinor: string;
   provisionalDailyDemand: string;
+  currency: string;
+  expectedDailyRevenueRangeMinor: readonly [string, string];
+  expectedDailyProfitRangeMinor: readonly [string, string];
+  economicsEffectiveAt: string;
+  economicsAssumptions: readonly string[];
   operatingCostFormulaVersion: "schedule-cost-v1";
+  economicsFormulaVersion: "schedule-economics-v1";
   blockTimeFormulaVersion: "schedule-block-v1";
   outsourcedService: true;
 }>;
@@ -150,6 +156,20 @@ export type TimetableActivation = Readonly<{
   validation: Readonly<{ valid: true; issues: readonly [] }>;
 }>;
 
+export type RoutePlanningSnapshot = Readonly<{
+  route: Route;
+  forecast: RouteForecast;
+  timetable?: Readonly<{
+    timetableVersionId: string;
+    version: number;
+    effectiveFrom: string;
+    generatedThrough: string;
+    aircraftId: string;
+    legs: readonly WeeklyLegInput[];
+    flights: readonly DatedFlight[];
+  }>;
+}>;
+
 export interface SchedulingRepository {
   airlineHomeJurisdiction(airlineId: string, playerAccountId: string): Promise<string>;
   airportFacts(
@@ -172,6 +192,11 @@ export interface SchedulingRepository {
     now: Date,
   ): Promise<Route>;
   listRoutes(playerAccountId: string, airlineId: string): Promise<readonly Route[]>;
+  getRoutePlanning(
+    playerAccountId: string,
+    airlineId: string,
+    routeId: string,
+  ): Promise<RoutePlanningSnapshot>;
   activateTimetable(
     playerAccountId: string,
     airlineId: string,
@@ -224,19 +249,39 @@ export function forecastRoute(
   const provisionalDailyDemand = market.forecast.segments
     .reduce((sum, segment) => sum + Number(segment.dailyDemand), 0)
     .toFixed(3);
+  const dailyDemand = Number(provisionalDailyDemand);
+  const sellablePassengers = Math.max(0, Math.min(aircraft.economySeats, dailyDemand));
+  const fare = BigInt(market.recommendedPricing.baseFareMinor);
+  const operatingCost = BigInt(
+    Math.round(
+      ((distanceNm * costPerNm + plannedBlockMinutes * 75) *
+        (10_000 + origin.congestionFeeBasisPoints + destination.congestionFeeBasisPoints)) /
+        10_000,
+    ),
+  );
+  const revenueMidpoint = BigInt(Math.round(sellablePassengers)) * fare;
+  const revenueLow = (revenueMidpoint * 8n) / 10n;
+  const revenueHigh = (revenueMidpoint * 12n) / 10n;
   return {
     distanceNm,
     plannedBlockMinutes,
     minimumTurnaroundMinutes,
-    provisionalOperatingCostMinor: String(
-      Math.round(
-        ((distanceNm * costPerNm + plannedBlockMinutes * 75) *
-          (10_000 + origin.congestionFeeBasisPoints + destination.congestionFeeBasisPoints)) /
-          10_000,
-      ),
-    ),
+    provisionalOperatingCostMinor: operatingCost.toString(),
     provisionalDailyDemand,
+    currency: market.recommendedPricing.currency,
+    expectedDailyRevenueRangeMinor: [revenueLow.toString(), revenueHigh.toString()],
+    expectedDailyProfitRangeMinor: [
+      (revenueLow - operatingCost).toString(),
+      (revenueHigh - operatingCost).toString(),
+    ],
+    economicsEffectiveAt: market.competition.asOf,
+    economicsAssumptions: [
+      "One daily direct departure with the selected aircraft economy capacity.",
+      "Revenue uses the authoritative recommended base fare and an 80%-120% demand uncertainty range.",
+      "Profit subtracts the scheduling operating-cost forecast and excludes future settlement variance.",
+    ],
     operatingCostFormulaVersion: "schedule-cost-v1",
+    economicsFormulaVersion: "schedule-economics-v1",
     blockTimeFormulaVersion: "schedule-block-v1",
     outsourcedService: true,
   };

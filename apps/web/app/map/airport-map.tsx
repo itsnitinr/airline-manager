@@ -22,6 +22,8 @@ export type { AirportMapAirport, AirportMapProps } from "./types";
 export function AirportMap({
   airports,
   selectedAirportId,
+  selectedAirportIds,
+  route,
   onSelect,
   interactive = true,
   label = "Airport network map",
@@ -41,7 +43,8 @@ export function AirportMap({
     >
       <DeferredAirportMapCanvas
         airports={airports}
-        {...(selectedAirportId === undefined ? {} : { selectedAirportId })}
+        selectedAirportIds={selectedAirportIds ?? (selectedAirportId ? [selectedAirportId] : [])}
+        {...(route === undefined ? {} : { route })}
         interactive={interactive}
         selectable={canSelect}
         label={label}

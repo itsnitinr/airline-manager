@@ -14,6 +14,8 @@ const airportSourceId = "published-airports";
 const airportLayerId = "published-airports-points";
 const airportHitLayerId = "published-airports-hit-area";
 const selectedLayerId = "published-airport-selection";
+const routeSourceId = "researched-direct-route";
+const routeLayerId = "researched-direct-route-line";
 const fallbackTimeoutMilliseconds = 6_000;
 
 export type AirportFeatureCollection = Readonly<{
@@ -38,8 +40,10 @@ function finiteCoordinate(value: string, minimum: number, maximum: number): numb
 
 export function airportFeatureCollection(
   airports: readonly AirportMapAirport[],
-  selectedAirportId?: string,
+  selectedAirportIds: readonly string[] | string = [],
 ): AirportFeatureCollection {
+  const selected =
+    typeof selectedAirportIds === "string" ? [selectedAirportIds] : selectedAirportIds;
   return {
     type: "FeatureCollection",
     features: airports.flatMap((airport) => {
@@ -55,7 +59,7 @@ export function airportFeatureCollection(
             airportId: airport.id,
             iataCode: airport.iataCode,
             name: airport.name,
-            selected: airport.id === selectedAirportId,
+            selected: selected.includes(airport.id),
           },
         },
       ];
@@ -113,7 +117,8 @@ export function applyOperationsMapPalette(map: MapLibreMap): void {
 function addAirportLayers(
   map: MapLibreMap,
   airports: readonly AirportMapAirport[],
-  selectedAirportId: string | undefined,
+  selectedAirportIds: readonly string[],
+  route: MapAdapterMountOptions["route"],
   selectable: boolean,
   cameraPadding: MapAdapterMountOptions["cameraPadding"],
   onSelect: (airportId: string) => void,
@@ -121,7 +126,48 @@ function addAirportLayers(
   if (map.getSource(airportSourceId)) return;
   map.addSource(airportSourceId, {
     type: "geojson",
-    data: airportFeatureCollection(airports, selectedAirportId),
+    data: airportFeatureCollection(airports, selectedAirportIds),
+  });
+  const routeAirports = route
+    ? [
+        airports.find(({ id }) => id === route.originAirportId),
+        airports.find(({ id }) => id === route.destinationAirportId),
+      ]
+    : [];
+  const routeCoordinates = routeAirports.flatMap((airport) => {
+    if (!airport) return [];
+    const latitude = finiteCoordinate(airport.latitudeDeg, -90, 90);
+    const longitude = finiteCoordinate(airport.longitudeDeg, -180, 180);
+    return latitude === null || longitude === null
+      ? []
+      : [[longitude, latitude] as [number, number]];
+  });
+  map.addSource(routeSourceId, {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features:
+        routeCoordinates.length === 2
+          ? [
+              {
+                type: "Feature",
+                properties: {},
+                geometry: { type: "LineString", coordinates: routeCoordinates },
+              },
+            ]
+          : [],
+    },
+  });
+  map.addLayer({
+    id: routeLayerId,
+    type: "line",
+    source: routeSourceId,
+    paint: {
+      "line-color": "#58b7d3",
+      "line-width": 2.4,
+      "line-opacity": 0.9,
+      "line-dasharray": [2, 1.5],
+    },
   });
   map.addLayer({
     id: airportLayerId,
@@ -202,7 +248,8 @@ export function createMapLibreAdapter(): AirportMapAdapter {
       }
 
       let airports = options.airports;
-      let selectedAirportId = options.selectedAirportId;
+      let selectedAirportIds = options.selectedAirportIds ?? [];
+      let route = options.route;
       let usingFallback = !options.styleUrl;
       let airportLayerReady = false;
       let destroyed = false;
@@ -250,7 +297,8 @@ export function createMapLibreAdapter(): AirportMapAdapter {
           addAirportLayers(
             map,
             airports,
-            selectedAirportId,
+            selectedAirportIds,
+            route,
             options.selectable,
             options.cameraPadding,
             options.onSelect,
@@ -290,13 +338,42 @@ export function createMapLibreAdapter(): AirportMapAdapter {
       });
 
       return {
-        update(nextAirports, nextSelectedAirportId) {
+        update(nextAirports, nextSelectedAirportIds = [], nextRoute) {
           airports = nextAirports;
-          selectedAirportId = nextSelectedAirportId;
+          selectedAirportIds = nextSelectedAirportIds;
+          route = nextRoute;
           const source = sourceFor(map);
           if (!source) return;
-          source.setData(airportFeatureCollection(airports, selectedAirportId));
-          const selected = airports.find(({ id }) => id === selectedAirportId);
+          source.setData(airportFeatureCollection(airports, selectedAirportIds));
+          const routeSource = map.getSource(routeSourceId) as GeoJSONSource | undefined;
+          const endpoints = route
+            ? [
+                airports.find(({ id }) => id === route!.originAirportId),
+                airports.find(({ id }) => id === route!.destinationAirportId),
+              ]
+            : [];
+          const coordinates = endpoints.flatMap((airport) => {
+            if (!airport) return [];
+            const latitude = finiteCoordinate(airport.latitudeDeg, -90, 90);
+            const longitude = finiteCoordinate(airport.longitudeDeg, -180, 180);
+            return latitude === null || longitude === null
+              ? []
+              : [[longitude, latitude] as [number, number]];
+          });
+          routeSource?.setData({
+            type: "FeatureCollection",
+            features:
+              coordinates.length === 2
+                ? [
+                    {
+                      type: "Feature",
+                      properties: {},
+                      geometry: { type: "LineString", coordinates },
+                    },
+                  ]
+                : [],
+          });
+          const selected = airports.find(({ id }) => id === selectedAirportIds.at(-1));
           if (!selected) return;
           const latitude = finiteCoordinate(selected.latitudeDeg, -90, 90);
           const longitude = finiteCoordinate(selected.longitudeDeg, -180, 180);

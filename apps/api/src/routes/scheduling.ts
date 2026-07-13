@@ -9,6 +9,7 @@ import {
   routeIdentifierParamsSchema,
   routeResearchQuerySchema,
   routeResearchSchedulingResponseSchema,
+  routePlanningResponseSchema,
   routeResponseSchema,
   routesResponseSchema,
   timetableActivationRequestSchema,
@@ -115,6 +116,23 @@ export function registerSchedulingRoutes(app: FastifyInstance, service?: Schedul
     },
     async (request) =>
       required().listRoutes(request.params.airlineId, {
+        requestId: request.id,
+        authorization: request.authorizationContext,
+      }),
+  );
+
+  app.get<{ Params: RouteParams }>(
+    "/v1/airlines/:airlineId/routes/:routeId/planning",
+    {
+      schema: {
+        operationId: "getRoutePlanning",
+        tags: ["scheduling"],
+        params: routeIdentifierParamsSchema,
+        response: { 200: routePlanningResponseSchema, ...errors },
+      },
+    },
+    async (request) =>
+      required().getRoutePlanning(request.params.airlineId, request.params.routeId, {
         requestId: request.id,
         authorization: request.authorizationContext,
       }),

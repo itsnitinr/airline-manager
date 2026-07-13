@@ -122,6 +122,7 @@ export function registerErrorMapping(app: FastifyInstance): void {
           error.code,
           error.message,
           error.issues.map((issue) => ({
+            code: issue.code,
             ...(issue.field ? { field: issue.field } : {}),
             issue: `${issue.message} Suggested correction: ${issue.suggestedCorrection}`,
           })),

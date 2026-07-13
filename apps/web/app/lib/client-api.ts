@@ -15,6 +15,7 @@ export type ActionableError = Readonly<{
   code: string;
   message: string;
   fields: Readonly<Record<string, string>>;
+  details: readonly Readonly<{ code?: string; field?: string; issue: string }>[];
   recoverable: boolean;
 }>;
 
@@ -31,6 +32,18 @@ const SAFE_MESSAGES: Record<string, string> = {
   airline_name_unavailable: "That airline name is unavailable. Choose another name.",
   airport_jurisdiction_mismatch: "Choose a principal base in the selected jurisdiction.",
   founder_lease_already_accepted: "A founder aircraft has already been selected.",
+  fuel_quote_expired: "This fuel quote expired. Request a fresh quote; your quantity is preserved.",
+  fuel_capacity_exceeded:
+    "The purchase exceeds storage capacity. Reduce the quantity or upgrade capacity.",
+  fuel_reserve_exceeds_inventory:
+    "The reserve exceeds on-hand fuel. Reduce the reserve or purchase fuel first.",
+  insufficient_cash: "Available cash cannot cover this purchase. Reduce the commitment.",
+  invalid_route: "The selected route has operational constraints. Review every correction below.",
+  invalid_rotation: "The weekly rotation is not feasible. Review every server correction below.",
+  occupancy_conflict:
+    "This maintenance window overlaps aircraft occupancy. Move the window or revise the rotation.",
+  workforce_shortage:
+    "Qualified workforce is unavailable for this window. Hire or train the required capacity.",
   rate_limited: "Too many attempts. Wait a minute and try again.",
 };
 
@@ -55,6 +68,11 @@ export function mapApiError(status: number, value: unknown): ActionableError {
   return {
     code,
     fields,
+    details: (envelope?.details ?? []).map((detail) => ({
+      ...(detail.code ? { code: detail.code } : {}),
+      ...(detail.field ? { field: detail.field.replace(/^\//, "") } : {}),
+      issue: detail.issue,
+    })),
     message:
       SAFE_MESSAGES[code] ??
       (status >= 500

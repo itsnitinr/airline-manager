@@ -17,6 +17,7 @@ describe("web API boundary", () => {
     ).toEqual({
       code: "validation_error",
       fields: { airlineName: "must have at least 3 characters" },
+      details: [{ field: "airlineName", issue: "must have at least 3 characters" }],
       message: "Review the highlighted information and try again.",
       recoverable: false,
     });

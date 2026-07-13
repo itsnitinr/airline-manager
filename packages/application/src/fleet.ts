@@ -4,6 +4,7 @@ import {
   type FounderLeasePreview,
   type FounderPackageComparison,
   type FleetAircraft,
+  type FleetAircraftPlanningDetail,
   type IdentityRepository,
 } from "@airline-manager/domain";
 import { requireOwnedResource, requireVerifiedPlayer } from "./authorization.js";
@@ -87,6 +88,30 @@ export class FleetService {
       );
     }
     return aircraft;
+  }
+
+  public async getAircraftPlanningDetail(
+    airlineId: string,
+    aircraftId: string,
+    context: QueryContext,
+  ): Promise<FleetAircraftPlanningDetail> {
+    requireVerifiedPlayer(context.authorization);
+    await requireOwnedResource(this.identity, context.authorization, "airline", airlineId);
+    await requireOwnedResource(this.identity, context.authorization, "aircraft", aircraftId);
+    const detail = await this.fleet.getAircraftPlanningDetail(
+      context.authorization.playerAccountId,
+      aircraftId,
+      this.clock.now(),
+    );
+    if (detail.aircraft.airlineId !== airlineId) {
+      await requireOwnedResource(
+        this.identity,
+        context.authorization,
+        "airline",
+        "00000000-0000-0000-0000-000000000000",
+      );
+    }
+    return detail;
   }
 }
 

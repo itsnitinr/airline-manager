@@ -6,6 +6,7 @@ import {
   createLeasePaymentSchedule,
   type CurrencyCode,
   type FleetAircraft,
+  type FleetAircraftPlanningDetail,
   type FleetRepository,
   type FounderLeaseAcceptance,
   type FounderLeasePreview,
@@ -721,6 +722,60 @@ export class KyselyFleetRepository implements FleetRepository {
     const row = (await aircraftRows(this.database, playerAccountId, { aircraftId }))[0];
     if (!row) throw new FleetDomainError("aircraft_not_found", "Aircraft is unavailable.");
     return aircraftFromRow(row, now);
+  }
+
+  public async getAircraftPlanningDetail(
+    playerAccountId: string,
+    aircraftId: string,
+    now: Date,
+  ): Promise<FleetAircraftPlanningDetail> {
+    const row = (await aircraftRows(this.database, playerAccountId, { aircraftId }))[0];
+    if (!row) throw new FleetDomainError("aircraft_not_found", "Aircraft is unavailable.");
+    const lease = await sql<{
+      id: string;
+      status: "active" | "returned" | "defaulted";
+      currency: CurrencyCode;
+      starts_at: Date;
+      matures_at: Date;
+      term_days: number;
+      payment_interval_days: number;
+      recurring_payment_minor: string;
+    }>`SELECT l.id, l.status, l.currency, l.starts_at, l.matures_at,
+      t.term_days, t.payment_interval_days, t.recurring_payment_minor::text
+      FROM operating_leases l
+      JOIN operating_lease_terms t ON t.lease_id = l.id AND t.version = 1
+      WHERE l.id = ${row.operating_lease_id}::uuid`.execute(this.database);
+    const leaseRow = lease.rows[0];
+    if (!leaseRow)
+      throw new FleetDomainError("aircraft_not_found", "Aircraft lease is unavailable.");
+    const payments = await sql<{
+      payment_number: number;
+      due_at: Date;
+      amount_minor: string;
+      status: "scheduled" | "paid" | "overdue" | "cancelled";
+    }>`SELECT payment_number, due_at, amount_minor::text, status
+      FROM operating_lease_payment_schedule
+      WHERE lease_id = ${leaseRow.id}::uuid AND term_version = 1
+      ORDER BY payment_number`.execute(this.database);
+    return {
+      aircraft: aircraftFromRow(row, now),
+      lease: {
+        id: leaseRow.id,
+        status: leaseRow.status,
+        currency: leaseRow.currency,
+        startsAt: leaseRow.starts_at.toISOString(),
+        maturesAt: leaseRow.matures_at.toISOString(),
+        termDays: leaseRow.term_days,
+        paymentIntervalDays: leaseRow.payment_interval_days,
+        recurringPaymentMinor: leaseRow.recurring_payment_minor,
+        paymentSchedule: payments.rows.map((payment) => ({
+          paymentNumber: payment.payment_number,
+          dueAt: payment.due_at.toISOString(),
+          amountMinor: payment.amount_minor,
+          status: payment.status,
+        })),
+      },
+    };
   }
 
   public async completeDueDelivery(

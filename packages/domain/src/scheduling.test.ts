@@ -43,7 +43,13 @@ const forecast: RouteForecast = {
   minimumTurnaroundMinutes: 50,
   provisionalOperatingCostMinor: "100",
   provisionalDailyDemand: "20",
+  currency: "USD",
+  expectedDailyRevenueRangeMinor: ["80000", "120000"],
+  expectedDailyProfitRangeMinor: ["40000", "80000"],
+  economicsEffectiveAt: "2026-01-01T00:00:00.000Z",
+  economicsAssumptions: ["One daily departure."],
   operatingCostFormulaVersion: "schedule-cost-v1",
+  economicsFormulaVersion: "schedule-economics-v1",
   blockTimeFormulaVersion: "schedule-block-v1",
   outsourcedService: true,
 };

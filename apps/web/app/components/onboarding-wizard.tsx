@@ -163,6 +163,7 @@ export function OnboardingWizard({
         code: "base_required",
         message: "Select a jurisdiction and principal base.",
         fields: {},
+        details: [],
         recoverable: false,
       });
       return;

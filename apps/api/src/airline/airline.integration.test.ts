@@ -330,11 +330,16 @@ describe("authenticated airline founding API", () => {
       nextStep: "plan_first_route",
     });
     const aircraftId = String(accepted.json().aircraft.id);
-    const [fleet, detail, delivery, nextStep] = await Promise.all([
+    const [fleet, detail, planning, delivery, nextStep] = await Promise.all([
       app.inject({ method: "GET", url: `/v1/airlines/${airlineId}/fleet`, headers: { cookie } }),
       app.inject({
         method: "GET",
         url: `/v1/airlines/${airlineId}/fleet/${aircraftId}`,
+        headers: { cookie },
+      }),
+      app.inject({
+        method: "GET",
+        url: `/v1/airlines/${airlineId}/fleet/${aircraftId}/planning`,
         headers: { cookie },
       }),
       app.inject({
@@ -354,6 +359,15 @@ describe("authenticated airline founding API", () => {
       id: aircraftId,
       restrictions: { sale: true, collateral: true, cashExtraction: true },
     });
+    expect(planning.json()).toMatchObject({
+      aircraft: { id: aircraftId },
+      lease: {
+        status: "active",
+        currency: "USD",
+        recurringPaymentMinor: expect.any(String),
+      },
+    });
+    expect(planning.json().lease.paymentSchedule.length).toBeGreaterThan(0);
     expect(delivery.json()).toMatchObject({ aircraftId, deliveryState: "delivered" });
     expect(nextStep.json()).toMatchObject({ nextStep: "plan_first_route" });
   });

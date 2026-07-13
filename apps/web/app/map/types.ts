@@ -9,6 +9,8 @@ export type AirportMapAirport = Readonly<{
 export type AirportMapProps = Readonly<{
   airports: readonly AirportMapAirport[];
   selectedAirportId?: string;
+  selectedAirportIds?: readonly string[];
+  route?: Readonly<{ originAirportId: string; destinationAirportId: string }>;
   onSelect?: (airportId: string) => void;
   interactive?: boolean;
   label?: string;
@@ -21,6 +23,8 @@ export type AirportMapRenderStatus = "loading" | "ready" | "degraded" | "unavail
 export type MapAdapterMountOptions = Readonly<{
   airports: readonly AirportMapAirport[];
   selectedAirportId?: string;
+  selectedAirportIds?: readonly string[];
+  route?: Readonly<{ originAirportId: string; destinationAirportId: string }>;
   interactive: boolean;
   selectable: boolean;
   label: string;
@@ -35,7 +39,11 @@ export type MapAdapterMountOptions = Readonly<{
 }>;
 
 export interface AirportMapAdapterInstance {
-  update(airports: readonly AirportMapAirport[], selectedAirportId?: string): void;
+  update(
+    airports: readonly AirportMapAirport[],
+    selectedAirportIds?: readonly string[],
+    route?: Readonly<{ originAirportId: string; destinationAirportId: string }>,
+  ): void;
   resize(): void;
   destroy(): void;
 }

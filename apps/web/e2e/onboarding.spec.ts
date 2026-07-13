@@ -98,13 +98,12 @@ async function foundAirline(page: Page, suffix: string) {
       path: "test-results/visual-qa/founder-aircraft-comparison-mobile.png",
     });
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.getByRole("tab", { name: /ATR.*72-600/ }).click();
   await page.getByRole("button", { name: "Preview schedule" }).click();
   await expect(page.getByText("Acceptance schedule")).toBeVisible();
   await page.getByRole("button", { name: "Accept founder lease" }).click();
   await expect(page).toHaveURL(/\/app/);
-  await expect(
-    page.getByRole("heading", { level: 1, name: `Meridian Coast ${suffix}`, exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Network" })).toBeVisible();
   if (process.env.VISUAL_QA === "1") {
     for (const viewport of [
       { name: "mobile", width: 390, height: 844 },
@@ -121,19 +120,148 @@ async function foundAirline(page: Page, suffix: string) {
   }
 }
 
+async function exerciseTicket20Planning(page: Page) {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/app?view=network");
+  await expect(page.getByRole("heading", { name: "Build one defensible route" })).toBeVisible();
+  const destination = page.getByLabel("Destination", { exact: true });
+  const heathrowValue = await destination
+    .locator("option", { hasText: /^LHR/ })
+    .getAttribute("value");
+  if (!heathrowValue) throw new Error("Published catalog did not expose LHR for range validation.");
+  await destination.selectOption(heathrowValue);
+  await page.getByRole("button", { name: "Research direct route" }).click();
+  await expect(page.getByText("Constraints require recovery")).toBeVisible();
+  await expect(page.getByText(/route exceeds the aircraft range/)).toBeVisible();
+  await expect(
+    page.getByRole("link", {
+      name: "Select an aircraft with more range or choose a shorter route.",
+    }),
+  ).toHaveAttribute("href", "/app?view=fleet");
+  await page.screenshot({ path: "test-results/visual-qa/ticket20-range-constraint-laptop.png" });
+
+  const newarkValue = await destination
+    .locator("option", { hasText: /^EWR/ })
+    .getAttribute("value");
+  if (!newarkValue) throw new Error("Published catalog did not expose EWR for route research.");
+  await destination.selectOption(newarkValue);
+  await page.getByRole("button", { name: "Research direct route" }).click();
+  await expect(page.getByText("Operable direct route")).toBeVisible();
+  await expect(page.getByText("Expected profit")).toBeVisible();
+  await expect(page.getByRole("table", { name: "Demand segment forecast" })).toBeVisible();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({ path: "test-results/visual-qa/ticket20-route-research-laptop.png" });
+
+  await page.getByRole("button", { name: "Save researched route" }).click();
+  await expect(page.getByText(/Route AM\d+ saved from authoritative research/)).toBeVisible();
+  await page.getByRole("button", { name: "Save prospective strategy" }).click();
+  await expect(page.getByText(/Pricing strategy v\d+ takes effect/)).toBeVisible();
+  await expect(
+    page.getByRole("table", { name: "Current and prospective pricing periods" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Refresh +24h forecast" }).click();
+  await expect(page.getByRole("table", { name: "Airport weather planning inputs" })).toBeVisible();
+  await expect(page.getByText("Generated simulation snapshot, never live weather.")).toBeVisible();
+
+  await page.getByLabel("Leg 2 local departure").fill("08:10");
+  await page.getByRole("button", { name: "Validate and activate prospectively" }).click();
+  await expect(page.getByText(/Leg 1 is not ready before the following departure/)).toBeVisible();
+  await page.getByLabel("Leg 2 local departure").fill("14:00");
+  await page.getByLabel("Leg 2 origin").selectOption("JFK");
+  await page.getByRole("button", { name: "Validate and activate prospectively" }).click();
+  await expect(page.getByText("Planning action blocked")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Fleet recovery" })).toHaveAttribute(
+    "href",
+    "/app?view=fleet",
+  );
+  await page.getByLabel("Leg 2 origin").selectOption("EWR");
+  await page.getByRole("button", { name: "Validate and activate prospectively" }).click();
+  await expect(page.getByRole("heading", { name: /Active version 1/ })).toBeVisible();
+  await expect(page.getByRole("table", { name: "Generated dated-flight horizon" })).toBeVisible();
+  await page.screenshot({ path: "test-results/visual-qa/ticket20-active-rotation-laptop.png" });
+
+  await page.goto("/app?view=fleet");
+  await expect(
+    page.getByRole("heading", { name: "Aircraft obligations and readiness" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Founder lease" })).toBeVisible();
+  await page.screenshot({ path: "test-results/visual-qa/ticket20-fleet-laptop.png" });
+
+  await page.goto("/app?view=fuel");
+  await expect(page.getByRole("heading", { name: "Fuel position and purchasing" })).toBeVisible();
+  await page.getByLabel("Quantity").fill("1000");
+  await page.getByRole("button", { name: "Request expiring quote" }).click();
+  const purchaseDialog = page.getByRole("dialog", { name: "Confirm fuel purchase" });
+  await expect(purchaseDialog).toBeVisible();
+  await expect(purchaseDialog.getByRole("button", { name: "Confirm purchase" })).toBeFocused();
+  await purchaseDialog.getByRole("button", { name: "Confirm purchase" }).click();
+  await expect(page.getByText(/1,000 kg purchased at the quoted price/)).toBeVisible();
+  await page.getByLabel("Planning reserve").fill("500");
+  await page.getByRole("button", { name: "Save reserve" }).click();
+  await expect(
+    page.getByText("Planning reserve updated from the authoritative inventory."),
+  ).toBeVisible();
+  await page.getByLabel("Projected consumption").fill("1200");
+  await page.getByRole("button", { name: "Forecast inventory" }).click();
+  await expect(page.getByText("Shortage")).toBeVisible();
+  await page.screenshot({ path: "test-results/visual-qa/ticket20-fuel-laptop.png" });
+
+  await page.goto("/app?view=workforce");
+  await expect(
+    page.getByRole("heading", { name: "Workforce pools and shortage recovery" }),
+  ).toBeVisible();
+  await expect(page.getByText(/variant:/).first()).toBeVisible();
+  await page.getByLabel("Capacity", { exact: true }).fill("1");
+  await page.getByRole("button", { name: "Review cost and begin training" }).click();
+  await expect(page.getByText(/Capacity enters service .*Hiring .*training/)).toBeVisible();
+  await page.screenshot({ path: "test-results/visual-qa/ticket20-workforce-laptop.png" });
+
+  await page.goto("/app?view=maintenance");
+  await expect(page.getByRole("heading", { name: "Dispatch readiness" })).toBeVisible();
+  await expect(
+    page.getByRole("table", { name: "Aircraft maintenance due counters" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Preview constraints and schedule" }).click();
+  await expect(page.getByText("Maintenance window blocked")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Review aircraft rotation occupancy" }),
+  ).toBeVisible();
+  await page.screenshot({ path: "test-results/visual-qa/ticket20-maintenance-warning-laptop.png" });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/app?view=network");
+  await expect(page.getByText("Rotation editing requires desktop")).toBeVisible();
+  await expect(page.getByLabel("Minimum")).toBeHidden();
+  await page.goto("/app?view=fuel");
+  await expect(page.getByRole("button", { name: "Request expiring quote" })).toBeVisible();
+  await page.goto("/app?view=workforce");
+  await expect(page.getByText("Staffing changes require desktop")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Review cost and begin training" })).toBeHidden();
+  await page.goto("/app?view=maintenance");
+  await expect(page.getByText("Maintenance scheduling requires desktop")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Preview constraints and schedule" })).toBeHidden();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({
+    path: "test-results/visual-qa/ticket20-mobile-maintenance-monitoring.png",
+    fullPage: true,
+  });
+}
+
 test.describe.serial("player onboarding", () => {
   test("mobile registration, verification, keyboard airport selection, founding, lease, and shell recovery", async ({
     page,
     request,
     context,
   }) => {
-    test.setTimeout(120_000);
+    test.setTimeout(240_000);
     await page.setViewportSize({ width: 390, height: 844 });
     const stamp = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     const email = `player-${stamp}@example.test`;
     const password = "Initial-password-2026";
     await registerVerifyAndSignIn(page, request, email, password);
     await foundAirline(page, stamp.slice(-6));
+    await exerciseTicket20Planning(page);
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     await context.clearCookies();
     await page.reload();

@@ -108,6 +108,21 @@ export type FleetAircraft = Readonly<{
   restrictions: Readonly<{ sale: true; collateral: true; cashExtraction: true }>;
 }>;
 
+export type FleetAircraftPlanningDetail = Readonly<{
+  aircraft: FleetAircraft;
+  lease: Readonly<{
+    id: string;
+    status: LeaseState;
+    currency: CurrencyCode;
+    startsAt: string;
+    maturesAt: string;
+    termDays: number;
+    paymentIntervalDays: number;
+    recurringPaymentMinor: string;
+    paymentSchedule: readonly LeasePayment[];
+  }>;
+}>;
+
 export type FounderLeaseAcceptance = Readonly<{
   airlineId: string;
   careerId: string;
@@ -196,6 +211,11 @@ export interface FleetRepository {
     now: Date,
   ): Promise<readonly FleetAircraft[]>;
   getAircraft(playerAccountId: string, aircraftId: string, now: Date): Promise<FleetAircraft>;
+  getAircraftPlanningDetail(
+    playerAccountId: string,
+    aircraftId: string,
+    now: Date,
+  ): Promise<FleetAircraftPlanningDetail>;
   completeDueDelivery(
     aircraftId: string,
     expectedVersion: bigint,

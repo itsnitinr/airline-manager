@@ -7,7 +7,8 @@ import styles from "./airport-map.module.css";
 
 type AirportMapCanvasProps = Readonly<{
   airports: readonly AirportMapAirport[];
-  selectedAirportId?: string;
+  selectedAirportIds?: readonly string[];
+  route?: Readonly<{ originAirportId: string; destinationAirportId: string }>;
   interactive: boolean;
   selectable: boolean;
   label: string;
@@ -26,7 +27,8 @@ const statusCopy: Readonly<Record<AirportMapRenderStatus, string>> = {
 
 export function AirportMapCanvas({
   airports,
-  selectedAirportId,
+  selectedAirportIds = [],
+  route,
   interactive,
   selectable,
   label,
@@ -37,7 +39,8 @@ export function AirportMapCanvas({
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<AirportMapAdapterInstance | null>(null);
   const airportsRef = useRef(airports);
-  const selectedAirportIdRef = useRef(selectedAirportId);
+  const selectedAirportIdsRef = useRef(selectedAirportIds);
+  const routeRef = useRef(route);
   const onSelectRef = useRef(onSelect);
   const [status, setStatus] = useState<AirportMapRenderStatus>("loading");
   const hasAirports = airports.length > 0;
@@ -57,9 +60,8 @@ export function AirportMapCanvas({
     try {
       instanceRef.current = createMapLibreAdapter().mount(container, {
         airports: airportsRef.current,
-        ...(selectedAirportIdRef.current === undefined
-          ? {}
-          : { selectedAirportId: selectedAirportIdRef.current }),
+        selectedAirportIds: selectedAirportIdsRef.current,
+        ...(routeRef.current === undefined ? {} : { route: routeRef.current }),
         interactive,
         selectable,
         label,
@@ -95,9 +97,10 @@ export function AirportMapCanvas({
 
   useEffect(() => {
     airportsRef.current = airports;
-    selectedAirportIdRef.current = selectedAirportId;
-    instanceRef.current?.update(airports, selectedAirportId);
-  }, [airports, selectedAirportId]);
+    selectedAirportIdsRef.current = selectedAirportIds;
+    routeRef.current = route;
+    instanceRef.current?.update(airports, selectedAirportIds, route);
+  }, [airports, route, selectedAirportIds]);
 
   if (!hasAirports) {
     return (

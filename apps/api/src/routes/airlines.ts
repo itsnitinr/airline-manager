@@ -8,6 +8,7 @@ import {
   deliveryStatusResponseSchema,
   errorEnvelopeSchema,
   fleetAircraftResponseSchema,
+  fleetAircraftPlanningResponseSchema,
   fleetListResponseSchema,
   founderLeaseAcceptanceResponseSchema,
   founderLeasePreviewResponseSchema,
@@ -275,6 +276,29 @@ export function registerAirlineRoutes(
         requestId: request.id,
         authorization: request.authorizationContext,
       }),
+  );
+
+  app.get<{ Params: AircraftParams }>(
+    "/v1/airlines/:airlineId/fleet/:aircraftId/planning",
+    {
+      schema: {
+        operationId: "getFleetAircraftPlanningDetail",
+        tags: ["fleet"],
+        params: aircraftIdentifierParamsSchema,
+        response: {
+          200: fleetAircraftPlanningResponseSchema,
+          401: errorEnvelopeSchema,
+          403: errorEnvelopeSchema,
+          500: errorEnvelopeSchema,
+        },
+      },
+    },
+    async (request) =>
+      requiredFleet().getAircraftPlanningDetail(
+        request.params.airlineId,
+        request.params.aircraftId,
+        { requestId: request.id, authorization: request.authorizationContext },
+      ),
   );
 
   app.get<{ Params: AircraftParams }>(
